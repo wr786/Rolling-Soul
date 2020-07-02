@@ -1,4 +1,4 @@
 # Summer Python 2020
  北京大学2020暑期学校Python语言基础与应用小组repo
 
-[点此查看代码规范]((https://github.com/wr786/Summer-Python-2020/blob/master/代码规范.md))
+[点此查看代码规范](https://github.com/wr786/Summer-Python-2020/blob/master/代码规范.md)
