@@ -1,13 +1,42 @@
 import pgzrun
 import random
 
-class Knight:
+class Weapon:
+
+	def __init__(self):
+		self.actor = Actor('wall_1a_01')	# 等图片，破旧的手枪
+
+	def deal_damage(self, target):
+		pass	# 造成伤害，通过区别self.actor.image来判断伤害点数（因为不想对每个武器都定义一个对象，而且没意义
+
+	def show_anime(self):
+		pass	# 对当前所对的方向释放"特效"，待写
+
+class Player:	# 基类，用于写一些共同点
+
+	def __init__(self):
+		self.weapon = Weapon()
+
+	def walk(self):
+		self.actor.left += hFlag
+		self.actor.top += vFlag
+		self.actor.left = max(self.actor.left, 10)
+		self.actor.left = min(self.actor.left, WIDTH - self.actor.width)
+		self.actor.top = max(self.actor.top, 10)
+		self.actor.top = min(self.actor.top, HEIGHT - self.actor.height)
+		# 实际上枪械只需要和玩家保持一个相对位置就好了，所以在处理完玩家的运动之后再更新枪械的位置就行了
+		# 这里大概需要一个偏移量来使枪在手上
+		self.weapon.actor.left = self.actor.left 
+		self.weapon.actor.top = self.actor.top
+
+class Knight(Player):
 
 	def __init__(self):
 		self.actor = Actor('knight_rt')
+		Player.__init__(self)
 		# 这里还可以加入血量之类的
 
-# 移动部分
+	# 移动部分
 
 	def face_right(self):
 		self.actor.image = "knight_rt"
@@ -39,21 +68,14 @@ class Knight:
 			else:
 				self.actor.image = "knight_ltwalk"
 
-	def walk(self):
-		self.actor.left += hFlag
-		self.actor.top += vFlag
-		self.actor.left = max(self.actor.left, 10)
-		self.actor.left = min(self.actor.left, WIDTH - self.actor.width)
-		self.actor.top = max(self.actor.top, 10)
-		self.actor.top = min(self.actor.top, HEIGHT - self.actor.height)
-
-class Assassin:
+class Assassin(Player):
 
 	def __init__(self):
 		self.actor = Actor('assassin_rt')
+		Player.__init__(self)
 		# 这里还可以加入血量之类的
 
-# 移动部分
+	# 移动部分
 
 	def face_right(self):
 		self.actor.image = "assassin_rt"
@@ -85,21 +107,14 @@ class Assassin:
 			else:
 				self.actor.image = "assassin_ltwalk"
 
-	def walk(self):
-		self.actor.left += hFlag
-		self.actor.top += vFlag
-		self.actor.left = max(self.actor.left, 10)
-		self.actor.left = min(self.actor.left, WIDTH - self.actor.width)
-		self.actor.top = max(self.actor.top, 10)
-		self.actor.top = min(self.actor.top, HEIGHT - self.actor.height)
-
-class Paladin:
+class Paladin(Player):
 
 	def __init__(self):
 		self.actor = Actor('paladin_rt')
+		Player.__init__(self)
 		# 这里还可以加入血量之类的
 
-# 移动部分
+	# 移动部分
 
 	def face_right(self):
 		self.actor.image = "paladin_rt"
@@ -130,20 +145,14 @@ class Paladin:
 				self.actor.image = "paladin_lt"
 			else:
 				self.actor.image = "paladin_ltwalk"
-	# 撞墙处理
-	def walk(self):
-		self.actor.left += hFlag
-		self.actor.top += vFlag
-		self.actor.left = max(self.actor.left, 37)
-		self.actor.left = min(self.actor.left, WIDTH - self.actor.width-37)
-		self.actor.top = max(self.actor.top, 37)
-		self.actor.top = min(self.actor.top, HEIGHT - self.actor.height-37)
 
 # 地图设置
 WIDTH = 925
 HEIGHT = 925
 floors = {}
 walls = {}
+
+# 背景相关
 floorcnt = 0
 wallcnt = 0
 for i in range(851):
@@ -156,6 +165,25 @@ vFlag = 0
 hFlag = 0
 frameCnt = 0
 moveSpan = 4
+
+# 随机画地图背景
+def draw_map():
+	global floorcnt
+	global wallcnt
+	for i in range(23):
+		for j in range(23):
+			screen.blit(floors[floorcnt], (37 + 37 * i, 37 + 37 * j))
+			floorcnt = (floorcnt + 1) % 529
+	for i in range(25):
+		screen.blit(walls[wallcnt], (37 * i, 0))
+		wallcnt = (wallcnt + 1) % 25
+		screen.blit(walls[wallcnt], (37 * i, 886))
+		wallcnt = (wallcnt + 1) % 25
+	for i in range(23):
+		screen.blit(walls[wallcnt], (0, 37 + 37 * i))
+		wallcnt = (wallcnt + 1) % 23
+		screen.blit(walls[wallcnt], (885, 37 + 37 * i))
+		wallcnt = (wallcnt + 1) % 23
 
 def update():
 	global hFlag
@@ -177,29 +205,13 @@ def update():
 	if vFlag != 0:
 		player.up_down()
 
-
 def draw():
 	global frameCnt
-	global floorcnt
-	global wallcnt
 	screen.clear()
-	for i in range(23):
-		for j in range(23):
-			screen.blit(floors[floorcnt], (37 + 37 * i, 37 + 37 * j))
-			floorcnt = (floorcnt + 1) % 529
-	for i in range(25):
-		screen.blit(walls[wallcnt], (37 * i, 0))
-		wallcnt = (wallcnt + 1) % 25
-		screen.blit(walls[wallcnt], (37 * i, 886))
-		wallcnt = (wallcnt + 1) % 25
-	for i in range(23):
-		screen.blit(walls[wallcnt], (0, 37 + 37 * i))
-		wallcnt = (wallcnt + 1) % 23
-		screen.blit(walls[wallcnt], (885, 37 + 37 * i))
-		wallcnt = (wallcnt + 1) % 23
+	draw_map()
 	player.actor.draw()
+	player.weapon.actor.draw()
 	frameCnt = frameCnt % 60 + 1
-
 
 def on_key_down(key):
 	global hFlag
@@ -212,7 +224,6 @@ def on_key_down(key):
 		hFlag += moveSpan
 	if key == key.W:
 		vFlag -= moveSpan
-
 
 def on_key_up(key):
 	global hFlag
@@ -228,5 +239,6 @@ def on_key_up(key):
 
 player = Paladin()	# 这里需要写个选择人物
 player.actor.topright = (314.5, 314.5)
+player.weapon.actor.topright = (314.5, 314.5)	# 需要一个偏移量
 
 pgzrun.go()
