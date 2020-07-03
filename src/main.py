@@ -1,5 +1,6 @@
 import pgzrun
 import random
+from random import randint
 from math import *
 
 ##########################################################################################
@@ -18,7 +19,7 @@ floors = {}
 walls = {}
 
 wallSize = 37	# 一个方块的大小
-level = 1	# 现在是第几关
+level = (1, 'a')	# 现在是第几关
 
 # 背景相关
 floorcnt = 0
@@ -38,6 +39,7 @@ moveSpan = 4
 # 屏幕中的子弹列表，每次画都需要更新，然后用不同的列表来区分伤害判定
 playerBulletList = []
 enemyBulletList = []
+enemyList = []
 
 ##########################################################################################
 
@@ -52,10 +54,10 @@ class Bullet:
 		self.actor = Actor(f'bullet_{type}')
 		self.actor.topright = shootPoint
 		self.actor.angle = self.actor.angle_to(dirt)
-		# self.direction = (dirt[0] - self.actor.pos[0], dirt[1] - self.actor.pos[1])
 		self.speed = 8	# 子弹速度，应该还需要改
+		self.atk = 10	# 武器伤害，应该还需要改
 
-	def move_on(self):
+	def move_on(self, friendly):
 		self.actor.left += self.speed * cos(self.actor.angle / 180 * pi)
 		self.actor.bottom += -1 * self.speed * sin(self.actor.angle / 180 * pi)
 		# 这里还应该加入碰撞角色、障碍物检测
@@ -68,6 +70,17 @@ class Bullet:
 		# 左右两堵墙
 		if self.actor.colliderect((0, 0), (wallSize, HEIGHT)) or self.actor.colliderect((WIDTH - wallSize, 0), (WIDTH, HEIGHT)):
 			return False
+		if friendly:	# 是玩家射出的命中了敌人
+			for _enemy in enemyList:
+				if self.actor.colliderect(_enemy.actor):
+					_enemy.hp -= self.atk
+					if _enemy.hp <= 0:
+						enemyList.remove(_enemy)
+					return False
+		else:	# 敌人的子弹射中了玩家
+			if self.actor.colliderect(player.actor):
+				#todo 这里应该有个主角掉血
+				return False
 		return True
 
 class Weapon:
@@ -79,9 +92,6 @@ class Weapon:
 	def bulletType(self):	# 如果这里出错了，就检查武器图片命名
 		weaponName = self.actor.image
 		return weaponName[weaponName.find('_')+1:-3]
-	
-	def deal_damage(self, target):
-		pass	#todo 造成伤害，通过区别self.actor.image来判断伤害点数（因为不想对每个武器都定义一个对象，而且没意义
 
 	def show_anime(self):
 		pass	#todo 对当前所对的方向释放"特效"，待写
@@ -254,6 +264,57 @@ class Paladin(Player):
 			else:
 				self.actor.image = "paladin_ltwalk"
 
+class Enemy:
+
+	def __init__(self, type):	# type参数是判断了当前是第几关之后再传进来的，这里为了测试，就直接只用一种怪先
+		self.actor = Actor('monster_1a_01_rt')
+		# 如果加了障碍物的话，这里就得复杂一些
+		self.actor.topright = (randint(wallSize, WIDTH - wallSize), randint(wallSize, HEIGHT - wallSize))	
+		self.speed = wallSize * 1.5
+		self.moveCD_MAX = 60
+		self.shootCD_MAX = 100
+		self.moveCD = randint(0, self.moveCD_MAX)
+		self.shootCD = randint(0, self.shootCD_MAX)
+		self.hp = 100
+
+	def face_right(self):
+		self.actor.image = self.actor.image[:-3] + '_rt'
+
+	def face_left(self):
+		self.actor.image = self.actor.image[:-3] + '_lt'
+
+	def move(self):
+		if not self.moveCD:
+			moveDirection = ((0, 1), (1, 0), (0, -1), (-1, 0))
+			moveDir = random.choice(moveDirection)
+			(dx, dy) = (moveDir[0] * self.speed, moveDir[1] * self.speed)
+			self.actor.left += dx
+			self.actor.bottom += dy
+
+			# 碰撞检定
+			#todo 障碍物相关的还得后续写一下
+			#todo 这里还应该有个碰撞玩家造成伤害并回弹，先不写
+			self.actor.left = max(self.actor.left, wallSize)
+			self.actor.left = min(self.actor.left, WIDTH - self.actor.width - wallSize)
+			self.actor.top = max(self.actor.top, wallSize)
+			self.actor.top = min(self.actor.top, HEIGHT - self.actor.height - wallSize)
+			for _enemy in enemyList:
+				while self.actor.colliderect(_enemy.actor) and self != _enemy:
+					self.actor.left -= dx
+					self.actor.bottom -= dy
+
+			self.moveCD = self.moveCD_MAX
+
+		else:
+			self.moveCD -= 1
+
+	def shoot(self):
+		if not self.shootCD:
+			enemyBulletList.append(Bullet('monster_01', self.actor.topright, (player.actor.pos[0] + randint(-50, 50), player.actor.pos[1] + randint(-50, 50))))	# 先用shotgun凑合，瞄准玩家
+			self.shootCD = self.shootCD_MAX
+		else:
+			self.shootCD -= 1
+
 # 随机画地图背景
 def draw_map():
 	global floorcnt
@@ -295,11 +356,14 @@ def update():
 	# 移动处理
 	player.walk()
 	player.turn()
+	for _enemy in enemyList:
+		_enemy.move()
+		_enemy.shoot()
 	for _bullet in playerBulletList:
-		if not _bullet.move_on():
+		if not _bullet.move_on(True):
 			playerBulletList.remove(_bullet)
 	for _bullet in enemyBulletList:
-		if not _bullet.move_on():
+		if not _bullet.move_on(False):
 			enemyBulletList.remove(_bullet)
 	
 
@@ -311,12 +375,16 @@ def draw():
 	if roleChoose == 0:
 		start_view()
 	else:
-		if level == 1 and not music.is_playing('bgm_boss'):	# 仅用来测试，必然要调整
+		if level == (1, 'a') and not music.is_playing('bgm_boss'):	# 仅用来测试，必然要调整
 			music.play('bgm_boss')
-			music.set_volume(0.7)
+			music.set_volume(0.4)
+			for _ in range(4):
+				enemyList.append(Enemy('待定'))	# 这里传参后期要改
 		draw_map()
 		player.actor.draw()
 		player.weapon.actor.draw()
+		for _enemy in enemyList:
+			_enemy.actor.draw()
 		for _bullet in playerBulletList:
 			_bullet.actor.draw()
 		for _bullet in enemyBulletList:
