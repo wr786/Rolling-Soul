@@ -8,12 +8,15 @@ from math import *
 # 选角色相关
 roleChoose = 0
 
+# 状态栏相关
+barWidth = 174
+barHeight = 85
 
 # 地图设置
 floornum = 21 # 一行地砖的数量
 wallnum = 23 # 一行墙砖的数量
 wallSize = 37	# 一个方块的大小
-WIDTH = wallnum * wallSize
+WIDTH = wallnum * wallSize + barWidth
 HEIGHT = wallnum * wallSize
 floors = {}
 walls = {}
@@ -68,7 +71,7 @@ class Bullet:
 		if self.actor.colliderect((0, 0), (WIDTH, wallSize)) or self.actor.colliderect((0, HEIGHT - wallSize), (WIDTH, HEIGHT)):
 			return False
 		# 左右两堵墙
-		if self.actor.colliderect((0, 0), (wallSize, HEIGHT)) or self.actor.colliderect((WIDTH - wallSize, 0), (WIDTH, HEIGHT)):
+		if self.actor.colliderect((0, 0), (wallSize, HEIGHT)) or self.actor.colliderect((WIDTH - wallSize - barWidth, 0), (WIDTH, HEIGHT)):
 			return False
 		if friendly:	# 是玩家射出的命中了敌人
 			for _enemy in enemyList:
@@ -120,9 +123,9 @@ class Player:	# 基类，用于写一些共同点
 		self.actor.left += hFlag
 		self.actor.top += vFlag
 		self.actor.left = max(self.actor.left, wallSize)
-		self.actor.left = min(self.actor.left, WIDTH - self.actor.width - wallSize)
+		self.actor.left = min(self.actor.left, WIDTH - self.actor.width - wallSize - barWidth)
 		self.actor.top = max(self.actor.top, wallSize)
-		self.actor.top = min(self.actor.top, HEIGHT - self.actor.height - wallSize)
+		self.actor.top = min(self.actor.top, HEIGHT - self.actor.height - wallSize - barWidth)
 		# 实际上枪械只需要和玩家保持一个相对位置就好了，所以在处理完玩家的运动之后再更新枪械的位置就行了
 		# 这里大概需要一个偏移量来使枪在手上
 		self.weapon.actor.left = self.actor.left + 0.5 * self.actor.width - 0.5 * self.weapon.actor.width
@@ -269,7 +272,7 @@ class Enemy:
 	def __init__(self, type):	# type参数是判断了当前是第几关之后再传进来的，这里为了测试，就直接只用一种怪先
 		self.actor = Actor('monster_1a_01_rt')
 		# 如果加了障碍物的话，这里就得复杂一些
-		self.actor.topright = (randint(wallSize, WIDTH - wallSize), randint(wallSize, HEIGHT - wallSize))	
+		self.actor.topright = (randint(wallSize, WIDTH - wallSize - barWidth), randint(wallSize, HEIGHT - wallSize - barWidth))
 		self.speed = wallSize * 1.5
 		self.moveCD_MAX = 60
 		self.shootCD_MAX = 100
@@ -295,9 +298,9 @@ class Enemy:
 			#todo 障碍物相关的还得后续写一下
 			#todo 这里还应该有个碰撞玩家造成伤害并回弹，先不写
 			self.actor.left = max(self.actor.left, wallSize)
-			self.actor.left = min(self.actor.left, WIDTH - self.actor.width - wallSize)
+			self.actor.left = min(self.actor.left, WIDTH - self.actor.width - wallSize - barWidth)
 			self.actor.top = max(self.actor.top, wallSize)
-			self.actor.top = min(self.actor.top, HEIGHT - self.actor.height - wallSize)
+			self.actor.top = min(self.actor.top, HEIGHT - self.actor.height - wallSize - barWidth)
 			for _enemy in enemyList:
 				while self.actor.colliderect(_enemy.actor) and self != _enemy:
 					self.actor.left -= dx
@@ -331,7 +334,7 @@ def draw_map():
 	for i in range(wallnum):
 		screen.blit(walls[wallcnt], (0, wallSize + wallSize * i))
 		wallcnt = (wallcnt + 1) % wallnum
-		screen.blit(walls[wallcnt], (WIDTH - wallSize, wallSize + wallSize * i))
+		screen.blit(walls[wallcnt], (WIDTH - wallSize - barWidth, wallSize + wallSize * i))
 		wallcnt = (wallcnt + 1) % wallnum
 
 def choose_role(pos):
@@ -380,7 +383,8 @@ def draw():
 			music.set_volume(0.4)
 			for _ in range(4):
 				enemyList.append(Enemy('待定'))	# 这里传参后期要改
-				
+		screen.fill("SteelBlue4")
+		screen.blit("status_bar", (WIDTH - barWidth, 0))
 		draw_map()
 		player.actor.draw()
 		player.weapon.actor.draw()
