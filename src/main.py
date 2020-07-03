@@ -4,7 +4,7 @@ import random
 class Weapon:
 
 	def __init__(self):
-		self.actor = Actor('wall_1a_01')	# 等图片，破旧的手枪
+		self.actor = Actor('initial_worngat')	# 等图片，破旧的手枪
 
 	def deal_damage(self, target):
 		pass	# 造成伤害，通过区别self.actor.image来判断伤害点数（因为不想对每个武器都定义一个对象，而且没意义
@@ -20,14 +20,14 @@ class Player:	# 基类，用于写一些共同点
 	def walk(self):
 		self.actor.left += hFlag
 		self.actor.top += vFlag
-		self.actor.left = max(self.actor.left, 10)
-		self.actor.left = min(self.actor.left, WIDTH - self.actor.width)
-		self.actor.top = max(self.actor.top, 10)
-		self.actor.top = min(self.actor.top, HEIGHT - self.actor.height)
+		self.actor.left = max(self.actor.left, 37)
+		self.actor.left = min(self.actor.left, WIDTH - self.actor.width-37)
+		self.actor.top = max(self.actor.top, 37)
+		self.actor.top = min(self.actor.top, HEIGHT - self.actor.height-37)
 		# 实际上枪械只需要和玩家保持一个相对位置就好了，所以在处理完玩家的运动之后再更新枪械的位置就行了
 		# 这里大概需要一个偏移量来使枪在手上
-		self.weapon.actor.left = self.actor.left 
-		self.weapon.actor.top = self.actor.top
+		self.weapon.actor.left = self.actor.left + 0.5 * self.actor.width
+		self.weapon.actor.top = self.actor.top + 0.5 * self.actor.height
 
 class Knight(Player):
 
@@ -147,17 +147,17 @@ class Paladin(Player):
 				self.actor.image = "paladin_ltwalk"
 
 # 地图设置
-WIDTH = 925
-HEIGHT = 925
+WIDTH = 851
+HEIGHT = 851
 floors = {}
 walls = {}
 
 # 背景相关
 floorcnt = 0
 wallcnt = 0
-for i in range(851):
+for i in range(777):
 	floors[i] = random.choice(["floor_1a_01", "floor_1a_02", "floor_1a_03"])
-for i in range(96):
+for i in range(88):
 	walls[i] = random.choice(["wall_1a_01", "wall_1a_02"])
 
 # 移动相关
@@ -170,19 +170,19 @@ moveSpan = 4
 def draw_map():
 	global floorcnt
 	global wallcnt
-	for i in range(23):
-		for j in range(23):
+	for i in range(21):
+		for j in range(21):
 			screen.blit(floors[floorcnt], (37 + 37 * i, 37 + 37 * j))
-			floorcnt = (floorcnt + 1) % 529
-	for i in range(25):
+			floorcnt = (floorcnt + 1) % 441
+	for i in range(23):
 		screen.blit(walls[wallcnt], (37 * i, 0))
-		wallcnt = (wallcnt + 1) % 25
-		screen.blit(walls[wallcnt], (37 * i, 886))
-		wallcnt = (wallcnt + 1) % 25
+		wallcnt = (wallcnt + 1) % 23
+		screen.blit(walls[wallcnt], (37 * i, 812))
+		wallcnt = (wallcnt + 1) % 23
 	for i in range(23):
 		screen.blit(walls[wallcnt], (0, 37 + 37 * i))
 		wallcnt = (wallcnt + 1) % 23
-		screen.blit(walls[wallcnt], (885, 37 + 37 * i))
+		screen.blit(walls[wallcnt], (811, 37 + 37 * i))
 		wallcnt = (wallcnt + 1) % 23
 
 def update():
