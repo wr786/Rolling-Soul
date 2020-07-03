@@ -125,7 +125,7 @@ class Player:	# 基类，用于写一些共同点
 		self.actor.left = max(self.actor.left, wallSize)
 		self.actor.left = min(self.actor.left, WIDTH - self.actor.width - wallSize - barWidth)
 		self.actor.top = max(self.actor.top, wallSize)
-		self.actor.top = min(self.actor.top, HEIGHT - self.actor.height - wallSize - barWidth)
+		self.actor.top = min(self.actor.top, HEIGHT - self.actor.height - wallSize)
 		# 实际上枪械只需要和玩家保持一个相对位置就好了，所以在处理完玩家的运动之后再更新枪械的位置就行了
 		# 这里大概需要一个偏移量来使枪在手上
 		self.weapon.actor.left = self.actor.left + 0.5 * self.actor.width - 0.5 * self.weapon.actor.width
@@ -272,7 +272,7 @@ class Enemy:
 	def __init__(self, type):	# type参数是判断了当前是第几关之后再传进来的，这里为了测试，就直接只用一种怪先
 		self.actor = Actor('monster_1a_01_rt')
 		# 如果加了障碍物的话，这里就得复杂一些
-		self.actor.topright = (randint(wallSize, WIDTH - wallSize - barWidth), randint(wallSize, HEIGHT - wallSize - barWidth))
+		self.actor.topright = (randint(wallSize, WIDTH - wallSize - barWidth), randint(wallSize, HEIGHT - wallSize))
 		self.speed = wallSize * 1.5
 		self.moveCD_MAX = 60
 		self.shootCD_MAX = 100
@@ -300,7 +300,7 @@ class Enemy:
 			self.actor.left = max(self.actor.left, wallSize)
 			self.actor.left = min(self.actor.left, WIDTH - self.actor.width - wallSize - barWidth)
 			self.actor.top = max(self.actor.top, wallSize)
-			self.actor.top = min(self.actor.top, HEIGHT - self.actor.height - wallSize - barWidth)
+			self.actor.top = min(self.actor.top, HEIGHT - self.actor.height - wallSize)
 			for _enemy in enemyList:
 				while self.actor.colliderect(_enemy.actor) and self != _enemy:
 					self.actor.left -= dx
