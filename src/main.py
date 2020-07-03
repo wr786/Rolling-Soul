@@ -2,16 +2,75 @@ import pgzrun
 import random
 from math import *
 
+##########################################################################################
+
+# 地图设置
+WIDTH = 851
+HEIGHT = 851
+floors = {}
+walls = {}
+wallSize = 37	# 一个方块的大小
+
+# 背景相关
+floorcnt = 0
+wallcnt = 0
+for i in range(777):
+	floors[i] = random.choice(["floor_1a_01", "floor_1a_02", "floor_1a_03"])
+for i in range(88):
+	walls[i] = random.choice(["wall_1a_01", "wall_1a_02"])
+
+# 移动相关
+vFlag = 0
+hFlag = 0
+frameCnt = 0
+moveSpan = 4
+
+# 战斗相关
+# 屏幕中的子弹列表，每次画都需要更新，然后用不同的列表来区分伤害判定
+playerBulletList = []
+enemyBulletList = []
+
+##########################################################################################
+
+def sgn(x): # 判断数字的符号，简单函数就直接缩写了
+	if x > 0: return 1
+	elif x < 0: return -1
+	else: return 0
+
+class Bullet:
+
+	def __init__(self, type, shootPoint, dirt):
+		self.actor = Actor(f'bullet_{type}')
+		self.actor.topright = shootPoint
+		self.actor.angle = self.actor.angle_to(dirt)
+		# self.direction = (dirt[0] - self.actor.pos[0], dirt[1] - self.actor.pos[1])
+		self.speed = 4	# 子弹速度，应该还需要改
+
+	def move_on(self):
+		self.actor.left += self.speed * cos(self.actor.angle / 180 * pi)
+		self.actor.bottom += -1 * self.speed * sin(self.actor.angle / 180 * pi)
+		# 这里还应该加入碰撞角色、障碍物检测
+		# for _wall in walls:
+		# 	if(self.actor.colliderect(_wall)):
+		# 		return False
+		# 上下两堵墙
+		if self.actor.colliderect((0, 0), (WIDTH, wallSize)) or self.actor.colliderect((0, HEIGHT - wallSize), (WIDTH, HEIGHT)):
+			return False
+		if self.actor.colliderect((0, 0), (wallSize, HEIGHT)) or self.actor.colliderect((WIDTH - wallSize, 0), (WIDTH, HEIGHT)):
+			return False
+		return True
+
 class Weapon:
 
 	def __init__(self):
-		self.actor = Actor('initial_worngat_rt')	# 等图片，破旧的手枪
+		self.actor = Actor('initial_worngat_rt')
+		self.bulletType = 'worngat'	# 此外可能还有激光等种类，如果按原本的元气骑士来看的话
 
 	def deal_damage(self, target):
-		pass	# 造成伤害，通过区别self.actor.image来判断伤害点数（因为不想对每个武器都定义一个对象，而且没意义
+		pass	#todo 造成伤害，通过区别self.actor.image来判断伤害点数（因为不想对每个武器都定义一个对象，而且没意义
 
 	def show_anime(self):
-		pass	# 对当前所对的方向释放"特效"，待写
+		pass	#todo 对当前所对的方向释放"特效"，待写
 
 	def rotate_to(self, pos):
 		if pos[0] < self.actor.pos[0]:	# 要翻转
@@ -20,6 +79,11 @@ class Weapon:
 		else:
 			self.actor.image = self.actor.image[:-3] + '_rt'
 			self.actor.angle = self.actor.angle_to(pos)
+
+	def shoot(self, pos):
+		#todo 这里应该要加一个发射cd
+		playerBulletList.append(Bullet(self.bulletType, self.actor.topright, pos))
+
 
 class Player:	# 基类，用于写一些共同点
 
@@ -37,6 +101,22 @@ class Player:	# 基类，用于写一些共同点
 		# 这里大概需要一个偏移量来使枪在手上
 		self.weapon.actor.left = self.actor.left + 0.5 * self.actor.width
 		self.weapon.actor.top = self.actor.top + 0.5 * self.actor.height
+
+	def turn(self):
+		if hFlag > 0:
+			if frameCnt <= 7.5 or 22.5< frameCnt <= 37.5 or frameCnt > 52.5:
+				self.face_right()
+			else:
+				self.walk_right()
+		elif hFlag < 0:
+			if frameCnt <= 7.5 or 22.5< frameCnt <= 37.5 or frameCnt > 52.5:
+				self.face_left()
+			else:
+				self.walk_left()
+		else:
+			self.stop()
+		if vFlag != 0:
+			self.up_down()
 
 class Knight(Player):
 
@@ -155,26 +235,6 @@ class Paladin(Player):
 			else:
 				self.actor.image = "paladin_ltwalk"
 
-# 地图设置
-WIDTH = 851
-HEIGHT = 851
-floors = {}
-walls = {}
-
-# 背景相关
-floorcnt = 0
-wallcnt = 0
-for i in range(777):
-	floors[i] = random.choice(["floor_1a_01", "floor_1a_02", "floor_1a_03"])
-for i in range(88):
-	walls[i] = random.choice(["wall_1a_01", "wall_1a_02"])
-
-# 移动相关
-vFlag = 0
-hFlag = 0
-frameCnt = 0
-moveSpan = 4
-
 # 随机画地图背景
 def draw_map():
 	global floorcnt
@@ -199,20 +259,14 @@ def update():
 	global vFlag
 	# 移动处理
 	player.walk()
-	if hFlag > 0:
-		if frameCnt <= 7.5 or 22.5< frameCnt <= 37.5 or frameCnt > 52.5:
-			player.face_right()
-		else:
-			player.walk_right()
-	elif hFlag < 0:
-		if frameCnt <= 7.5 or 22.5< frameCnt <= 37.5 or frameCnt > 52.5:
-			player.face_left()
-		else:
-			player.walk_left()
-	else:
-		player.stop()
-	if vFlag != 0:
-		player.up_down()
+	player.turn()
+	for _bullet in playerBulletList:
+		if not _bullet.move_on():
+			playerBulletList.remove(_bullet)
+	for _bullet in enemyBulletList:
+		if not _bullet.move_on():
+			enemyBulletList.remove(_bullet)
+	
 
 def draw():
 	global frameCnt
@@ -220,11 +274,20 @@ def draw():
 	draw_map()
 	player.actor.draw()
 	player.weapon.actor.draw()
+	for _bullet in playerBulletList:
+		_bullet.actor.draw()
+	for _bullet in enemyBulletList:
+		_bullet.actor.draw()
 	frameCnt = frameCnt % 60 + 1
 
 # 处理武器跟随旋转
 def on_mouse_move(pos):
 	player.weapon.rotate_to(pos)
+
+def on_mouse_down(pos, button):
+	#todo 这里应该加个判断，判断当前是否在战斗中
+	if button == mouse.LEFT:
+		player.weapon.shoot(pos)
 
 def on_key_down(key):
 	global hFlag
@@ -250,8 +313,8 @@ def on_key_up(key):
 	if key == key.W:
 		vFlag += moveSpan
 
-player = Paladin()	# 这里需要写个选择人物
+player = Paladin()	#todo 这里需要写个选择人物
 player.actor.topright = (314.5, 314.5)
-player.weapon.actor.topright = (314.5, 314.5)	# 需要一个偏移量
+player.weapon.actor.topright = (314.5, 314.5)
 
 pgzrun.go()
