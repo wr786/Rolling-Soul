@@ -63,8 +63,7 @@ class Bullet:
 class Weapon:
 
 	def __init__(self):	# 这里应该要新增一个参数来生成对应的武器，不过待定
-		# self.actor = Actor('initial_worngat_rt')
-		self.actor = Actor('blue_sakura_rt')
+		self.actor = Actor('initial_worngat_rt')
 
 	@property
 	def bulletType(self):	# 如果这里出错了，就检查武器图片命名
@@ -89,6 +88,7 @@ class Weapon:
 	def shoot(self, pos):
 		#todo 这里应该要加一个发射cd
 		playerBulletList.append(Bullet(self.bulletType, self.actor.topright, pos))
+		sounds.gun.play()
 
 
 class Player:	# 基类，用于写一些共同点
