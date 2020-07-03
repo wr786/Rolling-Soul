@@ -400,7 +400,12 @@ def update():
 		if not _bullet.move_on(False):
 			enemyBulletList.remove(_bullet)
 	
-
+def draw_bar():
+	screen.fill("SteelBlue4")
+	screen.blit("status_bar", (WIDTH - barWidth, 0))
+	screen.draw.text(f"{player.maxlife}/{player.life}", center=(WIDTH - 0.45 * barWidth, 0.25 * barHeight - 5), fontname="hanyinuomituan")
+	screen.draw.text(f"{player.maxarmor}/{player.armor}", center=(WIDTH - 0.45 * barWidth, 0.5 * barHeight - 5), fontname="hanyinuomituan")
+	screen.draw.text(f"{player.maxpower}/{player.power}", center=(WIDTH - 0.45 * barWidth, 0.75 * barHeight - 5), fontname="hanyinuomituan")
 def draw():
 	global frameCnt
 	screen.clear()
@@ -414,14 +419,12 @@ def draw():
 			music.set_volume(0.4)
 			for _ in range(4):
 				enemyList.append(Enemy('待定'))	# 这里传参后期要改
-		screen.fill("SteelBlue4")
-		screen.blit("status_bar", (WIDTH - barWidth, 0))
+
+		draw_bar()
 		draw_map()
 		player.actor.draw()
 		player.weapon.actor.draw()
-		screen.draw.text(f"{player.maxlife}/{player.life}", center=(WIDTH - 0.45 * barWidth, 0.25 * barHeight - 5),fontname="hanyinuomituan")
-		screen.draw.text(f"{player.maxarmor}/{player.armor}", center=(WIDTH - 0.45 * barWidth, 0.5 * barHeight - 5),fontname="hanyinuomituan")
-		screen.draw.text(f"{player.maxpower}/{player.power}", center=(WIDTH - 0.45 * barWidth, 0.75 * barHeight - 5),fontname="hanyinuomituan")
+
 		for _enemy in enemyList:
 			_enemy.actor.draw()
 		for _bullet in playerBulletList:
