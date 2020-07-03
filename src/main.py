@@ -99,7 +99,7 @@ class Player:	# 基类，用于写一些共同点
 		self.actor.top = min(self.actor.top, HEIGHT - self.actor.height-37)
 		# 实际上枪械只需要和玩家保持一个相对位置就好了，所以在处理完玩家的运动之后再更新枪械的位置就行了
 		# 这里大概需要一个偏移量来使枪在手上
-		self.weapon.actor.left = self.actor.left + 0.5 * self.actor.width
+		self.weapon.actor.left = self.actor.left + 0.5 * self.actor.width - 0.5 * self.weapon.actor.width
 		self.weapon.actor.top = self.actor.top + 0.5 * self.actor.height
 
 	def turn(self):
