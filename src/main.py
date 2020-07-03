@@ -1,4 +1,5 @@
 import pgzrun
+import random
 
 class Knight:
 
@@ -129,17 +130,26 @@ class Paladin:
 				self.actor.image = "paladin_lt"
 			else:
 				self.actor.image = "paladin_ltwalk"
-
+	# 撞墙处理
 	def walk(self):
 		self.actor.left += hFlag
 		self.actor.top += vFlag
-		self.actor.left = max(self.actor.left, 10)
-		self.actor.left = min(self.actor.left, WIDTH - self.actor.width)
-		self.actor.top = max(self.actor.top, 10)
-		self.actor.top = min(self.actor.top, HEIGHT - self.actor.height)
+		self.actor.left = max(self.actor.left, 37)
+		self.actor.left = min(self.actor.left, WIDTH - self.actor.width-37)
+		self.actor.top = max(self.actor.top, 37)
+		self.actor.top = min(self.actor.top, HEIGHT - self.actor.height-37)
 
-WIDTH = 1000
-HEIGHT = 800
+# 地图设置
+WIDTH = 925
+HEIGHT = 925
+floors = {}
+walls = {}
+floorcnt = 0
+wallcnt = 0
+for i in range(851):
+	floors[i] = random.choice(["floor_1a_01", "floor_1a_02", "floor_1a_03"])
+for i in range(96):
+	walls[i] = random.choice(["wall_1a_01", "wall_1a_02"])
 
 # 移动相关
 vFlag = 0
@@ -170,8 +180,23 @@ def update():
 
 def draw():
 	global frameCnt
+	global floorcnt
+	global wallcnt
 	screen.clear()
-	screen.fill((128, 0, 0))
+	for i in range(23):
+		for j in range(23):
+			screen.blit(floors[floorcnt], (37 + 37 * i, 37 + 37 * j))
+			floorcnt = (floorcnt + 1) % 529
+	for i in range(25):
+		screen.blit(walls[wallcnt], (37 * i, 0))
+		wallcnt = (wallcnt + 1) % 25
+		screen.blit(walls[wallcnt], (37 * i, 886))
+		wallcnt = (wallcnt + 1) % 25
+	for i in range(23):
+		screen.blit(walls[wallcnt], (0, 37 + 37 * i))
+		wallcnt = (wallcnt + 1) % 23
+		screen.blit(walls[wallcnt], (885, 37 + 37 * i))
+		wallcnt = (wallcnt + 1) % 23
 	player.actor.draw()
 	frameCnt = frameCnt % 60 + 1
 
@@ -202,5 +227,6 @@ def on_key_up(key):
 		vFlag += moveSpan
 
 player = Paladin()	# 这里需要写个选择人物
-player.actor.topright = (500, 400)
+player.actor.topright = (314.5, 314.5)
+
 pgzrun.go()
