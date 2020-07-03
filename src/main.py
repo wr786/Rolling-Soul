@@ -1,16 +1,25 @@
 import pgzrun
 import random
+from math import *
 
 class Weapon:
 
 	def __init__(self):
-		self.actor = Actor('initial_worngat')	# 等图片，破旧的手枪
+		self.actor = Actor('initial_worngat_rt')	# 等图片，破旧的手枪
 
 	def deal_damage(self, target):
 		pass	# 造成伤害，通过区别self.actor.image来判断伤害点数（因为不想对每个武器都定义一个对象，而且没意义
 
 	def show_anime(self):
 		pass	# 对当前所对的方向释放"特效"，待写
+
+	def rotate_to(self, pos):
+		if pos[0] < self.actor.pos[0]:	# 要翻转
+			self.actor.image = self.actor.image[:-3] + '_lt'
+			self.actor.angle = -1 * self.actor.angle_to((2*self.actor.pos[0] - pos[0], pos[1]))	# 反转后角度也要相应地变换
+		else:
+			self.actor.image = self.actor.image[:-3] + '_rt'
+			self.actor.angle = self.actor.angle_to(pos)
 
 class Player:	# 基类，用于写一些共同点
 
@@ -212,6 +221,10 @@ def draw():
 	player.actor.draw()
 	player.weapon.actor.draw()
 	frameCnt = frameCnt % 60 + 1
+
+# 处理武器跟随旋转
+def on_mouse_move(pos):
+	player.weapon.rotate_to(pos)
 
 def on_key_down(key):
 	global hFlag
