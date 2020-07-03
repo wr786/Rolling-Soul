@@ -4,6 +4,10 @@ from math import *
 
 ##########################################################################################
 
+# 选角色相关
+roleChoose = 0
+
+
 # 地图设置
 WIDTH = 851
 HEIGHT = 851
@@ -43,6 +47,7 @@ class Bullet:
 		self.actor = Actor(f'bullet_{type}')
 		self.actor.topright = shootPoint
 		self.actor.angle = self.actor.angle_to(dirt)
+		# self.direction = (dirt[0] - self.actor.pos[0], dirt[1] - self.actor.pos[1])
 		self.speed = 8	# 子弹速度，应该还需要改
 
 	def move_on(self):
@@ -263,6 +268,22 @@ def draw_map():
 		screen.blit(walls[wallcnt], (811, 37 + 37 * i))
 		wallcnt = (wallcnt + 1) % 23
 
+def choose_role(pos):
+	global roleChoose
+	if 0.25 * WIDTH -25 < pos[0] < 0.25 * WIDTH + 45 and 0.5 * HEIGHT < pos[1] <0.5 * HEIGHT + 70:
+		roleChoose = 1
+	elif 0.5 * WIDTH -25 < pos[0] < 0.5 * WIDTH + 45 and 0.5 * HEIGHT < pos[1] <0.5 * HEIGHT + 70:
+		roleChoose = 2
+	elif 0.75 * WIDTH - 25 < pos[0] < 0.75 * WIDTH + 45 and 0.5 * HEIGHT < pos[1] <0.5 * HEIGHT + 70:
+		roleChoose = 3
+
+def start_view():
+	screen.blit("start_back", (0, 0))
+	screen.draw.text("请点击你想玩的角色", (0.5 * WIDTH, 0.2 * HEIGHT))
+	screen.blit("knight_rt", (0.25 * WIDTH - 25, 0.5 * HEIGHT))
+	screen.blit("assassin_rt", (0.5 * WIDTH - 25, 0.5 * HEIGHT))
+	screen.blit("paladin_rt", (0.75 * WIDTH - 25, 0.5 * HEIGHT))
+
 def update():
 	global hFlag
 	global vFlag
@@ -280,14 +301,19 @@ def update():
 def draw():
 	global frameCnt
 	screen.clear()
-	draw_map()
-	player.actor.draw()
-	player.weapon.actor.draw()
-	for _bullet in playerBulletList:
-		_bullet.actor.draw()
-	for _bullet in enemyBulletList:
-		_bullet.actor.draw()
-	frameCnt = frameCnt % 60 + 1
+
+	global roleChoose
+	if roleChoose == 0:
+		start_view()
+	else:
+		draw_map()
+		player.actor.draw()
+		player.weapon.actor.draw()
+		for _bullet in playerBulletList:
+			_bullet.actor.draw()
+		for _bullet in enemyBulletList:
+			_bullet.actor.draw()
+		frameCnt = frameCnt % 60 + 1
 
 # 处理武器跟随旋转
 def on_mouse_move(pos):
@@ -295,7 +321,17 @@ def on_mouse_move(pos):
 
 def on_mouse_down(pos, button):
 	#todo 这里应该加个判断，判断当前是否在战斗中
-	if button == mouse.LEFT:
+	global player
+	global roleChoose
+	if roleChoose == 0 and button == mouse.LEFT:
+		choose_role(pos)
+		if roleChoose == 1:
+			player = Knight()
+		elif roleChoose == 2:
+			player = Assassin()
+		elif roleChoose == 3:
+			player = Paladin()
+	elif button == mouse.LEFT:
 		player.weapon.shoot(pos)
 
 def on_key_down(key):
@@ -322,7 +358,7 @@ def on_key_up(key):
 	if key == key.W:
 		vFlag += moveSpan
 
-player = Paladin()	#todo 这里需要写个选择人物
+player = Knight()	# 默认一个先，实际是会调整的
 player.actor.topright = (314.5, 314.5)
 player.weapon.actor.topright = (314.5, 314.5)
 
