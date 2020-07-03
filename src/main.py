@@ -2,6 +2,7 @@ import pgzrun
 import random
 from random import randint
 from math import *
+import os
 
 ##########################################################################################
 
@@ -144,10 +145,19 @@ class Player:	# 基类，用于写一些共同点
 		self.mp = 200
 		self.armorCD_MAX = 600
 		self.armorCD = 600
+		self.immuneTime = 0	# 无敌时间
 
 	def walk(self):
 		self.actor.left += hFlag
 		self.actor.top += vFlag
+		# 判断敌人碰撞
+		for _enemy in enemyList:
+			if self.actor.colliderect(_enemy.actor):
+				self.get_damage()	# 碰撞伤害
+				while self.actor.colliderect(_enemy.actor):
+					self.actor.left -= 5 * hFlag
+					self.actor.top -= 5 * vFlag
+		#todo 这里需要判断障碍物碰撞
 		self.actor.left = max(self.actor.left, wallSize)
 		self.actor.left = min(self.actor.left, WIDTH - self.actor.width - wallSize - barWidth)
 		self.actor.top = max(self.actor.top, wallSize)
@@ -184,13 +194,18 @@ class Player:	# 基类，用于写一些共同点
 			self.armorCD -= 100	# 脱离战斗后快速回复护甲
 		else:
 			self.armorCD += 1
+		if self.immuneTime:	#todo 如果现在是免疫伤害的阶段，那么就需要角色闪烁？
+			self.immuneTime -= 1
 
 	def get_damage(self, damage=1):
+		if self.immuneTime:	# 免疫伤害的时间
+			return
 		if self.armor > 0:
 			self.armor -= damage
 		else:
 			self.hp -= damage
 		self.armorCD = 0	# 一段时间内不被打中才能回护盾
+		self.immuneTime = 60	# 受伤后1s的无敌时间
 		if self.hp <= 0:
 			print('You Lose!')
 			exit(0)	#todo 编写失败界面
@@ -512,4 +527,5 @@ player = Knight()	# 默认一个先，实际是会调整的
 player.actor.topright = (314.5, 314.5)
 player.weapon.actor.topright = (314.5, 314.5)
 
+os.environ['SDL_VIDEO_WINDOW_POS'] = "50, 20"	# 设置窗口初始位置
 pgzrun.go()
