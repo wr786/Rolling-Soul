@@ -348,7 +348,7 @@ def choose_role(pos):
 
 def start_view():
 	screen.blit("start_back", (0, 0))
-	screen.draw.text("请点击你想玩的角色", (0.5 * WIDTH, 0.2 * HEIGHT))
+	screen.draw.text("Please Choose Your Hero", center = (0.5 * WIDTH, 0.2 * HEIGHT), fontname = "hanyinuomituan",fontsize = 90)
 	screen.blit("knight_rt", (0.25 * WIDTH - 25, 0.5 * HEIGHT))
 	screen.blit("assassin_rt", (0.5 * WIDTH - 25, 0.5 * HEIGHT))
 	screen.blit("paladin_rt", (0.75 * WIDTH - 25, 0.5 * HEIGHT))
@@ -388,6 +388,9 @@ def draw():
 		draw_map()
 		player.actor.draw()
 		player.weapon.actor.draw()
+		screen.draw.text(f"{player.maxlife}/{player.life}", center=(WIDTH - 0.45 * barWidth, 0.25 * barHeight - 5),fontname="hanyinuomituan")
+		screen.draw.text(f"{player.maxarmor}/{player.armor}", center=(WIDTH - 0.45 * barWidth, 0.5 * barHeight - 5),fontname="hanyinuomituan")
+		screen.draw.text(f"{player.maxpower}/{player.power}", center=(WIDTH - 0.45 * barWidth, 0.75 * barHeight - 5),fontname="hanyinuomituan")
 		for _enemy in enemyList:
 			_enemy.actor.draw()
 		for _bullet in playerBulletList:
@@ -408,10 +411,28 @@ def on_mouse_down(pos, button):
 		choose_role(pos)
 		if roleChoose == 1:
 			player = Knight()
+			player.maxlife = 4
+			player.life = 4
+			player.maxarmor = 6
+			player.armor = 6
+			player.maxpower = 200
+			player.power = 200
 		elif roleChoose == 2:
 			player = Assassin()
+			player.maxlife = 5
+			player.life = 5
+			player.maxarmor = 5
+			player.armor = 5
+			player.maxpower = 200
+			player.power = 200
 		elif roleChoose == 3:
 			player = Paladin()
+			player.maxlife = 7
+			player.life = 7
+			player.maxarmor = 4
+			player.armor = 4
+			player.maxpower = 200
+			player.power = 200
 	elif button == mouse.LEFT:
 		player.weapon.shoot(pos)
 
@@ -442,5 +463,11 @@ def on_key_up(key):
 player = Knight()	# 默认一个先，实际是会调整的
 player.actor.topright = (314.5, 314.5)
 player.weapon.actor.topright = (314.5, 314.5)
+player.maxlife = 5
+player.life = 5
+player.maxarmor = 5
+player.armor = 5
+player.maxpower = 200
+player.power = 200
 
 pgzrun.go()
