@@ -64,8 +64,13 @@ class Weapon:
 
 	def __init__(self):
 		self.actor = Actor('initial_worngat_rt')
-		self.bulletType = 'worngat'	# 此外可能还有激光等种类，如果按原本的元气骑士来看的话
+		# self.actor = Actor('blue_sakura_rt')
 
+	@property
+	def bulletType(self):	# 如果这里出错了，就检查武器图片命名
+		weaponName = self.actor.image
+		return weaponName[weaponName.find('_')+1:-3]
+	
 	def deal_damage(self, target):
 		pass	#todo 造成伤害，通过区别self.actor.image来判断伤害点数（因为不想对每个武器都定义一个对象，而且没意义
 
