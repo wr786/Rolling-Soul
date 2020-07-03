@@ -9,18 +9,21 @@ roleChoose = 0
 
 
 # 地图设置
-WIDTH = 851
-HEIGHT = 851
+floornum = 21 # 一行地砖的数量
+wallnum = 23 # 一行墙砖的数量
+wallSize = 37	# 一个方块的大小
+WIDTH = wallnum * wallSize
+HEIGHT = wallnum * wallSize
 floors = {}
 walls = {}
-wallSize = 37	# 一个方块的大小
+
 
 # 背景相关
 floorcnt = 0
 wallcnt = 0
-for i in range(777):
+for i in range(floornum ** 2):
 	floors[i] = random.choice(["floor_1a_01", "floor_1a_02", "floor_1a_03"])
-for i in range(88):
+for i in range((floornum + wallnum) * 2):
 	walls[i] = random.choice(["wall_1a_01", "wall_1a_02"])
 
 # 移动相关
@@ -104,10 +107,10 @@ class Player:	# 基类，用于写一些共同点
 	def walk(self):
 		self.actor.left += hFlag
 		self.actor.top += vFlag
-		self.actor.left = max(self.actor.left, 37)
-		self.actor.left = min(self.actor.left, WIDTH - self.actor.width-37)
-		self.actor.top = max(self.actor.top, 37)
-		self.actor.top = min(self.actor.top, HEIGHT - self.actor.height-37)
+		self.actor.left = max(self.actor.left, wallSize)
+		self.actor.left = min(self.actor.left, WIDTH - self.actor.width - wallSize)
+		self.actor.top = max(self.actor.top, wallSize)
+		self.actor.top = min(self.actor.top, HEIGHT - self.actor.height - wallSize)
 		# 实际上枪械只需要和玩家保持一个相对位置就好了，所以在处理完玩家的运动之后再更新枪械的位置就行了
 		# 这里大概需要一个偏移量来使枪在手上
 		self.weapon.actor.left = self.actor.left + 0.5 * self.actor.width - 0.5 * self.weapon.actor.width
@@ -253,20 +256,20 @@ class Paladin(Player):
 def draw_map():
 	global floorcnt
 	global wallcnt
-	for i in range(21):
-		for j in range(21):
-			screen.blit(floors[floorcnt], (37 + 37 * i, 37 + 37 * j))
-			floorcnt = (floorcnt + 1) % 441
-	for i in range(23):
-		screen.blit(walls[wallcnt], (37 * i, 0))
-		wallcnt = (wallcnt + 1) % 23
-		screen.blit(walls[wallcnt], (37 * i, 812))
-		wallcnt = (wallcnt + 1) % 23
-	for i in range(23):
-		screen.blit(walls[wallcnt], (0, 37 + 37 * i))
-		wallcnt = (wallcnt + 1) % 23
-		screen.blit(walls[wallcnt], (811, 37 + 37 * i))
-		wallcnt = (wallcnt + 1) % 23
+	for i in range(floornum):
+		for j in range(floornum):
+			screen.blit(floors[floorcnt], (wallSize + wallSize * i, wallSize + wallSize * j))
+			floorcnt = (floorcnt + 1) % (floornum ** 2)
+	for i in range(wallnum):
+		screen.blit(walls[wallcnt], (wallSize * i, 0))
+		wallcnt = (wallcnt + 1) % wallnum
+		screen.blit(walls[wallcnt], (wallSize * i, HEIGHT - wallSize))
+		wallcnt = (wallcnt + 1) % wallnum
+	for i in range(wallnum):
+		screen.blit(walls[wallcnt], (0, wallSize + wallSize * i))
+		wallcnt = (wallcnt + 1) % wallnum
+		screen.blit(walls[wallcnt], (WIDTH - wallSize, wallSize + wallSize * i))
+		wallcnt = (wallcnt + 1) % wallnum
 
 def choose_role(pos):
 	global roleChoose
