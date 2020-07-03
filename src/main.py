@@ -53,12 +53,12 @@ def sgn(x): # 判断数字的符号，简单函数就直接缩写了
 
 class Bullet:
 
-	def __init__(self, type, shootPoint, dirt):
+	def __init__(self, type, shootPoint, dirt, bulletSpeed, weaponATK):
 		self.actor = Actor(f'bullet_{type}')
 		self.actor.topright = shootPoint
 		self.actor.angle = self.actor.angle_to(dirt)
-		self.speed = 8	# 子弹速度，应该还需要改
-		self.atk = 10	# 武器伤害，应该还需要改
+		self.speed = bulletSpeed	# 子弹速度，应该还需要改
+		self.atk = weaponATK
 
 	def move_on(self, friendly):
 		self.actor.left += self.speed * cos(self.actor.angle / 180 * pi)
@@ -88,8 +88,12 @@ class Bullet:
 
 class Weapon:
 
-	def __init__(self):	# 这里应该要新增一个参数来生成对应的武器，不过待定
-		self.actor = Actor('initial_worngat_rt')
+	def __init__(self, gunType):	# 这里应该要新增一个参数来生成对应的武器，不过待定
+		self.actor = Actor(gunType + '_rt')	# 默认朝右
+		self.cd_MAX = 80 # 这里必然也是要修改的，不同的武器拥有不同的cd，下同
+		self.cd = 0	
+		self.bulletSpeed = 20
+		self.atk = 10
 
 	@property
 	def bulletType(self):	# 如果这里出错了，就检查武器图片命名
@@ -110,14 +114,16 @@ class Weapon:
 
 	def shoot(self, pos):
 		#todo 这里应该要加一个发射cd
-		playerBulletList.append(Bullet(self.bulletType, self.actor.topright, pos))
-		sounds.gun.play()
+		if self.cd <= 0:
+			playerBulletList.append(Bullet(self.bulletType, self.actor.topright, pos, self.bulletSpeed, self.atk))
+			sounds.gun.play()
+			self.cd = self.cd_MAX
 
 
 class Player:	# 基类，用于写一些共同点
 
-	def __init__(self):
-		self.weapon = Weapon()
+	def __init__(self, weaponName):
+		self.weapon = Weapon(weaponName)
 
 	def walk(self):
 		self.actor.left += hFlag
@@ -125,7 +131,7 @@ class Player:	# 基类，用于写一些共同点
 		self.actor.left = max(self.actor.left, wallSize)
 		self.actor.left = min(self.actor.left, WIDTH - self.actor.width - wallSize - barWidth)
 		self.actor.top = max(self.actor.top, wallSize)
-		self.actor.top = min(self.actor.top, HEIGHT - self.actor.height - wallSize - barWidth)
+		self.actor.top = min(self.actor.top, HEIGHT - self.actor.height - wallSize)
 		# 实际上枪械只需要和玩家保持一个相对位置就好了，所以在处理完玩家的运动之后再更新枪械的位置就行了
 		# 这里大概需要一个偏移量来使枪在手上
 		self.weapon.actor.left = self.actor.left + 0.5 * self.actor.width - 0.5 * self.weapon.actor.width
@@ -150,11 +156,14 @@ class Player:	# 基类，用于写一些共同点
 	def change_weapon(self, _weapon):
 		self.weapon = _weapon
 
+	def update(self):	# 进行一些数值的更新，包括但不限于武器cd、护盾
+		self.weapon.cd -= 1
+
 class Knight(Player):
 
 	def __init__(self):
 		self.actor = Actor('knight_rt')
-		Player.__init__(self)
+		Player.__init__(self, 'initial_worngat')
 		# 这里还可以加入血量之类的
 
 	# 移动部分
@@ -193,7 +202,7 @@ class Assassin(Player):
 
 	def __init__(self):
 		self.actor = Actor('assassin_rt')
-		Player.__init__(self)
+		Player.__init__(self, 'initial_p250')
 		# 这里还可以加入血量之类的
 
 	# 移动部分
@@ -232,7 +241,7 @@ class Paladin(Player):
 
 	def __init__(self):
 		self.actor = Actor('paladin_rt')
-		Player.__init__(self)
+		Player.__init__(self, 'initial_uzi')
 		# 这里还可以加入血量之类的
 
 	# 移动部分
@@ -279,6 +288,8 @@ class Enemy:
 		self.moveCD = randint(0, self.moveCD_MAX)
 		self.shootCD = randint(0, self.shootCD_MAX)
 		self.hp = 100
+		self.bulletSpeed = 10	# 这里同理也是要改的
+		self.atk = 1
 
 	def face_right(self):
 		self.actor.image = self.actor.image[:-3] + '_rt'
@@ -291,9 +302,12 @@ class Enemy:
 			moveDirection = ((0, 1), (1, 0), (0, -1), (-1, 0))
 			moveDir = random.choice(moveDirection)
 			(dx, dy) = (moveDir[0] * self.speed, moveDir[1] * self.speed)
+			if dx < 0:
+				self.face_left()
+			else:
+				self.face_right()
 			self.actor.left += dx
 			self.actor.bottom += dy
-
 			# 碰撞检定
 			#todo 障碍物相关的还得后续写一下
 			#todo 这里还应该有个碰撞玩家造成伤害并回弹，先不写
@@ -313,7 +327,7 @@ class Enemy:
 
 	def shoot(self):
 		if not self.shootCD:
-			enemyBulletList.append(Bullet('monster_01', self.actor.topright, (player.actor.pos[0] + randint(-50, 50), player.actor.pos[1] + randint(-50, 50))))	# 先用shotgun凑合，瞄准玩家
+			enemyBulletList.append(Bullet('monster_01', self.actor.topright, (player.actor.pos[0] + randint(-50, 50), player.actor.pos[1] + randint(-50, 50)), self.bulletSpeed, self.atk))	# 先用shotgun凑合，瞄准玩家
 			self.shootCD = self.shootCD_MAX
 		else:
 			self.shootCD -= 1
@@ -359,6 +373,7 @@ def update():
 	# 移动处理
 	player.walk()
 	player.turn()
+	player.update()
 	for _enemy in enemyList:
 		_enemy.move()
 		_enemy.shoot()
