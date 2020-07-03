@@ -380,6 +380,7 @@ def draw():
 			music.set_volume(0.4)
 			for _ in range(4):
 				enemyList.append(Enemy('待定'))	# 这里传参后期要改
+				
 		draw_map()
 		player.actor.draw()
 		player.weapon.actor.draw()
