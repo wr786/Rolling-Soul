@@ -313,7 +313,7 @@ def draw():
 	else:
 		if level == 1 and not music.is_playing('bgm_boss'):	# 仅用来测试，必然要调整
 			music.play('bgm_boss')
-			music.set_volume(0.7)
+			music.set_volume(0.4)
 		draw_map()
 		player.actor.draw()
 		player.weapon.actor.draw()
