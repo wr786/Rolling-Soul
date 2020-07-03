@@ -43,8 +43,7 @@ class Bullet:
 		self.actor = Actor(f'bullet_{type}')
 		self.actor.topright = shootPoint
 		self.actor.angle = self.actor.angle_to(dirt)
-		# self.direction = (dirt[0] - self.actor.pos[0], dirt[1] - self.actor.pos[1])
-		self.speed = 4	# 子弹速度，应该还需要改
+		self.speed = 8	# 子弹速度，应该还需要改
 
 	def move_on(self):
 		self.actor.left += self.speed * cos(self.actor.angle / 180 * pi)
@@ -56,15 +55,16 @@ class Bullet:
 		# 上下两堵墙
 		if self.actor.colliderect((0, 0), (WIDTH, wallSize)) or self.actor.colliderect((0, HEIGHT - wallSize), (WIDTH, HEIGHT)):
 			return False
+		# 左右两堵墙
 		if self.actor.colliderect((0, 0), (wallSize, HEIGHT)) or self.actor.colliderect((WIDTH - wallSize, 0), (WIDTH, HEIGHT)):
 			return False
 		return True
 
 class Weapon:
 
-	def __init__(self):
-		self.actor = Actor('initial_worngat_rt')
-		# self.actor = Actor('blue_sakura_rt')
+	def __init__(self):	# 这里应该要新增一个参数来生成对应的武器，不过待定
+		# self.actor = Actor('initial_worngat_rt')
+		self.actor = Actor('blue_sakura_rt')
 
 	@property
 	def bulletType(self):	# 如果这里出错了，就检查武器图片命名
@@ -78,6 +78,7 @@ class Weapon:
 		pass	#todo 对当前所对的方向释放"特效"，待写
 
 	def rotate_to(self, pos):
+		#todo 处理枪械的旋转中心，如果是_rt的话，应该偏向左边，如果是_lt的话，应该偏向右边（即靠枪把子
 		if pos[0] < self.actor.pos[0]:	# 要翻转
 			self.actor.image = self.actor.image[:-3] + '_lt'
 			self.actor.angle = -1 * self.actor.angle_to((2*self.actor.pos[0] - pos[0], pos[1]))	# 反转后角度也要相应地变换
@@ -122,6 +123,9 @@ class Player:	# 基类，用于写一些共同点
 			self.stop()
 		if vFlag != 0:
 			self.up_down()
+
+	def change_weapon(self, _weapon):
+		self.weapon = _weapon
 
 class Knight(Player):
 
