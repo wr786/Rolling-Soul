@@ -62,8 +62,15 @@ class Bullet:
 		self.actor.angle = self.actor.angle_to(dirt)
 		self.speed = bulletSpeed	# 子弹速度，应该还需要改
 		self.atk = weaponATK
+		self.effectLastTime = 10	# 特效显示的时间
 
 	def move_on(self, friendly):
+		if 'effect' in self.actor.image:
+			if self.effectLastTime:
+				self.effectLastTime -= 1
+				return True
+			else:
+				return False
 		self.actor.left += self.speed * cos(self.actor.angle / 180 * pi)
 		self.actor.bottom += -1 * self.speed * sin(self.actor.angle / 180 * pi)
 		# 这里还应该加入碰撞角色、障碍物检测
@@ -82,18 +89,20 @@ class Bullet:
 					_enemy.hp -= self.atk
 					if _enemy.hp <= 0:
 						enemyList.remove(_enemy)
-					return False
+					self.actor.image = 'effect_hit_small'
+					return True
 		else:	# 敌人的子弹射中了玩家
 			if self.actor.colliderect(player.actor):
-				#todo 这里应该有个主角掉血
-				return False
+				player.get_damage()
+				self.actor.image = 'effect_hit_big'
+				return True
 		return True
 
 class Weapon:
 
 	def __init__(self, gunType):	# 这里应该要新增一个参数来生成对应的武器，不过待定
 		self.actor = Actor(gunType + '_rt')	# 默认朝右
-		self.cd_MAX = 80 # 这里必然也是要修改的，不同的武器拥有不同的cd，下同
+		self.cd_MAX = 50 # 这里必然也是要修改的，不同的武器拥有不同的cd，下同
 		self.cd = 0	
 		self.bulletSpeed = 20
 		self.atk = 10
@@ -125,8 +134,16 @@ class Weapon:
 
 class Player:	# 基类，用于写一些共同点
 
-	def __init__(self, weaponName):
+	def __init__(self, weaponName, hpMax, armorMax):
 		self.weapon = Weapon(weaponName)
+		self.hp_MAX = hpMax
+		self.hp = hpMax
+		self.armor_MAX = armorMax
+		self.armor = armorMax
+		self.mp_MAX = 200
+		self.mp = 200
+		self.armorCD_MAX = 600
+		self.armorCD = 600
 
 	def walk(self):
 		self.actor.left += hFlag
@@ -161,13 +178,28 @@ class Player:	# 基类，用于写一些共同点
 
 	def update(self):	# 进行一些数值的更新，包括但不限于武器cd、护盾
 		self.weapon.cd -= 1
+		if self.armorCD == self.armorCD_MAX:
+			self.armor += 1
+			self.armor = min(self.armor, self.armor_MAX)
+			self.armorCD -= 100	# 脱离战斗后快速回复护甲
+		else:
+			self.armorCD += 1
+
+	def get_damage(self, damage=1):
+		if self.armor > 0:
+			self.armor -= damage
+		else:
+			self.hp -= damage
+		self.armorCD = 0	# 一段时间内不被打中才能回护盾
+		if self.hp <= 0:
+			print('You Lose!')
+			exit(0)	#todo 编写失败界面
 
 class Knight(Player):
 
 	def __init__(self):
 		self.actor = Actor('knight_rt')
-		Player.__init__(self, 'initial_worngat')
-		# 这里还可以加入血量之类的
+		Player.__init__(self, 'initial_worngat', 4, 6)
 
 	# 移动部分
 
@@ -205,8 +237,7 @@ class Assassin(Player):
 
 	def __init__(self):
 		self.actor = Actor('assassin_rt')
-		Player.__init__(self, 'initial_p250')
-		# 这里还可以加入血量之类的
+		Player.__init__(self, 'initial_p250', 5, 5)
 
 	# 移动部分
 
@@ -244,8 +275,7 @@ class Paladin(Player):
 
 	def __init__(self):
 		self.actor = Actor('paladin_rt')
-		Player.__init__(self, 'initial_uzi')
-		# 这里还可以加入血量之类的
+		Player.__init__(self, 'initial_uzi', 7, 4)
 
 	# 移动部分
 
@@ -291,7 +321,7 @@ class Enemy:
 		self.moveCD = randint(0, self.moveCD_MAX)
 		self.shootCD = randint(0, self.shootCD_MAX)
 		self.hp = 100
-		self.bulletSpeed = 10	# 这里同理也是要改的
+		self.bulletSpeed = 6	# 这里同理也是要改的
 		self.atk = 1
 
 	def face_right(self):
@@ -363,6 +393,7 @@ def choose_role(pos):
 	elif 0.75 * WIDTH - 25 < pos[0] < 0.75 * WIDTH + 45 and 0.5 * HEIGHT < pos[1] <0.5 * HEIGHT + 70:
 		roleChoose = 3
 
+# 开始界面
 def start_view():
 	screen.fill("white")
 	screen.blit("start_back", (0, 0))
@@ -403,9 +434,10 @@ def update():
 def draw_bar():
 	screen.fill("SteelBlue4")
 	screen.blit("status_bar", (WIDTH - barWidth, 0))
-	screen.draw.text(f"{player.maxlife}/{player.life}", center=(WIDTH - 0.45 * barWidth, 0.25 * barHeight - 5), fontname="hanyinuomituan")
-	screen.draw.text(f"{player.maxarmor}/{player.armor}", center=(WIDTH - 0.45 * barWidth, 0.5 * barHeight - 5), fontname="hanyinuomituan")
-	screen.draw.text(f"{player.maxpower}/{player.power}", center=(WIDTH - 0.45 * barWidth, 0.75 * barHeight - 5), fontname="hanyinuomituan")
+	screen.draw.text(f"{player.hp}/{player.hp_MAX}", center=(WIDTH - 0.45 * barWidth, 0.25 * barHeight - 5), fontname="hanyinuomituan")
+	screen.draw.text(f"{player.armor}/{player.armor_MAX}", center=(WIDTH - 0.45 * barWidth, 0.5 * barHeight - 5), fontname="hanyinuomituan")
+	screen.draw.text(f"{player.mp}/{player.mp_MAX}", center=(WIDTH - 0.45 * barWidth, 0.75 * barHeight - 5), fontname="hanyinuomituan")
+
 def draw():
 	global frameCnt
 	screen.clear()
@@ -445,28 +477,10 @@ def on_mouse_down(pos, button):
 		choose_role(pos)
 		if roleChoose == 1:
 			player = Knight()
-			player.maxlife = 4
-			player.life = 4
-			player.maxarmor = 6
-			player.armor = 6
-			player.maxpower = 200
-			player.power = 200
 		elif roleChoose == 2:
 			player = Assassin()
-			player.maxlife = 5
-			player.life = 5
-			player.maxarmor = 5
-			player.armor = 5
-			player.maxpower = 200
-			player.power = 200
 		elif roleChoose == 3:
 			player = Paladin()
-			player.maxlife = 7
-			player.life = 7
-			player.maxarmor = 4
-			player.armor = 4
-			player.maxpower = 200
-			player.power = 200
 	elif button == mouse.LEFT:
 		player.weapon.shoot(pos)
 
@@ -497,11 +511,5 @@ def on_key_up(key):
 player = Knight()	# 默认一个先，实际是会调整的
 player.actor.topright = (314.5, 314.5)
 player.weapon.actor.topright = (314.5, 314.5)
-player.maxlife = 5
-player.life = 5
-player.maxarmor = 5
-player.armor = 5
-player.maxpower = 200
-player.power = 200
 
 pgzrun.go()
