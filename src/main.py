@@ -66,12 +66,14 @@ class Obstacle:
 				return True
 		return False
 
-	def __init__(self, x=0, y=0, obstacleType=''):
+	def __init__(self, x=0, y=0, obstacleType='floor_1c_03'):
 		# 后面可以根据需要用x、y设置障碍物的中心摆放位置, 用obstacleType确定障碍物的图片
-		self.actor = Actor('floor_1c_03')	# 暂时用这个，后面得更换障碍物图的
+		self.actor = Actor(obstacleType)	# 暂时用这个，后面得更换障碍物图的
 		# 利用while生成在合理的位置
 		while (not x and not y) or self.actor.colliderect(player.actor) or self.collide_other_obstacles():
 			x, y = (randint(wallSize, WIDTH - wallSize - barWidth), randint(wallSize, HEIGHT - wallSize))
+			self.actor.topright = (x, y)
+		else:
 			self.actor.topright = (x, y)
 
 class Bullet:
