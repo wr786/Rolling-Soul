@@ -19,16 +19,19 @@ barHeight = 85
 # 地图设置
 floornum = 21 # 一行地砖的数量
 wallnum = 23 # 一行墙砖的数量
-wallSize = 37	# 一个方块的大小
+wallSize = 37   # 一个方块的大小
 WIDTH = wallnum * wallSize + barWidth
 HEIGHT = wallnum * wallSize
 floors = {}
 walls = {}
 
-wallSize = 37	# 一个方块的大小
-level = (1, 'a', 1)	# 现在是第几关
+wallSize = 37   # 一个方块的大小
+level = [1, 'a', 1] # 现在是第几关
 
-obstacleList = []	# 关卡障碍物列表
+obstacleList = []   # 关卡障碍物列表
+
+#怪物数量
+enemyNum = [0] * 4
 
 # 背景相关
 floorcnt = 0
@@ -42,20 +45,26 @@ for i in range((floornum + wallnum) * 2):
 vFlag = 0
 hFlag = 0
 frameCnt = 0
-moveSpan = 4
+# moveSpan = 4
+moveSpan = 8
+enemyMoveFlag = [0]*12 #优化怪物行走方式
+enemyMoveCnt = 0 #不同数字代表不同怪物
+enemyMoveDirection = [random.randint(0, 360)]*12 
+
 
 # 战斗相关
 # 屏幕中的子弹列表，每次画都需要更新，然后用不同的列表来区分伤害判定
 playerBulletList = []
 enemyBulletList = []
 enemyList = []
-levelEnemyList = {}	# 后续可以通过需要，将怪物列表分成小怪和大怪
+levelEnemyList = {}
 # 战斗数值
-weaponData = {}	# key为武器名<rarity>_<name>, value为(atkRange, cost, cd, bulletSpeed)
+weaponData = {} # key为武器名<rarity>_<name>, value为(atkRange, cost, cd, bulletSpeed)
 WEAPON_CD_STD = 50
 WEAPON_BULLET_SPEED_STD = 20
+# ENEMY_SPEED_STD = wallSize * 1.5
 ENEMY_SPEED_STD = wallSize * 1.5
-enemyData = {}	# key为敌人名，value为(HP, cd, walkSpeed, bulletData)
+enemyData = {}  # key为敌人名，value为(HP, cd, walkSpeed, bulletData)
 
 ##########################################################################################
 
@@ -69,7 +78,7 @@ def read_data():
 			try:
 				atkRange = int(datas[2])
 				atkRange = (atkRange, atkRange)
-			except:	# 如果出错，代表存在~
+			except: # 如果出错，代表存在~
 				atkEqualRange = datas[2].split('~')
 				atkRange = (int(atkEqualRange[0]), int(atkEqualRange[1]))
 			weaponData.update({f'{datas[1]}_{datas[0]}': (atkRange, int(datas[3]), float(datas[4]), float(datas[5]))})
@@ -77,14 +86,12 @@ def read_data():
 	with open('./data/monster_data.csv', 'r') as f:
 		for line in f.readlines()[1:]:
 			datas = line.split('\t')
-			_level = (int(datas[0][0]), datas[0][1], int(datas[1]))
-			# 在关卡怪物列表中添加这种怪物
-			if _level not in levelEnemyList.keys():
-				levelEnemyList.update({_level: [datas[0]]})
-			else:
-				levelEnemyList[_level].append(datas[0])
+			for minor in datas[1].split('|'):	# 用'|'分隔开怪物
+				_monster = (int(datas[0][0]), datas[0][1], int(minor))	# 这个minor表示该关卡(如'1a')内怪物id
+				# 在关卡怪物列表中添加这种怪物
+				levelEnemyList.update({_monster: datas[0]})
 			# 类型，atk，bulletSpeed，概率
-			_bulletType = [x.zfill(2) for x in datas[6].split('|')]	# 在左边补齐0
+			_bulletType = [x.zfill(2) for x in datas[6].split('|')] # 在左边补齐0
 			_bulletAtk = [int(x) for x in datas[3].split('|')]
 			_bulletSpeed = [float(x) for x in datas[7].split('|')]
 			_bulletProb = [float(x) for x in datas[8].split('|')]
@@ -113,7 +120,7 @@ class Obstacle:
 
 # 画障碍物地图
 def obstacle_map():
-	if level == (1, 'a', 1):
+	if level == [1, 'a', 1]:
 		obstacle_x = 7 * wallSize
 		obstacle_y = wallSize
 		for _ in range(14):
@@ -124,7 +131,7 @@ def obstacle_map():
 		for _ in range(14):
 			obstacleList.append(Obstacle(obstacle_x, obstacle_y))
 			obstacle_y += wallSize
-	elif level == (1, 'a', 2):
+	elif level == [1, 'a', 2]:
 		pass  #这样就能设计不同关卡的地图
 
 class Bullet:
@@ -165,7 +172,7 @@ class Bullet:
 						enemyList.remove(_enemy)
 					self.actor.image = 'effect_hit_small'
 					return True
-		else:	# 敌人的子弹射中了玩家
+		else:   # 敌人的子弹射中了玩家
 			if self.actor.colliderect(player.actor):
 				player.get_damage(self.atk)
 				self.actor.image = 'effect_hit_big'
@@ -174,13 +181,13 @@ class Bullet:
 
 class Weapon:
 
-	def __init__(self, gunType):	# 这里应该要新增一个参数来生成对应的武器，不过待定
+	def __init__(self, gunType): 
 		self.gunType = gunType
-		self.actor = Actor(gunType + '_rt')	# 默认朝右
-		self.cd = 0	
+		self.actor = Actor(gunType + '_rt') # 默认朝右
+		self.cd = 0 
 
 	@property
-	def bulletType(self):	# 如果这里出错了，就检查武器图片命名
+	def bulletType(self):   # 如果这里出错了，就检查武器图片命名
 		weaponName = self.actor.image
 		return weaponName[weaponName.find('_')+1:-3]
 
@@ -193,7 +200,7 @@ class Weapon:
 		return weaponData[self.gunType][3] * WEAPON_BULLET_SPEED_STD
 	
 	@property
-	def atk(self):	# 在获取atk时就完成随机选取范围内atk的操作
+	def atk(self):  # 在获取atk时就完成随机选取范围内atk的操作
 		return randint(weaponData[self.gunType][0][0], weaponData[self.gunType][0][1])
 
 	@property
@@ -205,21 +212,21 @@ class Weapon:
 
 	def rotate_to(self, pos):
 		#todo 处理枪械的旋转中心，如果是_rt的话，应该偏向左边，如果是_lt的话，应该偏向右边（即靠枪把子
-		if pos[0] < self.actor.pos[0]:	# 要翻转
+		if pos[0] < self.actor.pos[0]:  # 要翻转
 			self.actor.image = self.actor.image[:-3] + '_lt'
-			self.actor.angle = -1 * self.actor.angle_to((2*self.actor.pos[0] - pos[0], pos[1]))	# 反转后角度也要相应地变换
+			self.actor.angle = -1 * self.actor.angle_to((2*self.actor.pos[0] - pos[0], pos[1])) # 反转后角度也要相应地变换
 		else:
 			self.actor.image = self.actor.image[:-3] + '_rt'
 			self.actor.angle = self.actor.angle_to(pos)
 
-	def shoot(self, pos):	
+	def shoot(self, pos):   
 		if self.cd <= 0 and player.mp >= self.cost:
 			playerBulletList.append(Bullet(self.bulletType, self.actor.topright, pos, self.bulletSpeed, self.atk))
 			sounds.gun.play()
 			self.cd = self.cd_MAX
 			player.mp -= self.cost # 只有玩家会使用Weapon类，所以直接减少玩家的mp
 
-class Player:	# 基类，用于写一些共同点
+class Player:   # 基类，用于写一些共同点
 
 	def __init__(self, weaponName, hpMax, armorMax):
 		self.weapon = Weapon(weaponName)
@@ -231,7 +238,7 @@ class Player:	# 基类，用于写一些共同点
 		self.mp = 200
 		self.armorCD_MAX = 600
 		self.armorCD = 600
-		self.immuneTime = 0	# 无敌时间
+		self.immuneTime = 0 # 无敌时间
 
 	def walk(self):
 		self.actor.left += hFlag
@@ -239,10 +246,11 @@ class Player:	# 基类，用于写一些共同点
 		# 判断敌人碰撞
 		for _enemy in enemyList:
 			if self.actor.colliderect(_enemy.actor):
-				self.get_damage()	# 碰撞伤害
-				while self.actor.colliderect(_enemy.actor):
-					self.actor.left -= 5 * hFlag
-					self.actor.top -= 5 * vFlag
+				self.get_damage()   # 碰撞伤害
+				# while self.actor.colliderect(_enemy.actor):
+				# 	_angle = self.actor.angle_to(_enemy.actor)
+				# 	self.actor.left -= 0.2 * moveSpan * cos(_angle / 180 * pi)
+				# 	self.actor.top -= 0.2 * moveSpan * sin(_angle / 180 * pi)
 		self.actor.left = max(self.actor.left, wallSize)
 		self.actor.left = min(self.actor.left, WIDTH - self.actor.width - wallSize - barWidth)
 		self.actor.top = max(self.actor.top, wallSize)
@@ -250,8 +258,9 @@ class Player:	# 基类，用于写一些共同点
 		# 障碍物判定
 		for _obstacle in obstacleList:
 			while self.actor.colliderect(_obstacle.actor):
-				self.actor.left -= hFlag
-				self.actor.top -= vFlag
+				_angle = self.actor.angle_to(_obstacle.actor)
+				self.actor.left -= 0.2 * moveSpan * cos(_angle / 180 * pi)
+				self.actor.top -= 0.2 * moveSpan * sin(_angle / 180 * pi)
 		self.weapon.actor.left = self.actor.left + 0.5 * self.actor.width - 0.5 * self.weapon.actor.width
 		self.weapon.actor.top = self.actor.top + 0.5 * self.actor.height
 
@@ -274,19 +283,19 @@ class Player:	# 基类，用于写一些共同点
 	def change_weapon(self, _weapon):
 		self.weapon = _weapon
 
-	def update(self):	# 进行一些数值的更新，包括但不限于武器cd、护盾
+	def update(self):   # 进行一些数值的更新，包括但不限于武器cd、护盾
 		self.weapon.cd -= 1
 		if self.armorCD == self.armorCD_MAX:
 			self.armor += 1
 			self.armor = min(self.armor, self.armor_MAX)
-			self.armorCD -= 100	# 脱离战斗后快速回复护甲
+			self.armorCD -= 100 # 脱离战斗后快速回复护甲
 		else:
 			self.armorCD += 1
 		if self.immuneTime:
 			self.immuneTime -= 1
 
 	def get_damage(self, damage=1):
-		if self.immuneTime:	# 免疫伤害的时间
+		if self.immuneTime: # 免疫伤害的时间
 			return
 		if self.armor > 0:
 			if self.armor >= damage:
@@ -301,7 +310,7 @@ class Player:	# 基类，用于写一些共同点
 		self.immuneTime = 60	# 受伤后1s的无敌时间
 		if self.hp <= 0:
 			print('You Lose!')
-			exit()	#todo 编写失败界面
+			exit()  #todo 编写失败界面
 
 class Knight(Player):
 
@@ -419,22 +428,31 @@ class Paladin(Player):
 
 class Enemy:
 
+	def collide_obstacles(self):
+		for _obstacle in obstacleList:
+			if self.actor.colliderect(_obstacle.actor):
+				return True
+		return False
+
 	def __init__(self, enemyType):
 		self.enemyType = enemyType
 		self.actor = Actor(f'monster_{enemyType}_rt')
 		# 如果加了障碍物的话，这里就得复杂一些
 		self.actor.topright = (randint(wallSize, WIDTH - wallSize - barWidth), randint(wallSize, HEIGHT - wallSize))
+		while self.collide_obstacles():
+			self.actor.topright = (randint(wallSize, WIDTH - wallSize - barWidth), randint(wallSize, HEIGHT - wallSize))
 		self.moveCD = randint(0, self.moveCD_MAX)
 		self.shootCD = randint(0, self.shootCD_MAX)
-		self.hp = enemyData[self.enemyType][0]	# 这个是会变化的，所以就不用@property了
+		self.hp = enemyData[self.enemyType][0]  # 这个是会变化的，所以就不用@property了
 
 	@property
 	def speed(self):
 		return enemyData[self.enemyType][2] * ENEMY_SPEED_STD
 	
 	@property
-	def moveCD_MAX(self):	# 移动CD
+	def moveCD_MAX(self):   # 移动CD
 		return 60
+		# return 1
 
 	@property
 	def shootCD_MAX(self):
@@ -458,16 +476,23 @@ class Enemy:
 		self.actor.image = self.actor.image[:-3] + '_lt'
 
 	def move(self):
+		global enemyMoveFlag
+		global enemyMoveDirection
 		if not self.moveCD:
-			moveDirection = ((0, 1), (1, 0), (0, -1), (-1, 0))
-			moveDir = random.choice(moveDirection)
-			(dx, dy) = (moveDir[0] * self.speed, moveDir[1] * self.speed)
+			# enemyMoveDirection = ((0, 1), (1, 0), (0, -1), (-1, 0))
+			# moveDir = random.choice(enemyMoveDirection)
+			# (dx, dy) = (moveDir[0] * self.speed, moveDir[1] * self.speed)
+			if not enemyMoveFlag[enemyMoveCnt]:
+				enemyMoveDirection[enemyMoveCnt] = random.randint(0, 360)
+				enemyMoveFlag[enemyMoveCnt] = random.randint(1, 60)
+			(dx, dy) = (cos(enemyMoveDirection[enemyMoveCnt])*self.speed, sin(enemyMoveDirection[enemyMoveCnt])*self.speed)
 			if dx < 0:
 				self.face_left()
 			else:
 				self.face_right()
 			self.actor.left += dx
 			self.actor.bottom += dy
+			enemyMoveFlag[enemyMoveCnt] -= 1
 			# 碰撞检定
 			self.actor.left = max(self.actor.left, wallSize)
 			self.actor.left = min(self.actor.left, WIDTH - self.actor.width - wallSize - barWidth)
@@ -475,12 +500,15 @@ class Enemy:
 			self.actor.top = min(self.actor.top, HEIGHT - self.actor.height - wallSize)
 			for _obstacle in obstacleList:
 				while self.actor.colliderect(_obstacle.actor):
-					self.actor.left -= dx
-					self.actor.bottom -= dy
-			for _enemy in enemyList:
-				while self.actor.colliderect(_enemy.actor) and self != _enemy:
-					self.actor.left -= dx
-					self.actor.bottom -= dy
+					_angle = self.actor.angle_to(_obstacle.actor)
+					self.actor.left -= 0.2 * moveSpan * cos(_angle / 180 * pi)
+					self.actor.top -= 0.2 * moveSpan * sin(_angle / 180 * pi)
+					enemyMoveFlag[enemyMoveCnt] = 0
+			# for _enemy in enemyList:
+			#	 while self.actor.colliderect(_enemy.actor) and self != _enemy:
+			#		 self.actor.left -= dx
+			#		 self.actor.bottom -= dy
+			#		 enemyMoveFlag = 0
 			self.moveCD = self.moveCD_MAX
 
 		else:
@@ -546,6 +574,8 @@ def start_view():
 def update():
 	global hFlag
 	global vFlag
+	global enemyMoveCnt
+	enemyMoveCnt = 0
 	# 移动处理
 	player.walk()
 	player.turn()
@@ -553,6 +583,7 @@ def update():
 	for _enemy in enemyList:
 		_enemy.move()
 		_enemy.shoot()
+		enemyMoveCnt += 1
 	for _bullet in playerBulletList:
 		if not _bullet.move_on(True):
 			playerBulletList.remove(_bullet)
@@ -570,28 +601,49 @@ def draw_bar():
 
 def draw():
 	global frameCnt
+	global enemy_01_num
+	global enemy_02_num
+	global enemy_03_num
+	global enemy_04_num
+
 	screen.clear()
 
 	global roleChoose
-	if roleChoose == 0:	# 选择人物
+	if roleChoose == 0: # 选择人物
 		start_view()
 	else:
 		draw_bar()
 		draw_map()
 
-		if level[:2] == (1, 'a'):	# 仅用来测试，必然要调整
+		if level[:2] == [1, 'a']:   # 仅用来测试，必然要调整
 			if not music.is_playing('bgm_boss'):	# 用bgm有没有播放就可以判断是否初始化过关卡了
 				music.play('bgm_boss')
 				music.set_volume(0.2)
 				obstacle_map()
-				for _ in range(4):	# 敌人生成
-					enemyList.append(Enemy(random.choice(levelEnemyList[level])))	# 这里传参后期要改
+				if level[0] == 1:
+					if level[2] == 1:
+						enemyNum = [3, 3, 0, 0]
+					elif level[2] == 2:
+						enemyNum = [4, 3, 1, 0]
+					elif level[2] == 3:
+						enemyNum = [0, 0, 1, 1]
+				elif level[0] == 2:
+					if level[2] == 1:
+						enemyNum = [5, 4, 1, 0]
+					elif level[2] == 2:
+						enemyNum = [5, 4, 2, 0]
+					elif level[2] == 3:
+						enemyNum = [0, 0, 2, 1]
+				else:
+					pass	# 这之后继续写后续关卡的参数
+				for enemyMinorType in range(1, 5):
+						for _ in range(enemyNum[enemyMinorType - 1]):
+							enemyList.append(Enemy(levelEnemyList[(level[0], 'a', enemyMinorType)]	))  # 这里的'a'后续要更换成根据人物变化
 			else:
-				if not enemyList:	# 敌人打完了
-					print('You Win!')	#todo 这里后期要改成进入下一关卡
+				if not enemyList:   # 敌人打完了
+					print('You Win!')   #todo 这里后期要改成进入下一关卡
 					exit()
-
-		
+					
 		if player.immuneTime and player.immuneTime % 20 < 10:
 			pass	# 无敌时间，为了看得更直观加个pass、else
 		else:
@@ -654,9 +706,9 @@ def on_key_up(key):
 
 read_data()
 
-player = Knight()	# 默认一个先，实际是会调整的
+player = Knight()   # 默认一个先，实际是会调整的
 player.actor.topright = (314.5, 314.5)
 player.weapon.actor.topright = (314.5, 314.5)
 
-os.environ['SDL_VIDEO_WINDOW_POS'] = "50, 20"	# 设置窗口初始位置
+os.environ['SDL_VIDEO_WINDOW_POS'] = "50, 20"   # 设置窗口初始位置
 pgzrun.go()
