@@ -271,7 +271,7 @@ class Player:	# 基类，用于写一些共同点
 			self.armorCD -= 100	# 脱离战斗后快速回复护甲
 		else:
 			self.armorCD += 1
-		if self.immuneTime:	#todo 如果现在是免疫伤害的阶段，那么就需要角色闪烁？
+		if self.immuneTime:
 			self.immuneTime -= 1
 
 	def get_damage(self, damage=1):
@@ -580,8 +580,11 @@ def draw():
 
 		draw_bar()
 		draw_map()
-		player.actor.draw()
-		player.weapon.actor.draw()
+		if player.immuneTime and player.immuneTime % 20 < 10:
+			pass	# 无敌时间，为了看得更直观加个pass、else
+		else:
+			player.actor.draw()
+			player.weapon.actor.draw()
 
 		for _obstacle in obstacleList:
 			_obstacle.actor.draw()
