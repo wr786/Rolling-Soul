@@ -54,8 +54,8 @@ levelEnemyList = {}	# 后续可以通过需要，将怪物列表分成小怪和�
 weaponData = {}	# key为武器名<rarity>_<name>, value为(atkRange, cost, cd, bulletSpeed)
 WEAPON_CD_STD = 50
 WEAPON_BULLET_SPEED_STD = 20
-ENEMY_SPEED_STD = wallSize * 1.5
 enemyData = {}	# key为敌人名，value为(HP, cd, walkSpeed, bulletData)
+ENEMY_SPEED_STD = wallSize * 1.5
 
 ##########################################################################################
 
