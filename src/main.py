@@ -2,6 +2,8 @@ import pgzrun
 import random
 from random import randint
 from math import *
+from math import sin
+from math import cos
 import os
 
 ##########################################################################################
@@ -37,9 +39,9 @@ enemyNum = [0] * 4
 floorcnt = 0
 wallcnt = 0
 for i in range(floornum ** 2):
-	floors[i] = random.choice(["floor_1a_01", "floor_1a_02", "floor_1a_03"])
+    floors[i] = random.choice(["floor_1a_01", "floor_1a_02", "floor_1a_03"])
 for i in range((floornum + wallnum) * 2):
-	walls[i] = random.choice(["wall_1a_01", "wall_1a_02"])
+    walls[i] = random.choice(["wall_1a_01", "wall_1a_02"])
 
 # 移动相关
 vFlag = 0
@@ -101,22 +103,22 @@ def read_data():
 
 
 def sgn(x): # 判断数字的符号，简单函数就直接缩写了
-	if x > 0: return 1
-	elif x < 0: return -1
-	else: return 0
+    if x > 0: return 1
+    elif x < 0: return -1
+    else: return 0
 
 class Obstacle:
 
-	def collide_other_obstacles(self):
-		for _obstacle in obstacleList:
-			if self.actor.colliderect(_obstacle.actor):
-				return True
-		return False
+    def collide_other_obstacles(self):
+        for _obstacle in obstacleList:
+            if self.actor.colliderect(_obstacle.actor):
+                return True
+        return False
 
-	def  __init__(self, x, y): # 关卡名暂时用level代替
-		obstacleType = random.choice([f'wall_{level[0]}{level[1]}_01', f'wall_{level[0]}{level[1]}_02']) # 障碍物的图像就和墙一样
-		self.actor = Actor(obstacleType)
-		self.actor.topright = (x, y)
+    def  __init__(self, x, y): # 关卡名暂时用level代替
+        obstacleType = random.choice([f'wall_{level[0]}{level[1]}_01', f'wall_{level[0]}{level[1]}_02']) # 障碍物的图像就和墙一样
+        self.actor = Actor(obstacleType)
+        self.actor.topright = (x, y)
 
 # 画障碍物地图
 def obstacle_map():
@@ -314,117 +316,117 @@ class Player:   # 基类，用于写一些共同点
 
 class Knight(Player):
 
-	def __init__(self):
-		self.actor = Actor('knight_rt')
-		Player.__init__(self, 'initial_worngat', 4, 6)
+    def __init__(self):
+        self.actor = Actor('knight_rt')
+        Player.__init__(self, 'initial_worngat', 4, 6)
 
-	# 移动部分
+    # 移动部分
 
-	def face_right(self):
-		self.actor.image = "knight_rt"
+    def face_right(self):
+        self.actor.image = "knight_rt"
 
-	def walk_right(self):
-		self.actor.image = "knight_rtwalk"
+    def walk_right(self):
+        self.actor.image = "knight_rtwalk"
 
-	def face_left(self):
-		self.actor.image = "knight_lt"
+    def face_left(self):
+        self.actor.image = "knight_lt"
 
-	def walk_left(self):
-		self.actor.image = "knight_ltwalk"
+    def walk_left(self):
+        self.actor.image = "knight_ltwalk"
 
-	def stop(self):
-		if self.actor.image == "knight_rt" or self.actor.image == "knight_rtwalk":
-			self.actor.image = "knight_rt"
-		elif self.actor.image == "knight_lt" or self.actor.image == "knight_ltwalk":
-			self.actor.image = "knight_lt"
+    def stop(self):
+        if self.actor.image == "knight_rt" or self.actor.image == "knight_rtwalk":
+            self.actor.image = "knight_rt"
+        elif self.actor.image == "knight_lt" or self.actor.image == "knight_ltwalk":
+            self.actor.image = "knight_lt"
 
-	def up_down(self):
-		if self.actor.image == "knight_rt" or self.actor.image == "knight_rtwalk":
-			if frameCnt <= 7.5 or 22.5< frameCnt <= 37.5 or frameCnt > 52.5:
-				self.actor.image = "knight_rt"
-			else:
-				self.actor.image = "knight_rtwalk"
-		else:
-			if frameCnt <= 7.5 or 22.5< frameCnt <= 37.5 or frameCnt > 52.5:
-				self.actor.image = "knight_lt"
-			else:
-				self.actor.image = "knight_ltwalk"
+    def up_down(self):
+        if self.actor.image == "knight_rt" or self.actor.image == "knight_rtwalk":
+            if frameCnt <= 7.5 or 22.5< frameCnt <= 37.5 or frameCnt > 52.5:
+                self.actor.image = "knight_rt"
+            else:
+                self.actor.image = "knight_rtwalk"
+        else:
+            if frameCnt <= 7.5 or 22.5< frameCnt <= 37.5 or frameCnt > 52.5:
+                self.actor.image = "knight_lt"
+            else:
+                self.actor.image = "knight_ltwalk"
 
 class Assassin(Player):
 
-	def __init__(self):
-		self.actor = Actor('assassin_rt')
-		Player.__init__(self, 'initial_p250', 5, 5)
+    def __init__(self):
+        self.actor = Actor('assassin_rt')
+        Player.__init__(self, 'initial_p250', 5, 5)
 
-	# 移动部分
+    # 移动部分
 
-	def face_right(self):
-		self.actor.image = "assassin_rt"
+    def face_right(self):
+        self.actor.image = "assassin_rt"
 
-	def walk_right(self):
-		self.actor.image = "assassin_rtwalk"
+    def walk_right(self):
+        self.actor.image = "assassin_rtwalk"
 
-	def face_left(self):
-		self.actor.image = "assassin_lt"
+    def face_left(self):
+        self.actor.image = "assassin_lt"
 
-	def walk_left(self):
-		self.actor.image = "assassin_ltwalk"
+    def walk_left(self):
+        self.actor.image = "assassin_ltwalk"
 
-	def stop(self):
-		if self.actor.image == "assassin_rt" or self.actor.image == "assassin_rtwalk":
-			self.actor.image = "assassin_rt"
-		elif self.actor.image == "assassin_lt" or self.actor.image == "assassin_ltwalk":
-			self.actor.image = "assassin_lt"
+    def stop(self):
+        if self.actor.image == "assassin_rt" or self.actor.image == "assassin_rtwalk":
+            self.actor.image = "assassin_rt"
+        elif self.actor.image == "assassin_lt" or self.actor.image == "assassin_ltwalk":
+            self.actor.image = "assassin_lt"
 
-	def up_down(self):
-		if self.actor.image == "assassin_rt" or self.actor.image == "assassin_rtwalk":
-			if frameCnt <= 7.5 or 22.5< frameCnt <= 37.5 or frameCnt > 52.5:
-				self.actor.image = "assassin_rt"
-			else:
-				self.actor.image = "assassin_rtwalk"
-		else:
-			if frameCnt <= 7.5 or 22.5< frameCnt <= 37.5 or frameCnt > 52.5:
-				self.actor.image = "assassin_lt"
-			else:
-				self.actor.image = "assassin_ltwalk"
+    def up_down(self):
+        if self.actor.image == "assassin_rt" or self.actor.image == "assassin_rtwalk":
+            if frameCnt <= 7.5 or 22.5< frameCnt <= 37.5 or frameCnt > 52.5:
+                self.actor.image = "assassin_rt"
+            else:
+                self.actor.image = "assassin_rtwalk"
+        else:
+            if frameCnt <= 7.5 or 22.5< frameCnt <= 37.5 or frameCnt > 52.5:
+                self.actor.image = "assassin_lt"
+            else:
+                self.actor.image = "assassin_ltwalk"
 
 class Paladin(Player):
 
-	def __init__(self):
-		self.actor = Actor('paladin_rt')
-		Player.__init__(self, 'initial_uzi', 7, 4)
+    def __init__(self):
+        self.actor = Actor('paladin_rt')
+        Player.__init__(self, 'initial_uzi', 7, 4)
 
-	# 移动部分
+    # 移动部分
 
-	def face_right(self):
-		self.actor.image = "paladin_rt"
+    def face_right(self):
+        self.actor.image = "paladin_rt"
 
-	def walk_right(self):
-		self.actor.image = "paladin_rtwalk"
+    def walk_right(self):
+        self.actor.image = "paladin_rtwalk"
 
-	def face_left(self):
-		self.actor.image = "paladin_lt"
+    def face_left(self):
+        self.actor.image = "paladin_lt"
 
-	def walk_left(self):
-		self.actor.image = "paladin_ltwalk"
+    def walk_left(self):
+        self.actor.image = "paladin_ltwalk"
 
-	def stop(self):
-		if self.actor.image == "paladin_rt" or self.actor.image == "paladin_rtwalk":
-			self.actor.image = "paladin_rt"
-		elif self.actor.image == "paladin_lt" or self.actor.image == "paladin_ltwalk":
-			self.actor.image = "paladin_lt"
+    def stop(self):
+        if self.actor.image == "paladin_rt" or self.actor.image == "paladin_rtwalk":
+            self.actor.image = "paladin_rt"
+        elif self.actor.image == "paladin_lt" or self.actor.image == "paladin_ltwalk":
+            self.actor.image = "paladin_lt"
 
-	def up_down(self):
-		if self.actor.image == "paladin_rt" or self.actor.image == "paladin_rtwalk":
-			if frameCnt <= 7.5 or 22.5< frameCnt <= 37.5 or frameCnt > 52.5:
-				self.actor.image = "paladin_rt"
-			else:
-				self.actor.image = "paladin_rtwalk"
-		else:
-			if frameCnt <= 7.5 or 22.5< frameCnt <= 37.5 or frameCnt > 52.5:
-				self.actor.image = "paladin_lt"
-			else:
-				self.actor.image = "paladin_ltwalk"
+    def up_down(self):
+        if self.actor.image == "paladin_rt" or self.actor.image == "paladin_rtwalk":
+            if frameCnt <= 7.5 or 22.5< frameCnt <= 37.5 or frameCnt > 52.5:
+                self.actor.image = "paladin_rt"
+            else:
+                self.actor.image = "paladin_rtwalk"
+        else:
+            if frameCnt <= 7.5 or 22.5< frameCnt <= 37.5 or frameCnt > 52.5:
+                self.actor.image = "paladin_lt"
+            else:
+                self.actor.image = "paladin_ltwalk"
 
 class Enemy:
 
@@ -523,53 +525,53 @@ class Enemy:
 
 # 随机画地图背景
 def draw_map():
-	global floorcnt
-	global wallcnt
-	for i in range(floornum):
-		for j in range(floornum):
-			screen.blit(floors[floorcnt], (wallSize + wallSize * i, wallSize + wallSize * j))
-			floorcnt = (floorcnt + 1) % (floornum ** 2)
-	for i in range(wallnum):
-		screen.blit(walls[wallcnt], (wallSize * i, 0))
-		wallcnt = (wallcnt + 1) % wallnum
-		screen.blit(walls[wallcnt], (wallSize * i, HEIGHT - wallSize))
-		wallcnt = (wallcnt + 1) % wallnum
-	for i in range(wallnum):
-		screen.blit(walls[wallcnt], (0, wallSize + wallSize * i))
-		wallcnt = (wallcnt + 1) % wallnum
-		screen.blit(walls[wallcnt], (WIDTH - wallSize - barWidth, wallSize + wallSize * i))
-		wallcnt = (wallcnt + 1) % wallnum
+    global floorcnt
+    global wallcnt
+    for i in range(floornum):
+        for j in range(floornum):
+            screen.blit(floors[floorcnt], (wallSize + wallSize * i, wallSize + wallSize * j))
+            floorcnt = (floorcnt + 1) % (floornum ** 2)
+    for i in range(wallnum):
+        screen.blit(walls[wallcnt], (wallSize * i, 0))
+        wallcnt = (wallcnt + 1) % wallnum
+        screen.blit(walls[wallcnt], (wallSize * i, HEIGHT - wallSize))
+        wallcnt = (wallcnt + 1) % wallnum
+    for i in range(wallnum):
+        screen.blit(walls[wallcnt], (0, wallSize + wallSize * i))
+        wallcnt = (wallcnt + 1) % wallnum
+        screen.blit(walls[wallcnt], (WIDTH - wallSize - barWidth, wallSize + wallSize * i))
+        wallcnt = (wallcnt + 1) % wallnum
 
 # 人物选择
 def choose_role(pos):
-	global roleChoose
-	if 0.25 * WIDTH -25 < pos[0] < 0.25 * WIDTH + 45 and 0.5 * HEIGHT < pos[1] <0.5 * HEIGHT + 70:
-		roleChoose = 1
-	elif 0.5 * WIDTH -25 < pos[0] < 0.5 * WIDTH + 45 and 0.5 * HEIGHT < pos[1] <0.5 * HEIGHT + 70:
-		roleChoose = 2
-	elif 0.75 * WIDTH - 25 < pos[0] < 0.75 * WIDTH + 45 and 0.5 * HEIGHT < pos[1] <0.5 * HEIGHT + 70:
-		roleChoose = 3
+    global roleChoose
+    if 0.25 * WIDTH -25 < pos[0] < 0.25 * WIDTH + 45 and 0.5 * HEIGHT < pos[1] <0.5 * HEIGHT + 70:
+        roleChoose = 1
+    elif 0.5 * WIDTH -25 < pos[0] < 0.5 * WIDTH + 45 and 0.5 * HEIGHT < pos[1] <0.5 * HEIGHT + 70:
+        roleChoose = 2
+    elif 0.75 * WIDTH - 25 < pos[0] < 0.75 * WIDTH + 45 and 0.5 * HEIGHT < pos[1] <0.5 * HEIGHT + 70:
+        roleChoose = 3
 
 # 开始界面
 def start_view():
-	screen.fill("white")
-	screen.blit("start_back", (0, 0))
-	screen.draw.text("Please Choose Your Hero", center = (0.5 * WIDTH, 0.2 * HEIGHT), fontname = "hanyinuomituan", fontsize = 90)
-	screen.blit("knight_rt", (0.25 * WIDTH - 25, 0.5 * HEIGHT))
-	screen.draw.text("Knight", center = (0.25 * WIDTH, 0.5 * HEIGHT + 1.3 * heroHeight), fontname = "hanyinuomituan", fontsize = 40, color = "orange")
-	screen.draw.text("Max Life:4", center=(0.25 * WIDTH, 0.5 * HEIGHT + 1.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="red")
-	screen.draw.text("Max Armor:6", center=(0.25 * WIDTH, 0.5 * HEIGHT + 2.3 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="grey40")
-	screen.draw.text("Max Power:200", center=(0.25 * WIDTH, 0.5 * HEIGHT + 2.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="blue")
-	screen.blit("assassin_rt", (0.5 * WIDTH - 25, 0.5 * HEIGHT))
-	screen.draw.text("Assassin", center=(0.5 * WIDTH, 0.5 * HEIGHT + 1.3 * heroHeight), fontname="hanyinuomituan", fontsize=40, color="black")
-	screen.draw.text("Max Life:5", center=(0.5 * WIDTH, 0.5 * HEIGHT + 1.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="red")
-	screen.draw.text("Max Armor:5", center=(0.5 * WIDTH, 0.5 * HEIGHT + 2.3 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="grey40")
-	screen.draw.text("Max Power:200", center=(0.5 * WIDTH, 0.5 * HEIGHT + 2.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="blue")
-	screen.blit("paladin_rt", (0.75 * WIDTH - 25, 0.5 * HEIGHT))
-	screen.draw.text("Paladin", center=(0.75 * WIDTH, 0.5 * HEIGHT + 1.3 * heroHeight), fontname="hanyinuomituan", fontsize=40, color="SteelBlue2")
-	screen.draw.text("Max Life:7", center=(0.75 * WIDTH, 0.5 * HEIGHT + 1.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="red")
-	screen.draw.text("Max Armor:4", center=(0.75 * WIDTH, 0.5 * HEIGHT + 2.3 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="grey40")
-	screen.draw.text("Max Power:200", center=(0.75 * WIDTH, 0.5 * HEIGHT + 2.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="blue")
+    screen.fill("white")
+    screen.blit("start_back", (0, 0))
+    screen.draw.text("Please Choose Your Hero", center = (0.5 * WIDTH, 0.2 * HEIGHT), fontname = "hanyinuomituan", fontsize = 90)
+    screen.blit("knight_rt", (0.25 * WIDTH - 25, 0.5 * HEIGHT))
+    screen.draw.text("Knight", center = (0.25 * WIDTH, 0.5 * HEIGHT + 1.3 * heroHeight), fontname = "hanyinuomituan", fontsize = 40, color = "orange")
+    screen.draw.text("Max Life:4", center=(0.25 * WIDTH, 0.5 * HEIGHT + 1.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="red")
+    screen.draw.text("Max Armor:6", center=(0.25 * WIDTH, 0.5 * HEIGHT + 2.3 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="grey40")
+    screen.draw.text("Max Power:200", center=(0.25 * WIDTH, 0.5 * HEIGHT + 2.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="blue")
+    screen.blit("assassin_rt", (0.5 * WIDTH - 25, 0.5 * HEIGHT))
+    screen.draw.text("Assassin", center=(0.5 * WIDTH, 0.5 * HEIGHT + 1.3 * heroHeight), fontname="hanyinuomituan", fontsize=40, color="black")
+    screen.draw.text("Max Life:5", center=(0.5 * WIDTH, 0.5 * HEIGHT + 1.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="red")
+    screen.draw.text("Max Armor:5", center=(0.5 * WIDTH, 0.5 * HEIGHT + 2.3 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="grey40")
+    screen.draw.text("Max Power:200", center=(0.5 * WIDTH, 0.5 * HEIGHT + 2.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="blue")
+    screen.blit("paladin_rt", (0.75 * WIDTH - 25, 0.5 * HEIGHT))
+    screen.draw.text("Paladin", center=(0.75 * WIDTH, 0.5 * HEIGHT + 1.3 * heroHeight), fontname="hanyinuomituan", fontsize=40, color="SteelBlue2")
+    screen.draw.text("Max Life:7", center=(0.75 * WIDTH, 0.5 * HEIGHT + 1.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="red")
+    screen.draw.text("Max Armor:4", center=(0.75 * WIDTH, 0.5 * HEIGHT + 2.3 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="grey40")
+    screen.draw.text("Max Power:200", center=(0.75 * WIDTH, 0.5 * HEIGHT + 2.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="blue")
 
 def update():
 	global hFlag
@@ -593,18 +595,14 @@ def update():
 
 # 画状态栏
 def draw_bar():
-	screen.fill("SteelBlue4")
-	screen.blit("status_bar", (WIDTH - barWidth, 0))
-	screen.draw.text(f"{player.hp_MAX}/{player.hp}", center=(WIDTH - 0.45 * barWidth, 0.25 * barHeight - 5), fontname="hanyinuomituan")
-	screen.draw.text(f"{player.armor_MAX}/{player.armor}", center=(WIDTH - 0.45 * barWidth, 0.5 * barHeight - 5), fontname="hanyinuomituan")
-	screen.draw.text(f"{player.mp_MAX}/{player.mp}", center=(WIDTH - 0.45 * barWidth, 0.75 * barHeight - 5), fontname="hanyinuomituan")
+    screen.fill("SteelBlue4")
+    screen.blit("status_bar", (WIDTH - barWidth, 0))
+    screen.draw.text(f"{player.hp_MAX}/{player.hp}", center=(WIDTH - 0.45 * barWidth, 0.25 * barHeight - 5), fontname="hanyinuomituan")
+    screen.draw.text(f"{player.armor_MAX}/{player.armor}", center=(WIDTH - 0.45 * barWidth, 0.5 * barHeight - 5), fontname="hanyinuomituan")
+    screen.draw.text(f"{player.mp_MAX}/{player.mp}", center=(WIDTH - 0.45 * barWidth, 0.75 * barHeight - 5), fontname="hanyinuomituan")
 
 def draw():
 	global frameCnt
-	global enemy_01_num
-	global enemy_02_num
-	global enemy_03_num
-	global enemy_04_num
 
 	screen.clear()
 
@@ -662,46 +660,46 @@ def draw():
 
 # 处理武器跟随旋转
 def on_mouse_move(pos):
-	player.weapon.rotate_to(pos)
+    player.weapon.rotate_to(pos)
 
 def on_mouse_down(pos, button):
-	#todo 这里应该加个判断，判断当前是否在战斗中
-	global player
-	global roleChoose
-	if roleChoose == 0 and button == mouse.LEFT:
-		choose_role(pos)
-		if roleChoose == 1:
-			player = Knight()
-		elif roleChoose == 2:
-			player = Assassin()
-		elif roleChoose == 3:
-			player = Paladin()
-	elif button == mouse.LEFT:
-		player.weapon.shoot(pos)
+    #todo 这里应该加个判断，判断当前是否在战斗中
+    global player
+    global roleChoose
+    if roleChoose == 0 and button == mouse.LEFT:
+        choose_role(pos)
+        if roleChoose == 1:
+            player = Knight()
+        elif roleChoose == 2:
+            player = Assassin()
+        elif roleChoose == 3:
+            player = Paladin()
+    elif button == mouse.LEFT:
+        player.weapon.shoot(pos)
 
 def on_key_down(key):
-	global hFlag
-	global vFlag
-	if key == key.A:
-		hFlag -= moveSpan
-	if key == key.S:
-		vFlag += moveSpan
-	if key == key.D:
-		hFlag += moveSpan
-	if key == key.W:
-		vFlag -= moveSpan
+    global hFlag
+    global vFlag
+    if key == key.A:
+        hFlag -= moveSpan
+    if key == key.S:
+        vFlag += moveSpan
+    if key == key.D:
+        hFlag += moveSpan
+    if key == key.W:
+        vFlag -= moveSpan
 
 def on_key_up(key):
-	global hFlag
-	global vFlag
-	if key == key.A:
-		hFlag += moveSpan
-	if key == key.S:
-		vFlag -= moveSpan
-	if key == key.D:
-		hFlag -= moveSpan
-	if key == key.W:
-		vFlag += moveSpan
+    global hFlag
+    global vFlag
+    if key == key.A:
+        hFlag += moveSpan
+    if key == key.S:
+        vFlag -= moveSpan
+    if key == key.D:
+        hFlag -= moveSpan
+    if key == key.W:
+        vFlag += moveSpan
 
 
 read_data()
