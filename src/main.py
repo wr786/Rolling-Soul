@@ -449,9 +449,9 @@ def update():
 def draw_bar():
 	screen.fill("SteelBlue4")
 	screen.blit("status_bar", (WIDTH - barWidth, 0))
-	screen.draw.text(f"{player.hp}/{player.hp_MAX}", center=(WIDTH - 0.45 * barWidth, 0.25 * barHeight - 5), fontname="hanyinuomituan")
-	screen.draw.text(f"{player.armor}/{player.armor_MAX}", center=(WIDTH - 0.45 * barWidth, 0.5 * barHeight - 5), fontname="hanyinuomituan")
-	screen.draw.text(f"{player.mp}/{player.mp_MAX}", center=(WIDTH - 0.45 * barWidth, 0.75 * barHeight - 5), fontname="hanyinuomituan")
+	screen.draw.text(f"{player.hp_MAX}/{player.hp}", center=(WIDTH - 0.45 * barWidth, 0.25 * barHeight - 5), fontname="hanyinuomituan")
+	screen.draw.text(f"{player.armor_MAX}/{player.armor}", center=(WIDTH - 0.45 * barWidth, 0.5 * barHeight - 5), fontname="hanyinuomituan")
+	screen.draw.text(f"{player.mp_MAX}/{player.mp}", center=(WIDTH - 0.45 * barWidth, 0.75 * barHeight - 5), fontname="hanyinuomituan")
 
 def draw():
 	global frameCnt
