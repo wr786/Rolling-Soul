@@ -50,8 +50,28 @@ playerBulletList = []
 enemyBulletList = []
 enemyList = []
 levelEnemyList = { (1, 'a'): ('1a_01', '1a_02', '1a_03', '1a_04')}	# 后续可以通过需要，将怪物列表分成小怪和大怪
+# 战斗数值
+weaponData = {}	# key为武器名<rarity>_<name>, value为(atkRange, cost, cd, bulletSpeed)
+WEAPON_CD_STD = 50
+WEAPON_BULLET_SPEED_STD = 20
 
 ##########################################################################################
+
+# 读入各种数据
+def read_data():
+	# 读入武器数据
+	with open('./data/weapon_data.csv', 'r') as f:
+		for line in f.readlines()[1:]:
+			datas = line.split('\t')
+			atkRange = 0
+			try:
+				atkRange = int(datas[2])
+				atkRange = (atkRange, atkRange)
+			except:	# 如果出错，代表存在~
+				atkEqualRange = datas[2].split('~')
+				atkRange = (int(atkEqualRange[0]), int(atkEqualRange[1]))
+			weaponData.update({f'{datas[1]}_{datas[0]}': (atkRange, int(datas[3]), float(datas[4]), float(datas[5]))})
+
 
 def sgn(x): # 判断数字的符号，简单函数就直接缩写了
 	if x > 0: return 1
@@ -124,17 +144,31 @@ class Bullet:
 class Weapon:
 
 	def __init__(self, gunType):	# 这里应该要新增一个参数来生成对应的武器，不过待定
+		self.gunType = gunType
 		self.actor = Actor(gunType + '_rt')	# 默认朝右
-		self.cd_MAX = 50 # 这里必然也是要修改的，不同的武器拥有不同的cd，下同
 		self.cd = 0	
-		self.bulletSpeed = 20
-		self.atk = 10
 
 	@property
 	def bulletType(self):	# 如果这里出错了，就检查武器图片命名
 		weaponName = self.actor.image
 		return weaponName[weaponName.find('_')+1:-3]
 
+	@property
+	def cd_MAX(self):
+		return weaponData[self.gunType][2] * WEAPON_CD_STD
+	
+	@property
+	def bulletSpeed(self):
+		return weaponData[self.gunType][3] * WEAPON_BULLET_SPEED_STD
+	
+	@property
+	def atk(self):	# 在获取atk时就完成随机选取范围内atk的操作
+		return randint(weaponData[self.gunType][0][0], weaponData[self.gunType][0][1])
+
+	@property
+	def cost(self):
+		return weaponData[self.gunType][1]
+	
 	def show_anime(self):
 		pass	#todo 对当前所对的方向释放"特效"，待写
 
@@ -147,12 +181,12 @@ class Weapon:
 			self.actor.image = self.actor.image[:-3] + '_rt'
 			self.actor.angle = self.actor.angle_to(pos)
 
-	def shoot(self, pos):
-		#todo 这里应该要加一个发射cd
-		if self.cd <= 0:
+	def shoot(self, pos):	
+		if self.cd <= 0 and player.mp >= self.cost:
 			playerBulletList.append(Bullet(self.bulletType, self.actor.topright, pos, self.bulletSpeed, self.atk))
 			sounds.gun.play()
 			self.cd = self.cd_MAX
+			player.mp -= self.cost # 只有玩家会使用Weapon类，所以直接减少玩家的mp
 
 class Player:	# 基类，用于写一些共同点
 
@@ -231,13 +265,14 @@ class Player:	# 基类，用于写一些共同点
 		self.immuneTime = 60	# 受伤后1s的无敌时间
 		if self.hp <= 0:
 			print('You Lose!')
-			exit(0)	#todo 编写失败界面
+			exit()	#todo 编写失败界面
 
 class Knight(Player):
 
 	def __init__(self):
 		self.actor = Actor('knight_rt')
-		Player.__init__(self, 'initial_worngat', 4, 6)
+		# Player.__init__(self, 'initial_worngat', 4, 6)
+		Player.__init__(self, 'orange_unicorn', 4, 6)
 
 	# 移动部分
 
@@ -510,7 +545,7 @@ def draw():
 			else:
 				if not enemyList:	# 敌人打完了
 					print('You Win!')	#todo 这里后期要改成进入下一关卡
-					exit(0)
+					exit()
 
 		draw_bar()
 		draw_map()
@@ -569,6 +604,9 @@ def on_key_up(key):
 		hFlag -= moveSpan
 	if key == key.W:
 		vFlag += moveSpan
+
+
+read_data()
 
 player = Knight()	# 默认一个先，实际是会调整的
 player.actor.topright = (314.5, 314.5)

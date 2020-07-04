@@ -1,0 +1,14 @@
+Name	Rarity	ATK	MP	CD(cd_std)	Speed(speed_std)
+worngat	initial	3	0	1	1
+p250	initial	4	0	1.2	1
+uzi	initial	2	0	0.6	1
+ak47	white	3~6	1	1	1
+m4	white	4	1	0.9	1.5
+sniper	white	10	3	2	2
+shotgun	white	8~15	3	1.5	0.7
+firegun	green	7~12	2	1.2	1
+rattlesnake	green	10~20	4	1.5	0.7
+snowfox	green	4	1	0.4	1.5
+ice	blue	20	4	2	2
+sakura	blue	15~30	4	1.5	0.7
+unicorn	orange	30~50	9	0.5	1
