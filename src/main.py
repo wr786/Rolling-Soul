@@ -44,6 +44,14 @@ hFlag = 0
 frameCnt = 0
 moveSpan = 4
 
+# 对话相关
+chatchoose = 0 # 0表示没有对话的状态，数字为剧情的编号
+
+# 传送门相关
+portalCnt = 0
+portalWidth = 122
+portalHeight = 142
+
 # 战斗相关
 # 屏幕中的子弹列表，每次画都需要更新，然后用不同的列表来区分伤害判定
 playerBulletList = []
@@ -497,6 +505,24 @@ class Enemy:
 		else:
 			self.shootCD -= 1
 
+# 生成传送门
+def portal_create(x, y):
+    if 0 <= portalCnt < 20:
+        screen.blit("portal_01", (x - 0.5 * portalWidth, y - 0.5 * portalHeight))
+    elif 20 <= portalCnt < 40:
+        screen.blit("portal_02", (x - 0.5 * portalWidth, y - 0.5 * portalHeight))
+    elif 40 <= portalCnt < 60:
+        screen.blit("portal_03", (x - 0.5 * portalWidth, y - 0.5 * portalHeight))
+    if x - 0.5 * portalWidth - player.actor.width <= player.actor.left <= x + 0.5 * portalWidth and y - 0.5 * portalHeight - player.actor.height <= player.actor.top <= y + 0.5 * portalHeight:
+        screen.blit("talk_bar", (WIDTH - barWidth, 3 * barHeight))
+        screen.draw.text(f"It's a PORTAL!\nLet's go into it!", center=(WIDTH - 0.5 * barWidth, 4.5 * barHeight),
+                         fontname="hanyinuomituan")
+        chatchoose = 1
+        screen.blit("choose_bar_1", (WIDTH - barWidth, 6 * barHeight))
+        screen.draw.text("GO!", center=(WIDTH - 0.5 * barWidth, 6.5 * barHeight),
+                         fontname="hanyinuomituan")
+
+
 # 随机画地图背景
 def draw_map():
 	global floorcnt
@@ -601,10 +627,13 @@ def draw_bar():
 					 fontname="hanyinuomituan", color="yellow")
 	screen.draw.text(f"{weaponData[player.weapon.gunType][2]}s", center=(WIDTH - 0.2 * barWidth, 2.75 * barHeight - 5),
 					 fontname="hanyinuomituan", color="yellow")
+	# 产生对话栏
+	screen.blit("talk_bar", (WIDTH - barWidth, 3 * barHeight))
 # todo 这里的字体可以换一个更适合的
 
 def draw():
 	global frameCnt
+	global portalCnt
 	screen.clear()
 
 	global roleChoose
@@ -622,9 +651,8 @@ def draw():
 				for _ in range(4):	# 敌人生成
 					enemyList.append(Enemy(random.choice(levelEnemyList[level])))	# 这里传参后期要改
 			else:
-				if not enemyList:	# 敌人打完了
-					print('You Win!')	#todo 这里后期要改成进入下一关卡
-					exit()
+				if not enemyList:  # 敌人打完了
+					portal_create(0.5 * wallnum * wallSize, 0.5 * wallnum * wallSize)
 
 		
 		if player.immuneTime and player.immuneTime % 20 < 10:
@@ -642,6 +670,7 @@ def draw():
 		for _bullet in enemyBulletList:
 			_bullet.actor.draw()
 		frameCnt = frameCnt % 60 + 1
+		portalCnt = portalCnt % 60 + 1
 
 # 处理武器跟随旋转
 def on_mouse_move(pos):
@@ -660,7 +689,12 @@ def on_mouse_down(pos, button):
 		elif roleChoose == 3:
 			player = Paladin()
 	elif button == mouse.LEFT:
-		player.weapon.shoot(pos)
+		if chatchoose == 0:
+			player.weapon.shoot(pos)
+		elif chatchoose == 1:
+			pass
+		elif chatchoose == 2:
+			pass  # todo 这里加上如果点击在某个范围内，就怎样怎样
 
 def on_key_down(key):
 	global hFlag
