@@ -26,7 +26,7 @@ floors = {}
 walls = {}
 
 wallSize = 37	# 一个方块的大小
-level = (1, 'a')	# 现在是第几关
+level = (1, 'a', 1)	# 现在是第几关
 
 obstacleList = []	# 关卡障碍物列表
 
@@ -77,7 +77,7 @@ def read_data():
 	with open('./data/monster_data.csv', 'r') as f:
 		for line in f.readlines()[1:]:
 			datas = line.split('\t')
-			_level = (int(datas[1][0]), datas[1][1])
+			_level = (int(datas[0][0]), datas[0][1], int(datas[1]))
 			# 在关卡怪物列表中添加这种怪物
 			if _level not in levelEnemyList.keys():
 				levelEnemyList.update({_level: [datas[0]]})
@@ -106,15 +106,26 @@ class Obstacle:
 				return True
 		return False
 
-	def __init__(self, x=0, y=0, obstacleType='floor_1c_03'):
-		# 后面可以根据需要用x、y设置障碍物的中心摆放位置, 用obstacleType确定障碍物的图片
-		self.actor = Actor(obstacleType)	# 暂时用这个，后面得更换障碍物图的
-		# 利用while生成在合理的位置
-		while (not x and not y) or self.actor.colliderect(player.actor) or self.collide_other_obstacles():
-			x, y = (randint(wallSize, WIDTH - wallSize - barWidth), randint(wallSize, HEIGHT - wallSize))
-			self.actor.topright = (x, y)
-		else:
-			self.actor.topright = (x, y)
+	def  __init__(self, x, y): # 关卡名暂时用level代替
+		obstacleType = random.choice([f'wall_{level[0]}{level[1]}_01', f'wall_{level[0]}{level[1]}_02']) # 障碍物的图像就和墙一样
+		self.actor = Actor(obstacleType)
+		self.actor.topright = (x, y)
+
+# 画障碍物地图
+def obstacle_map():
+	if level == (1, 'a', 1):
+		obstacle_x = 7 * wallSize
+		obstacle_y = wallSize
+		for _ in range(14):
+			obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+			obstacle_y += wallSize
+		obstacle_x = 15 * wallSize
+		obstacle_y = 8 * wallSize
+		for _ in range(14):
+			obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+			obstacle_y += wallSize
+	elif level == (1, 'a', 2):
+		pass  #这样就能设计不同关卡的地图
 
 class Bullet:
 
@@ -565,12 +576,14 @@ def draw():
 	if roleChoose == 0:	# 选择人物
 		start_view()
 	else:
-		if level == (1, 'a'):	# 仅用来测试，必然要调整
+		draw_bar()
+		draw_map()
+
+		if level[:2] == (1, 'a'):	# 仅用来测试，必然要调整
 			if not music.is_playing('bgm_boss'):	# 用bgm有没有播放就可以判断是否初始化过关卡了
 				music.play('bgm_boss')
-				music.set_volume(0.4)
-				for _ in range(10):	# 障碍物生成
-					obstacleList.append(Obstacle())	# 暂时选择随机位置，要等待有人来设计关卡（
+				music.set_volume(0.2)
+				obstacle_map()
 				for _ in range(4):	# 敌人生成
 					enemyList.append(Enemy(random.choice(levelEnemyList[level])))	# 这里传参后期要改
 			else:
@@ -578,8 +591,7 @@ def draw():
 					print('You Win!')	#todo 这里后期要改成进入下一关卡
 					exit()
 
-		draw_bar()
-		draw_map()
+		
 		if player.immuneTime and player.immuneTime % 20 < 10:
 			pass	# 无敌时间，为了看得更直观加个pass、else
 		else:

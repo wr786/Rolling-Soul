@@ -1,0 +1,5 @@
+Name (monster_%s)	Level	HP	ATK	CD (%d * cd_std)	Walk_Speed (%d * walk_std)	Bullet_Type (bullet_monster_%d)	Bullet_Speed (%d * speed_std)	Probability
+1a_01	1	8	2	2	0.5	1	0.6	100
+1a_02	2	15	3	2	0.5	7	0.6	100
+1a_03	3	40	2|4	1	0.6	1|6	0.6|0.4	70|30
+1a_04	4	600	2|5|4	0.8	0.8	2|5|8	0.4|0.6|0.8	60|10|30
