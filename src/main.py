@@ -156,7 +156,7 @@ class Bullet:
 					return True
 		else:	# 敌人的子弹射中了玩家
 			if self.actor.colliderect(player.actor):
-				player.get_damage()
+				player.get_damage(self.atk)
 				self.actor.image = 'effect_hit_big'
 				return True
 		return True
@@ -278,7 +278,12 @@ class Player:	# 基类，用于写一些共同点
 		if self.immuneTime:	# 免疫伤害的时间
 			return
 		if self.armor > 0:
-			self.armor -= damage
+			if self.armor >= damage:
+				self.armor -= damage
+			else:
+				damage -= self.armor
+				self.armor = 0
+				self.hp -= damage
 		else:
 			self.hp -= damage
 		self.armorCD = 0	# 一段时间内不被打中才能回护盾
