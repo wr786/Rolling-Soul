@@ -49,11 +49,13 @@ moveSpan = 4
 playerBulletList = []
 enemyBulletList = []
 enemyList = []
-levelEnemyList = { (1, 'a'): ('1a_01', '1a_02', '1a_03', '1a_04')}	# 后续可以通过需要，将怪物列表分成小怪和大怪
+levelEnemyList = {}	# 后续可以通过需要，将怪物列表分成小怪和大怪
 # 战斗数值
 weaponData = {}	# key为武器名<rarity>_<name>, value为(atkRange, cost, cd, bulletSpeed)
 WEAPON_CD_STD = 50
 WEAPON_BULLET_SPEED_STD = 20
+ENEMY_SPEED_STD = wallSize * 1.5
+enemyData = {}	# key为敌人名，value为(HP, cd, walkSpeed, bulletData)
 
 ##########################################################################################
 
@@ -71,6 +73,24 @@ def read_data():
 				atkEqualRange = datas[2].split('~')
 				atkRange = (int(atkEqualRange[0]), int(atkEqualRange[1]))
 			weaponData.update({f'{datas[1]}_{datas[0]}': (atkRange, int(datas[3]), float(datas[4]), float(datas[5]))})
+	# 读入怪物数据
+	with open('./data/monster_data.csv', 'r') as f:
+		for line in f.readlines()[1:]:
+			datas = line.split('\t')
+			_level = (int(datas[1][0]), datas[1][1])
+			# 在关卡怪物列表中添加这种怪物
+			if _level not in levelEnemyList.keys():
+				levelEnemyList.update({_level: [datas[0]]})
+			else:
+				levelEnemyList[_level].append(datas[0])
+			# 类型，atk，bulletSpeed，概率
+			_bulletType = [x.zfill(2) for x in datas[6].split('|')]	# 在左边补齐0
+			_bulletAtk = [int(x) for x in datas[3].split('|')]
+			_bulletSpeed = [float(x) for x in datas[7].split('|')]
+			_bulletProb = [float(x) for x in datas[8].split('|')]
+			_bulletData = list(zip(_bulletType, _bulletAtk, _bulletSpeed, _bulletProb))
+			# 添加到信息列表之中
+			enemyData.update({datas[0]: (int(datas[2]), float(datas[4]), float(datas[5]), _bulletData)})	
 
 
 def sgn(x): # 判断数字的符号，简单函数就直接缩写了
@@ -136,7 +156,7 @@ class Bullet:
 					return True
 		else:	# 敌人的子弹射中了玩家
 			if self.actor.colliderect(player.actor):
-				player.get_damage()
+				player.get_damage(self.atk)
 				self.actor.image = 'effect_hit_big'
 				return True
 		return True
@@ -251,14 +271,19 @@ class Player:	# 基类，用于写一些共同点
 			self.armorCD -= 100	# 脱离战斗后快速回复护甲
 		else:
 			self.armorCD += 1
-		if self.immuneTime:	#todo 如果现在是免疫伤害的阶段，那么就需要角色闪烁？
+		if self.immuneTime:
 			self.immuneTime -= 1
 
 	def get_damage(self, damage=1):
 		if self.immuneTime:	# 免疫伤害的时间
 			return
 		if self.armor > 0:
-			self.armor -= damage
+			if self.armor >= damage:
+				self.armor -= damage
+			else:
+				damage -= self.armor
+				self.armor = 0
+				self.hp -= damage
 		else:
 			self.hp -= damage
 		self.armorCD = 0	# 一段时间内不被打中才能回护盾
@@ -271,8 +296,7 @@ class Knight(Player):
 
 	def __init__(self):
 		self.actor = Actor('knight_rt')
-		# Player.__init__(self, 'initial_worngat', 4, 6)
-		Player.__init__(self, 'orange_unicorn', 4, 6)
+		Player.__init__(self, 'initial_worngat', 4, 6)
 
 	# 移动部分
 
@@ -384,30 +408,37 @@ class Paladin(Player):
 
 class Enemy:
 
-	def __init__(self, type):
-		self.actor = Actor(f'monster_{type}_rt')
+	def __init__(self, enemyType):
+		self.enemyType = enemyType
+		self.actor = Actor(f'monster_{enemyType}_rt')
 		# 如果加了障碍物的话，这里就得复杂一些
 		self.actor.topright = (randint(wallSize, WIDTH - wallSize - barWidth), randint(wallSize, HEIGHT - wallSize))
-		self.speed = wallSize * 1.5
-		self.moveCD_MAX = 60
-		self.shootCD_MAX = 100
 		self.moveCD = randint(0, self.moveCD_MAX)
 		self.shootCD = randint(0, self.shootCD_MAX)
-		self.hp = 100
-		self.bulletSpeed = 6	# 这里同理也是要改的
-		self.atk = 1
+		self.hp = enemyData[self.enemyType][0]	# 这个是会变化的，所以就不用@property了
 
 	@property
-	def bulletType(self): # 设置不同怪的不同种类的子弹
-		if '1a_01' in self.actor.image:
-			return 'monster_01'
-		elif '1a_02' in self.actor.image:
-			return 'monster_03'
-		elif '1a_03' in self.actor.image:
-			return 'monster_06'
-		elif '1a_04' in self.actor.image:
-			return 'monster_05'
+	def speed(self):
+		return enemyData[self.enemyType][2] * ENEMY_SPEED_STD
 	
+	@property
+	def moveCD_MAX(self):	# 移动CD
+		return 60
+
+	@property
+	def shootCD_MAX(self):
+		return enemyData[self.enemyType][1] * WEAPON_CD_STD
+
+	def random_bullet(self):
+		_prob = randint(0, 100)
+		selectedBullet = None
+		for _bullet in enemyData[self.enemyType][3]:
+			if _prob <= _bullet[3]:
+				selectedBullet = _bullet
+				break
+			else:
+				_prob -= _bullet[3]
+		return Bullet(f'monster_{selectedBullet[0]}', self.actor.topright, (player.actor.pos[0] + randint(-50, 50), player.actor.pos[1] + randint(-50, 50)), selectedBullet[2] * WEAPON_BULLET_SPEED_STD, selectedBullet[1])
 
 	def face_right(self):
 		self.actor.image = self.actor.image[:-3] + '_rt'
@@ -446,7 +477,7 @@ class Enemy:
 
 	def shoot(self):
 		if not self.shootCD:
-			enemyBulletList.append(Bullet(self.bulletType, self.actor.topright, (player.actor.pos[0] + randint(-50, 50), player.actor.pos[1] + randint(-50, 50)), self.bulletSpeed, self.atk))	# 先用shotgun凑合，瞄准玩家
+			enemyBulletList.append(self.random_bullet())
 			self.shootCD = self.shootCD_MAX
 		else:
 			self.shootCD -= 1
@@ -549,8 +580,11 @@ def draw():
 
 		draw_bar()
 		draw_map()
-		player.actor.draw()
-		player.weapon.actor.draw()
+		if player.immuneTime and player.immuneTime % 20 < 10:
+			pass	# 无敌时间，为了看得更直观加个pass、else
+		else:
+			player.actor.draw()
+			player.weapon.actor.draw()
 
 		for _obstacle in obstacleList:
 			_obstacle.actor.draw()
