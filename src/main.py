@@ -185,6 +185,10 @@ class Weapon:
 		return weaponName[weaponName.find('_')+1:-3]
 
 	@property
+	def rarity(self):
+		return self.gunType[:self.gunType.find('_')]
+
+	@property
 	def cd_MAX(self):
 		return weaponData[self.gunType][2] * WEAPON_CD_STD
 	
@@ -563,10 +567,41 @@ def update():
 # 画状态栏
 def draw_bar():
 	screen.fill("SteelBlue4")
+	# 角色状态栏
 	screen.blit("status_bar", (WIDTH - barWidth, 0))
 	screen.draw.text(f"{player.hp_MAX}/{player.hp}", center=(WIDTH - 0.45 * barWidth, 0.25 * barHeight - 5), fontname="hanyinuomituan")
 	screen.draw.text(f"{player.armor_MAX}/{player.armor}", center=(WIDTH - 0.45 * barWidth, 0.5 * barHeight - 5), fontname="hanyinuomituan")
 	screen.draw.text(f"{player.mp_MAX}/{player.mp}", center=(WIDTH - 0.45 * barWidth, 0.75 * barHeight - 5), fontname="hanyinuomituan")
+	# 所持武器栏
+	screen.blit(f"{player.weapon.gunType}_bar", (WIDTH - barWidth, barHeight))
+	# 所持武器信息
+	screen.blit("weapon_bar", (WIDTH - barWidth, 2 * barHeight))
+	if player.weapon.rarity == "initial":
+		screen.draw.text(f"{player.weapon.bulletType}", center=(WIDTH - 0.5 * barWidth, 2.25 * barHeight - 5),
+						 fontname="hanyinuomituan", color="grey")
+	else:
+		screen.draw.text(f"{player.weapon.bulletType}", center=(WIDTH - 0.5 * barWidth, 2.25 * barHeight - 5),
+						 fontname="hanyinuomituan", color=f"{player.weapon.rarity}")
+	screen.draw.text("ATK", center=(WIDTH - 0.8 * barWidth, 2.5 * barHeight - 5),
+					 fontname="hanyinuomituan", color="red")
+
+	if weaponData[player.weapon.gunType][0][0] == weaponData[player.weapon.gunType][0][1]:
+		screen.draw.text(f"{weaponData[player.weapon.gunType][0][0]}",
+						 center=(WIDTH - 0.8 * barWidth, 2.75 * barHeight - 5),
+						 fontname="hanyinuomituan", color="red")
+	else:
+		screen.draw.text(f"{weaponData[player.weapon.gunType][0][0]}~{weaponData[player.weapon.gunType][0][1]}",
+						 center=(WIDTH - 0.8 * barWidth, 2.75 * barHeight - 5),
+						 fontname="hanyinuomituan", color="red")
+	screen.draw.text("MP", center=(WIDTH - 0.5 * barWidth, 2.5 * barHeight - 5),
+					 fontname="hanyinuomituan", color="SteelBlue2")
+	screen.draw.text(f"{player.weapon.cost}", center=(WIDTH - 0.5 * barWidth, 2.75 * barHeight - 5),
+					 fontname="hanyinuomituan", color="SteelBlue2")
+	screen.draw.text("CD", center=(WIDTH - 0.2 * barWidth, 2.5 * barHeight - 5),
+					 fontname="hanyinuomituan", color="yellow")
+	screen.draw.text(f"{weaponData[player.weapon.gunType][2]}s", center=(WIDTH - 0.2 * barWidth, 2.75 * barHeight - 5),
+					 fontname="hanyinuomituan", color="yellow")
+# todo 这里的字体可以换一个更适合的
 
 def draw():
 	global frameCnt
