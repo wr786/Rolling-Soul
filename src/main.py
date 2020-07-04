@@ -28,6 +28,8 @@ walls = {}
 wallSize = 37	# 一个方块的大小
 level = (1, 'a')	# 现在是第几关
 
+obstacleList = []	# 关卡障碍物列表
+
 # 背景相关
 floorcnt = 0
 wallcnt = 0
@@ -56,6 +58,24 @@ def sgn(x): # 判断数字的符号，简单函数就直接缩写了
 	elif x < 0: return -1
 	else: return 0
 
+class Obstacle:
+
+	def collide_other_obstacles(self):
+		for _obstacle in obstacleList:
+			if self.actor.colliderect(_obstacle.actor):
+				return True
+		return False
+
+	def __init__(self, x=0, y=0, obstacleType='floor_1c_03'):
+		# 后面可以根据需要用x、y设置障碍物的中心摆放位置, 用obstacleType确定障碍物的图片
+		self.actor = Actor(obstacleType)	# 暂时用这个，后面得更换障碍物图的
+		# 利用while生成在合理的位置
+		while (not x and not y) or self.actor.colliderect(player.actor) or self.collide_other_obstacles():
+			x, y = (randint(wallSize, WIDTH - wallSize - barWidth), randint(wallSize, HEIGHT - wallSize))
+			self.actor.topright = (x, y)
+		else:
+			self.actor.topright = (x, y)
+
 class Bullet:
 
 	def __init__(self, type, shootPoint, dirt, bulletSpeed, weaponATK):
@@ -75,16 +95,17 @@ class Bullet:
 				return False
 		self.actor.left += self.speed * cos(self.actor.angle / 180 * pi)
 		self.actor.bottom += -1 * self.speed * sin(self.actor.angle / 180 * pi)
-		# 这里还应该加入碰撞角色、障碍物检测
-		# for _wall in walls:
-		# 	if(self.actor.colliderect(_wall)):
-		# 		return False
 		# 上下两堵墙
 		if self.actor.colliderect((0, 0), (WIDTH, wallSize)) or self.actor.colliderect((0, HEIGHT - wallSize), (WIDTH, HEIGHT)):
 			return False
 		# 左右两堵墙
 		if self.actor.colliderect((0, 0), (wallSize, HEIGHT)) or self.actor.colliderect((WIDTH - wallSize - barWidth, 0), (WIDTH, HEIGHT)):
 			return False
+		# 判断障碍物
+		for _obstacle in obstacleList:
+			if self.actor.colliderect(_obstacle.actor):
+				return False
+		# 判断命中
 		if friendly:	# 是玩家射出的命中了敌人
 			for _enemy in enemyList:
 				if self.actor.colliderect(_enemy.actor):
@@ -133,7 +154,6 @@ class Weapon:
 			sounds.gun.play()
 			self.cd = self.cd_MAX
 
-
 class Player:	# 基类，用于写一些共同点
 
 	def __init__(self, weaponName, hpMax, armorMax):
@@ -158,13 +178,15 @@ class Player:	# 基类，用于写一些共同点
 				while self.actor.colliderect(_enemy.actor):
 					self.actor.left -= 5 * hFlag
 					self.actor.top -= 5 * vFlag
-		#todo 这里需要判断障碍物碰撞
 		self.actor.left = max(self.actor.left, wallSize)
 		self.actor.left = min(self.actor.left, WIDTH - self.actor.width - wallSize - barWidth)
 		self.actor.top = max(self.actor.top, wallSize)
 		self.actor.top = min(self.actor.top, HEIGHT - self.actor.height - wallSize)
-		# 实际上枪械只需要和玩家保持一个相对位置就好了，所以在处理完玩家的运动之后再更新枪械的位置就行了
-		# 这里大概需要一个偏移量来使枪在手上
+		# 障碍物判定
+		for _obstacle in obstacleList:
+			while self.actor.colliderect(_obstacle.actor):
+				self.actor.left -= hFlag
+				self.actor.top -= vFlag
 		self.weapon.actor.left = self.actor.left + 0.5 * self.actor.width - 0.5 * self.weapon.actor.width
 		self.weapon.actor.top = self.actor.top + 0.5 * self.actor.height
 
@@ -370,17 +392,18 @@ class Enemy:
 			self.actor.left += dx
 			self.actor.bottom += dy
 			# 碰撞检定
-			#todo 障碍物相关的还得后续写一下
-			#todo 这里还应该有个碰撞玩家造成伤害并回弹，先不写
 			self.actor.left = max(self.actor.left, wallSize)
 			self.actor.left = min(self.actor.left, WIDTH - self.actor.width - wallSize - barWidth)
 			self.actor.top = max(self.actor.top, wallSize)
 			self.actor.top = min(self.actor.top, HEIGHT - self.actor.height - wallSize)
+			for _obstacle in obstacleList:
+				while self.actor.colliderect(_obstacle.actor):
+					self.actor.left -= dx
+					self.actor.bottom -= dy
 			for _enemy in enemyList:
 				while self.actor.colliderect(_enemy.actor) and self != _enemy:
 					self.actor.left -= dx
 					self.actor.bottom -= dy
-
 			self.moveCD = self.moveCD_MAX
 
 		else:
@@ -473,20 +496,29 @@ def draw():
 	screen.clear()
 
 	global roleChoose
-	if roleChoose == 0:
+	if roleChoose == 0:	# 选择人物
 		start_view()
 	else:
-		if level == (1, 'a') and not music.is_playing('bgm_boss'):	# 仅用来测试，必然要调整
-			music.play('bgm_boss')
-			music.set_volume(0.4)
-			for _ in range(4):
-				enemyList.append(Enemy(random.choice(levelEnemyList[level])))	# 这里传参后期要改
+		if level == (1, 'a'):	# 仅用来测试，必然要调整
+			if not music.is_playing('bgm_boss'):	# 用bgm有没有播放就可以判断是否初始化过关卡了
+				music.play('bgm_boss')
+				music.set_volume(0.4)
+				for _ in range(10):	# 障碍物生成
+					obstacleList.append(Obstacle())	# 暂时选择随机位置，要等待有人来设计关卡（
+				for _ in range(4):	# 敌人生成
+					enemyList.append(Enemy(random.choice(levelEnemyList[level])))	# 这里传参后期要改
+			else:
+				if not enemyList:	# 敌人打完了
+					print('You Win!')	#todo 这里后期要改成进入下一关卡
+					exit(0)
 
 		draw_bar()
 		draw_map()
 		player.actor.draw()
 		player.weapon.actor.draw()
 
+		for _obstacle in obstacleList:
+			_obstacle.actor.draw()
 		for _enemy in enemyList:
 			_enemy.actor.draw()
 		for _bullet in playerBulletList:
