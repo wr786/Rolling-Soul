@@ -47,6 +47,7 @@ moveSpan = 4
 playerBulletList = []
 enemyBulletList = []
 enemyList = []
+levelEnemyList = { (1, 'a'): ('1a_01', '1a_02', '1a_03', '1a_04')}	# 后续可以通过需要，将怪物列表分成小怪和大怪
 
 ##########################################################################################
 
@@ -326,8 +327,8 @@ class Paladin(Player):
 
 class Enemy:
 
-	def __init__(self, type):	# type参数是判断了当前是第几关之后再传进来的，这里为了测试，就直接只用一种怪先
-		self.actor = Actor('monster_1a_01_rt')
+	def __init__(self, type):
+		self.actor = Actor(f'monster_{type}_rt')
 		# 如果加了障碍物的话，这里就得复杂一些
 		self.actor.topright = (randint(wallSize, WIDTH - wallSize - barWidth), randint(wallSize, HEIGHT - wallSize))
 		self.speed = wallSize * 1.5
@@ -338,6 +339,18 @@ class Enemy:
 		self.hp = 100
 		self.bulletSpeed = 6	# 这里同理也是要改的
 		self.atk = 1
+
+	@property
+	def bulletType(self): # 设置不同怪的不同种类的子弹
+		if '1a_01' in self.actor.image:
+			return 'monster_01'
+		elif '1a_02' in self.actor.image:
+			return 'monster_03'
+		elif '1a_03' in self.actor.image:
+			return 'monster_06'
+		elif '1a_04' in self.actor.image:
+			return 'monster_05'
+	
 
 	def face_right(self):
 		self.actor.image = self.actor.image[:-3] + '_rt'
@@ -375,7 +388,7 @@ class Enemy:
 
 	def shoot(self):
 		if not self.shootCD:
-			enemyBulletList.append(Bullet('monster_01', self.actor.topright, (player.actor.pos[0] + randint(-50, 50), player.actor.pos[1] + randint(-50, 50)), self.bulletSpeed, self.atk))	# 先用shotgun凑合，瞄准玩家
+			enemyBulletList.append(Bullet(self.bulletType, self.actor.topright, (player.actor.pos[0] + randint(-50, 50), player.actor.pos[1] + randint(-50, 50)), self.bulletSpeed, self.atk))	# 先用shotgun凑合，瞄准玩家
 			self.shootCD = self.shootCD_MAX
 		else:
 			self.shootCD -= 1
@@ -399,6 +412,7 @@ def draw_map():
 		screen.blit(walls[wallcnt], (WIDTH - wallSize - barWidth, wallSize + wallSize * i))
 		wallcnt = (wallcnt + 1) % wallnum
 
+# 人物选择
 def choose_role(pos):
 	global roleChoose
 	if 0.25 * WIDTH -25 < pos[0] < 0.25 * WIDTH + 45 and 0.5 * HEIGHT < pos[1] <0.5 * HEIGHT + 70:
@@ -445,7 +459,8 @@ def update():
 	for _bullet in enemyBulletList:
 		if not _bullet.move_on(False):
 			enemyBulletList.remove(_bullet)
-	
+
+# 画状态栏
 def draw_bar():
 	screen.fill("SteelBlue4")
 	screen.blit("status_bar", (WIDTH - barWidth, 0))
@@ -465,7 +480,7 @@ def draw():
 			music.play('bgm_boss')
 			music.set_volume(0.4)
 			for _ in range(4):
-				enemyList.append(Enemy('待定'))	# 这里传参后期要改
+				enemyList.append(Enemy(random.choice(levelEnemyList[level])))	# 这里传参后期要改
 
 		draw_bar()
 		draw_map()
