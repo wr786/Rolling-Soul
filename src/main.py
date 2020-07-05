@@ -353,7 +353,7 @@ class Player:   # 基类，用于写一些共同点
         else:
             self.hp -= damage
         self.armorCD = 0    # 一段时间内不被打中才能回护盾
-        self.immuneTime = 60    # 受伤后1s的无敌时间
+        self.immuneTime = 90    # 受伤后1.5s的无敌时间
         if self.hp <= 0:
             self.hp = 0
 
