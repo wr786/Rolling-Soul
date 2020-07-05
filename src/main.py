@@ -10,6 +10,7 @@ import os
 
 # 选角色相关
 roleChoose = 0
+storyLine = 'a'
 
 # 角色高度
 heroHeight = 68
@@ -29,7 +30,7 @@ walls = {}
 
 wallSize = 37   # 一个方块的大小
 level = [1, 'a', 1] # 现在是第几关
-
+initialFlag = False # 关卡是否被初始化过
 obstacleList = []   # 关卡障碍物列表
 
 #怪物数量
@@ -38,10 +39,6 @@ enemyNum = [0] * 4
 # 背景相关
 floorcnt = 0
 wallcnt = 0
-for i in range(floornum ** 2):
-	floors[i] = random.choice(["floor_1a_01", "floor_1a_02", "floor_1a_03"])
-for i in range((floornum + wallnum) * 2):
-	walls[i] = random.choice(["wall_1a_01", "wall_1a_02"])
 
 # 移动相关
 vFlag = 0
@@ -52,7 +49,6 @@ moveSpan = 8
 enemyMoveFlag = [0]*12 #优化怪物行走方式
 enemyMoveCnt = 0 #不同数字代表不同怪物
 enemyMoveDirection = [random.randint(0, 360)]*12 
-
 
 # 对话相关
 chatchoose = 0 # 0表示没有对话的状态，数字为剧情的编号
@@ -111,14 +107,6 @@ def read_data():
 			_bulletData = list(zip(_bulletType, _bulletAtk, _bulletSpeed, _bulletProb))
 			# 添加到信息列表之中
 			enemyData.update({datas[0]: (int(datas[2]), float(datas[4]), float(datas[5]), _bulletData)})	
-
-def next_level():	# 进入下一关
-	#todo 这里可能要加入更复杂的逻辑（如果要错线的话
-	if level[2] == 3:
-		level[0] += 1
-		level[2] = 1
-	else:
-		level[2] += 1
 
 def sgn(x): # 判断数字的符号，简单函数就直接缩写了
 	if x > 0: return 1
@@ -293,9 +281,9 @@ class Player:   # 基类，用于写一些共同点
 		# 障碍物判定
 		for _obstacle in obstacleList:
 			while self.actor.colliderect(_obstacle.actor):
-				_angle = self.actor.angle_to(_obstacle.actor)
-				self.actor.left -= 0.2 * moveSpan * cos(_angle / 180 * pi)
-				self.actor.top -= 0.2 * moveSpan * sin(_angle / 180 * pi)
+				_angle = self.actor.angle_to(_obstacle.actor.center)
+				self.actor.left -= 0.1 * moveSpan * cos(_angle / 180 * pi)
+				self.actor.top -= 0.1 * moveSpan * sin(_angle / 180 * pi)
 		self.weapon.actor.left = self.actor.left + 0.5 * self.actor.width - 0.5 * self.weapon.actor.width
 		self.weapon.actor.top = self.actor.top + 0.5 * self.actor.height
 
@@ -486,8 +474,7 @@ class Enemy:
 	
 	@property
 	def moveCD_MAX(self):   # 移动CD
-		return 60
-		# return 1
+		return 20
 
 	@property
 	def shootCD_MAX(self):
@@ -535,9 +522,9 @@ class Enemy:
 			self.actor.top = min(self.actor.top, HEIGHT - self.actor.height - wallSize)
 			for _obstacle in obstacleList:
 				while self.actor.colliderect(_obstacle.actor):
-					_angle = self.actor.angle_to(_obstacle.actor)
-					self.actor.left -= 0.2 * moveSpan * cos(_angle / 180 * pi)
-					self.actor.top -= 0.2 * moveSpan * sin(_angle / 180 * pi)
+					_angle = self.actor.angle_to(_obstacle.actor.center)
+					self.actor.left -= 0.1 * moveSpan * cos(_angle / 180 * pi)
+					self.actor.top -= 0.1 * moveSpan * sin(_angle / 180 * pi)
 					enemyMoveFlag[enemyMoveCnt] = 0
 			# for _enemy in enemyList:
 			#	 while self.actor.colliderect(_enemy.actor) and self != _enemy:
@@ -599,9 +586,44 @@ def draw_map():
 		screen.blit(walls[wallcnt], (WIDTH - wallSize - barWidth, wallSize + wallSize * i))
 		wallcnt = (wallcnt + 1) % wallnum
 
+# 生成背景图块
+def generate_map_cells():
+	_level = f"{level[0]}{level[1]}"
+	for i in range(floornum ** 2):
+		floors[i] = random.choice([f"floor_{_level}_01", f"floor_{_level}_02", f"floor_{_level}_03"])
+	for i in range((floornum + wallnum) * 2):
+		walls[i] = random.choice([f"wall_{_level}_01", f"wall_{_level}_02"])
+
+# 清除关卡数据，为进入下一关做准备
+def clear_level_data():
+	global vFlag, hFlag, frameCnt, initialFlag
+	vFlag = hFlag = frameCnt = 0
+	initialFlag = False
+	global floors, walls
+	floors = {}
+	walls = {}
+	global enemyMoveFlag, enemyMoveCnt, chatchoose
+	enemyMoveFlag = [0]*12 
+	enemyMoveCnt = 0
+	chatchoose = 0
+	global playerBulletList, enemyBulletList, enemyList, obstacleList
+	obstacleList = []
+	playerBulletList = []
+	enemyBulletList = []
+	enemyList = []
+	music.stop()
+
+def next_level():	# 进入下一关
+	#todo 这里可能要加入更复杂的逻辑（如果要错线的话
+	if level[2] == 3:
+		level[0] += 1
+		level[2] = 1
+	else:
+		level[2] += 1
+
 # 人物选择
 def choose_role(pos):
-	global roleChoose
+	global roleChoose, storyLine
 	if 0.25 * WIDTH -25 < pos[0] < 0.25 * WIDTH + 45 and 0.5 * HEIGHT < pos[1] <0.5 * HEIGHT + 70:
 		roleChoose = 1
 	elif 0.5 * WIDTH -25 < pos[0] < 0.5 * WIDTH + 45 and 0.5 * HEIGHT < pos[1] <0.5 * HEIGHT + 70:
@@ -707,51 +729,14 @@ def draw_button():
 def draw():
 	global frameCnt
 	global portalFrameCnt
+	global initialFlag
 	screen.clear()
 
-	global roleChoose
-	if roleChoose == 0: # 选择人物
-		start_view()
-	else:
-		draw_bar()
-		draw_button()
+	draw_bar()
+	draw_button()		
+
+	if initialFlag:
 		draw_map()
-
-		if level[:2] == [1, 'a']:   # 仅用来测试，必然要调整
-			if not music.is_playing('bgm_boss'):	# 用bgm有没有播放就可以判断是否初始化过关卡了
-				music.play('bgm_boss')
-				music.set_volume(0.2)
-				obstacle_map()
-				if level[0] == 1:
-					if level[2] == 1:
-						enemyNum = [3, 3, 0, 0]
-					elif level[2] == 2:
-						enemyNum = [4, 3, 1, 0]
-					elif level[2] == 3:
-						enemyNum = [0, 0, 1, 1]
-				elif level[0] == 2:
-					if level[2] == 1:
-						enemyNum = [5, 4, 1, 0]
-					elif level[2] == 2:
-						enemyNum = [5, 4, 2, 0]
-					elif level[2] == 3:
-						enemyNum = [0, 0, 2, 1]
-				else:
-					pass	# 这之后继续写后续关卡的参数
-				for enemyMinorType in range(1, 5):
-						for _ in range(enemyNum[enemyMinorType - 1]):
-							enemyList.append(Enemy(levelEnemyList[(level[0], 'a', enemyMinorType)]	))  # 这里的'a'后续要更换成根据人物变化
-			else:
-				if not enemyList:  # 敌人打完了
-					portal_create(0.5 * wallnum * wallSize, 0.5 * wallnum * wallSize)
-
-
-		if player.immuneTime and player.immuneTime % 20 < 10:
-			pass	# 无敌时间，为了看得更直观加个pass、else
-		else:
-			player.actor.draw()
-			player.weapon.actor.draw()
-
 		for _obstacle in obstacleList:
 			_obstacle.actor.draw()
 		for _enemy in enemyList:
@@ -760,6 +745,47 @@ def draw():
 			_bullet.actor.draw()
 		for _bullet in enemyBulletList:
 			_bullet.actor.draw()
+
+	# 关卡信息初始化
+	global roleChoose, level
+	if roleChoose == 0: # 选择人物
+		start_view()
+	else:
+		if not music.is_playing(f'bgm_{level[0]}{level[1]}'):	# 用bgm有没有播放就可以判断是否初始化过关卡了
+			music.play(f'bgm_{level[0]}{level[1]}')
+			music.set_volume(0.2)
+			generate_map_cells()
+			obstacle_map()
+			if level[0] == 1:
+				if level[2] == 1:
+					enemyNum = [3, 3, 0, 0]
+				elif level[2] == 2:
+					enemyNum = [4, 3, 1, 0]
+				elif level[2] == 3:
+					enemyNum = [0, 0, 1, 1]
+			elif level[0] == 2:
+				if level[2] == 1:
+					enemyNum = [5, 4, 1, 0]
+				elif level[2] == 2:
+					enemyNum = [5, 4, 2, 0]
+				elif level[2] == 3:
+					enemyNum = [0, 0, 2, 1]
+			else:
+				pass	# 这之后继续写后续关卡的参数
+			for enemyMinorType in range(1, 5):
+					for _ in range(enemyNum[enemyMinorType - 1]):
+						enemyList.append(Enemy(levelEnemyList[(level[0], level[1], enemyMinorType)]	))  # 这里的'a'后续要更换成根据人物变化
+			initialFlag = True
+		else:
+			if not enemyList:  # 敌人打完了
+				portal_create(0.5 * wallnum * wallSize, 0.5 * wallnum * wallSize)
+
+		if player.immuneTime and player.immuneTime % 20 < 10:
+			pass	# 无敌时间，为了看得更直观加个pass、else
+		else:
+			player.actor.draw()
+			player.weapon.actor.draw()
+
 		frameCnt = frameCnt % 60 + 1
 		portalFrameCnt = portalFrameCnt % 60 + 1
 
@@ -769,23 +795,29 @@ def on_mouse_move(pos):
 
 def on_mouse_down(pos, button):
 	#todo 这里应该加个判断，判断当前是否在战斗中
-	global player
+	global player, level
 	global roleChoose
 	if roleChoose == 0 and button == mouse.LEFT:
 		choose_role(pos)
 		if roleChoose == 1:
 			player = Knight()
+			storyLine = 'a'
 		elif roleChoose == 2:
 			player = Assassin()
+			storyLine = 'b'
 		elif roleChoose == 3:
 			player = Paladin()
+			storyLine = 'c'
+		if roleChoose:
+			level = [1, storyLine, 1]
 	elif button == mouse.LEFT:
 		if chatchoose == 0:
 			player.weapon.shoot(pos)
 		elif chatchoose == 1:	# 选择传送门
 			response = curButton.detect(pos)
 			if response == "OK":
-				print("[INFO ]正在进入下一关")	#todo 正是实现进入下一关的功能
+				clear_level_data()
+				next_level()
 		elif chatchoose == 2:
 			pass  # todo 这里加上如果点击在某个范围内，就怎样怎样
 
