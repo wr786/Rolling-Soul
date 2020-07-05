@@ -263,9 +263,19 @@ class Player:   # 基类，用于写一些共同点
 		self.armorCD = 600
 		self.immuneTime = 0 # 无敌时间
 
+	def collide_obstacles(self):
+		for _obstacle in obstacleList:
+			if self.actor.colliderect(_obstacle.actor):
+				return True
+		return False
+
 	def walk(self):
 		self.actor.left += hFlag
+		if self.collide_obstacles():	# reverse这次移动
+			self.actor.left -= hFlag
 		self.actor.top += vFlag
+		if self.collide_obstacles():	# reverse这次移动
+			self.actor.top -= vFlag
 		# 判断敌人碰撞
 		for _enemy in enemyList:
 			if self.actor.colliderect(_enemy.actor):
@@ -278,12 +288,7 @@ class Player:   # 基类，用于写一些共同点
 		self.actor.left = min(self.actor.left, WIDTH - self.actor.width - wallSize - barWidth)
 		self.actor.top = max(self.actor.top, wallSize)
 		self.actor.top = min(self.actor.top, HEIGHT - self.actor.height - wallSize)
-		# 障碍物判定
-		for _obstacle in obstacleList:
-			while self.actor.colliderect(_obstacle.actor):
-				_angle = self.actor.angle_to(_obstacle.actor.center)
-				self.actor.left -= 0.1 * moveSpan * cos(_angle / 180 * pi)
-				self.actor.top -= 0.1 * moveSpan * sin(_angle / 180 * pi)
+
 		self.weapon.actor.left = self.actor.left + 0.5 * self.actor.width - 0.5 * self.weapon.actor.width
 		self.weapon.actor.top = self.actor.top + 0.5 * self.actor.height
 
@@ -516,16 +521,16 @@ class Enemy:
 			self.actor.bottom += dy
 			enemyMoveFlag[enemyMoveCnt] -= 1
 			# 碰撞检定
+			if self.collide_obstacles():	# 敌人的判断就不用那么细致了，如果走错就直接大不了不走算了
+				self.actor.left -= dx
+				self.actor.bottom -= dy
+				enemyMoveFlag[enemyMoveCnt] = 0	# 如果碰到障碍物了，就不要继续往这个方向死磕了
+			#todo 可以类似上面那行，让敌人不要一直撞墙
+
 			self.actor.left = max(self.actor.left, wallSize)
 			self.actor.left = min(self.actor.left, WIDTH - self.actor.width - wallSize - barWidth)
 			self.actor.top = max(self.actor.top, wallSize)
 			self.actor.top = min(self.actor.top, HEIGHT - self.actor.height - wallSize)
-			for _obstacle in obstacleList:
-				while self.actor.colliderect(_obstacle.actor):
-					_angle = self.actor.angle_to(_obstacle.actor.center)
-					self.actor.left -= 0.1 * moveSpan * cos(_angle / 180 * pi)
-					self.actor.top -= 0.1 * moveSpan * sin(_angle / 180 * pi)
-					enemyMoveFlag[enemyMoveCnt] = 0
 			# for _enemy in enemyList:
 			#	 while self.actor.colliderect(_enemy.actor) and self != _enemy:
 			#		 self.actor.left -= dx
