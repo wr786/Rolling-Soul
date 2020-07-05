@@ -61,6 +61,19 @@ portalFrameCnt = 0
 portalWidth = 122
 portalHeight = 142
 
+# 老虎机相关
+slotmachineWidth_small = 74
+slotmachineHeight_small = 142
+slotmachineWidth_big = 546
+slotmachineHeight_big = 346
+slotmachineCnt = 0
+slotmachineFlag = 0
+awardFlag = ''
+slotItem1 = 'slotmachine_item1'
+slotItem2 = 'slotmachine_item1'
+slotItem3 = 'slotmachine_item1'
+itemSize = 99
+
 # 战斗相关
 # 屏幕中的子弹列表，每次画都需要更新，然后用不同的列表来区分伤害判定
 playerBulletList = []
@@ -597,18 +610,78 @@ def portal_create(x, y):
 	elif 40 <= portalFrameCnt < 60:
 		screen.blit("portal_03", (x - 0.5 * portalWidth, y - 0.5 * portalHeight))
 	if x - 0.5 * portalWidth - player.actor.width <= player.actor.left <= x + 0.5 * portalWidth and y - 0.5 * portalHeight - player.actor.height <= player.actor.top <= y + 0.5 * portalHeight:
-		screen.blit("talk_bar", (WIDTH - barWidth, 3 * barHeight))
 		screen.draw.text(f"It's a PORTAL!\nLet's go into it!", center=(WIDTH - 0.5 * barWidth, 4.5 * barHeight),
 						 fontname="hanyinuomituan")
 		chatchoose = 1
 		curButton = Button(False, "GO!")
-		# screen.blit("choose_bar_1", (WIDTH - barWidth, 6 * barHeight))
-		# screen.draw.text("GO!", center=(WIDTH - 0.5 * barWidth, 6.5 * barHeight),
-		#				  fontname="hanyinuomituan")
 	else:	# 离开传送门，重新设置
 		if chatchoose == 1:
 			chatchoose = 0
 			curButton = None
+
+
+# 生成老虎机
+def slotmachine_create(x, y):
+    global curButton
+    global chatchoose
+    screen.blit("slotmachine_small", (x - 0.5 * slotmachineWidth_small, y - 0.2 * slotmachineHeight_small))
+    if slotmachineFlag == 0 and x - 0.5 * slotmachineWidth_small - player.actor.width <= player.actor.left <= x + 0.5 * slotmachineWidth_small and y - 0.5 * slotmachineHeight_small - player.actor.height <= player.actor.top <= y + 0.5 * slotmachineHeight_small:
+        screen.draw.text(f"It's a\nSlot Machine!\nPlay It?", center=(WIDTH - 0.5 * barWidth, 4.5 * barHeight),
+                         fontname="hanyinuomituan")
+        chatchoose = 998
+        curButton = Button(False, "PLAY!")
+    else:  # 离开老虎机，重新设置
+        if chatchoose == 998:
+            chatchoose = 0
+            curButton = None
+
+
+# 老虎机加载
+def slotmachine_play():
+    global slotmachineFlag
+    slotmachineFlag = 4
+
+# 老虎机抽奖
+def slotmachine_choice():
+    screen.blit("slotmachine", (0.5 * HEIGHT - 0.5 * slotmachineWidth_big, 0.5 * HEIGHT - 0.5 * slotmachineHeight_big))
+    global slotItem1, slotItem2, slotItem3, slotmachineCnt, slotmachineFlag
+    if slotmachineCnt <= 180:
+        slotItem1 = f"slotmachine_item{random.randint(1,6)}"
+    if slotmachineCnt <= 240:
+        slotItem2 = f"slotmachine_item{random.randint(1,6)}"
+    if slotmachineCnt <= 300:
+        slotItem3 = f"slotmachine_item{random.randint(1,6)}"
+    screen.blit(slotItem1, (0.5 * HEIGHT - 0.25 * slotmachineWidth_big - 0.5 * itemSize, 0.5 * HEIGHT - 0.25 * itemSize))
+    screen.blit(slotItem2, (0.5 * HEIGHT - 0.5 * itemSize, 0.5 * HEIGHT - 0.25 * itemSize))
+    screen.blit(slotItem3, (0.5 * HEIGHT + 0.25 * slotmachineWidth_big - 0.5 * itemSize, 0.5 * HEIGHT - 0.25 * itemSize))
+    if slotmachineCnt >360:
+        if slotItem1 == slotItem2 == slotItem3:
+            slotmachineFlag = 3
+        elif slotItem1 == slotItem2 or slotItem1 == slotItem3 or slotItem3 == slotItem2:
+            slotmachineFlag = 2
+        else:
+            slotmachineFlag = 1
+        slotmachine_award()
+
+# 老虎机奖励
+def slotmachine_award():
+    global awardFlag, roleChoose, slotmachineFlag
+    if slotmachineFlag == 3:
+        awardFlag = random.choice(["orange_unicorn_rt", "blue_ice_rt", "blue_sakura_rt"])
+    elif slotmachineFlag == 2:
+        awardFlag = random.choice(["green_snowfox_rt", "green_firegun_rt", "green_rattlesnake_rt"])
+    elif slotmachineFlag == 1:
+        awardFlag = random.choice(["white_ak47_rt", "white_m4_rt", "white_sniper_rt", "white_shotgun_rt"])
+    if slotItem1 != "slotmachine_item1" and slotItem2 != "slotmachine_item1" and slotItem3 != "slotmachine_item1":
+        player.hp += slotmachineFlag
+        if player.hp >= player.hp_MAX:
+            player.hp = player.hp_MAX
+    else:
+        player.get_damage(slotmachineFlag)
+        slotmachineFlag = 5
+# todo 武器奖励部分暂时这样写，以后有拾取武器了再改
+
+
 
 # 随机画地图背景
 def draw_map():
@@ -656,6 +729,10 @@ def clear_level_data():
 	enemyBulletList = []
 	enemyList = []
 	music.stop()
+	global slotmachineFlag, slotmachineCnt, awardFlag
+	slotmachineFlag = 0
+	slotmachineCnt = 0
+	awardFlag = ''
 
 def next_level():	# 进入下一关
 	#todo 这里可能要加入更复杂的逻辑（如果要错线的话
@@ -772,9 +849,7 @@ def draw_button():
 		screen.draw.text(curButton.caption1, center=curButton.actor.center, fontname="hanyinuomituan")
 
 def draw():
-	global frameCnt
-	global portalFrameCnt
-	global initialFlag
+	global frameCnt, portalFrameCnt, initialFlag, slotmachineCnt
 	screen.clear()
 
 	draw_bar()
@@ -824,6 +899,12 @@ def draw():
 		else:
 			if not enemyList:  # 敌人打完了
 				portal_create(0.5 * wallnum * wallSize, 0.5 * wallnum * wallSize)
+				slotmachine_create(0.5 * wallnum * wallSize, 0.2 * wallnum * wallSize)
+				if slotmachineFlag == 4:
+					slotmachineCnt += 1
+					slotmachine_choice()
+		if awardFlag != '':
+			screen.blit(awardFlag, (0.5 * wallnum * wallSize, 0.2 * wallnum * wallSize))
 
 		if player.immuneTime and player.immuneTime % 20 < 10:
 			pass	# 无敌时间，为了看得更直观加个pass、else
@@ -842,7 +923,7 @@ def on_mouse_move(pos):
 def on_mouse_down(pos, button):
 	#todo 这里应该加个判断，判断当前是否在战斗中
 	global player, level
-	global roleChoose
+	global roleChoose, chatchoose
 	if roleChoose == 0 and button == mouse.LEFT:
 		choose_role(pos)
 		if roleChoose == 1:
@@ -867,6 +948,11 @@ def on_mouse_down(pos, button):
 			if response == "OK":
 				clear_level_data()
 				next_level()
+		elif chatchoose == 998:  # 选择老虎机
+			response = curButton.detect(pos)
+			if response == "OK":
+				slotmachine_play()
+				chatchoose = 0
 		elif chatchoose == 2:
 			pass  # todo 这里加上如果点击在某个范围内，就怎样怎样
 
