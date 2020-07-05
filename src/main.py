@@ -204,6 +204,7 @@ class Weapon:
 		self.gunType = gunType
 		self.actor = Actor(gunType + '_rt') # 默认朝右
 		self.cd = 0 
+		self.cd_MAX = weaponData[self.gunType][2] * WEAPON_CD_STD
 
 	@property
 	def bulletType(self):   # 如果这里出错了，就检查武器图片命名
@@ -213,10 +214,6 @@ class Weapon:
 	@property
 	def rarity(self):
 		return self.gunType[:self.gunType.find('_')]
-
-	@property
-	def cd_MAX(self):
-		return weaponData[self.gunType][2] * WEAPON_CD_STD
 	
 	@property
 	def bulletSpeed(self):
@@ -251,7 +248,7 @@ class Weapon:
 
 class Player:   # 基类，用于写一些共同点
 
-	def __init__(self, weaponName, hpMax, armorMax):
+	def __init__(self, weaponName, hpMax, armorMax, skillCDMax):
 		self.weapon = Weapon(weaponName)
 		self.hp_MAX = hpMax
 		self.hp = hpMax
@@ -262,6 +259,11 @@ class Player:   # 基类，用于写一些共同点
 		self.armorCD_MAX = 600
 		self.armorCD = 600
 		self.immuneTime = 0 # 无敌时间
+		self.skillCD_MAX = skillCDMax
+		self.skillCD = 0
+
+	def is_skill_ready(self):
+		return self.skillCD == 0
 
 	def collide_obstacles(self):
 		for _obstacle in obstacleList:
@@ -321,6 +323,8 @@ class Player:   # 基类，用于写一些共同点
 			self.armorCD += 1
 		if self.immuneTime:
 			self.immuneTime -= 1
+		self.skillCD -= 1
+		self.skillCD = max(self.skillCD, 0)
 
 	def get_damage(self, damage=1):
 		if self.immuneTime: # 免疫伤害的时间
@@ -339,23 +343,11 @@ class Player:   # 基类，用于写一些共同点
 		if self.hp <= 0:
 			self.hp = 0
 
-# 死亡界面
-def get_death():
-    global roleChoose
-    if player.actor.image[-1] == 't':
-        screen.blit(f"{player.actor.image}death", (player.actor.left, player.actor.top))
-    elif player.actor.image[-1] == 'k':
-        screen.blit(f"{player.actor.image[0: -4]}death", (player.actor.left, player.actor.top))
-    screen.draw.text(f"YOU LOST!\nClick to Restart", center=(WIDTH - 0.5 * barWidth, 4.5 * barHeight),
-                         fontname="hanyinuomituan", color="red")
-    roleChoose = 4
-# todo 这里还要加上死亡的音效和bgm
-
 class Knight(Player):
 
 	def __init__(self):
 		self.actor = Actor('knight_rt')
-		Player.__init__(self, 'initial_worngat', 4, 6)
+		Player.__init__(self, 'initial_worngat', 4, 6, 18*60)
 
 	# 移动部分
 
@@ -389,11 +381,20 @@ class Knight(Player):
 			else:
 				self.actor.image = "knight_ltwalk"
 
+	def skill_recover(self):	# 取消技能所给状态
+		self.weapon.cd_MAX *= 2
+
+	def skill_emit(self):
+		self.skillCD = self.skillCD_MAX
+		self.weapon.cd_MAX *= 0.5
+		clock.schedule(self.skill_recover, 6)
+
+
 class Assassin(Player):
 
 	def __init__(self):
 		self.actor = Actor('assassin_rt')
-		Player.__init__(self, 'initial_p250', 5, 5)
+		Player.__init__(self, 'initial_p250', 5, 5, 12*60)
 
 	# 移动部分
 
@@ -427,11 +428,21 @@ class Assassin(Player):
 			else:
 				self.actor.image = "assassin_ltwalk"
 
+	def skill_recover(self):	# 取消技能所给状态
+		global moveSpan
+		moveSpan /= 2
+
+	def skill_emit(self):
+		global moveSpan
+		self.skillCD = self.skillCD_MAX
+		moveSpan *= 2
+		clock.schedule(self.skill_recover, 6)
+
 class Paladin(Player):
 
 	def __init__(self):
 		self.actor = Actor('paladin_rt')
-		Player.__init__(self, 'initial_uzi', 7, 4)
+		Player.__init__(self, 'initial_uzi', 7, 4, 12*60)
 
 	# 移动部分
 
@@ -464,6 +475,10 @@ class Paladin(Player):
 				self.actor.image = "paladin_lt"
 			else:
 				self.actor.image = "paladin_ltwalk"
+
+	def skill_emit(self):
+		self.skillCD = self.skillCD_MAX
+		self.immuneTime += 180
 
 class Enemy:
 
@@ -558,6 +573,18 @@ class Enemy:
 			self.shootCD = self.shootCD_MAX
 		else:
 			self.shootCD -= 1
+
+# 死亡界面
+def get_death():
+    global roleChoose
+    if player.actor.image[-1] == 't':
+        screen.blit(f"{player.actor.image}death", (player.actor.left, player.actor.top))
+    elif player.actor.image[-1] == 'k':
+        screen.blit(f"{player.actor.image[0: -4]}death", (player.actor.left, player.actor.top))
+    screen.draw.text(f"YOU LOST!\nClick to Restart", center=(WIDTH - 0.5 * barWidth, 4.5 * barHeight),
+                         fontname="hanyinuomituan", color="red")
+    roleChoose = 4
+# todo 这里还要加上死亡的音效和bgm			
 
 # 生成传送门
 def portal_create(x, y):
@@ -855,6 +882,9 @@ def on_key_down(key):
 			hFlag += moveSpan
 		if key == key.W:
 			vFlag -= moveSpan
+		if key == key.SPACE:
+			if player.is_skill_ready():
+				player.skill_emit()
 
 def on_key_up(key):
 	global hFlag
