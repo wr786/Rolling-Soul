@@ -821,10 +821,11 @@ def draw():
             for enemyMinorType in range(1, 5):
                     for _ in range(enemyNum[enemyMinorType - 1]):
                         enemyList.append(Enemy(levelEnemyList[(level[0], level[1], enemyMinorType)] ))  # 这里的'a'后续要更换成根据人物变化
+            player.actor.topleft = spawnPoint
             initialFlag = True
         else:
             if not enemyList:  # 敌人打完了
-                portal_create(0.5 * wallnum * wallSize, 0.5 * wallnum * wallSize)
+                portal_create(*spawnPoint)
 
         if player.immuneTime and player.immuneTime % 20 < 10:
             pass    # 无敌时间，为了看得更直观加个pass、else
