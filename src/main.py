@@ -337,8 +337,19 @@ class Player:   # 基类，用于写一些共同点
 		self.armorCD = 0	# 一段时间内不被打中才能回护盾
 		self.immuneTime = 60	# 受伤后1s的无敌时间
 		if self.hp <= 0:
-			print('You Lose!')
-			exit()  #todo 编写失败界面
+			self.hp = 0
+
+# 死亡界面
+def get_death():
+    global roleChoose
+    if player.actor.image[-1] == 't':
+        screen.blit(f"{player.actor.image}death", (player.actor.left, player.actor.top))
+    elif player.actor.image[-1] == 'k':
+        screen.blit(f"{player.actor.image[0: -4]}death", (player.actor.left, player.actor.top))
+    screen.draw.text(f"YOU LOST!\nClick to Restart", center=(WIDTH - 0.5 * barWidth, 4.5 * barHeight),
+                         fontname="hanyinuomituan", color="red")
+    roleChoose = 4
+# todo 这里还要加上死亡的音效和bgm
 
 class Knight(Player):
 
@@ -601,7 +612,8 @@ def generate_map_cells():
 
 # 清除关卡数据，为进入下一关做准备
 def clear_level_data():
-	global vFlag, hFlag, frameCnt, initialFlag
+	global vFlag, hFlag, frameCnt, initialFlag, curButton
+	curButton = None
 	vFlag = hFlag = frameCnt = 0
 	initialFlag = False
 	global floors, walls
@@ -663,19 +675,20 @@ def update():
 	global enemyMoveCnt
 	enemyMoveCnt = 0
 	# 移动处理
-	player.walk()
-	player.turn()
-	player.update()
-	for _enemy in enemyList:
-		_enemy.move()
-		_enemy.shoot()
-		enemyMoveCnt += 1
-	for _bullet in playerBulletList:
-		if not _bullet.move_on(True):
-			playerBulletList.remove(_bullet)
-	for _bullet in enemyBulletList:
-		if not _bullet.move_on(False):
-			enemyBulletList.remove(_bullet)
+	if player.hp > 0:
+		player.walk()
+		player.turn()
+		player.update()
+		for _enemy in enemyList:
+			_enemy.move()
+			_enemy.shoot()
+			enemyMoveCnt += 1
+		for _bullet in playerBulletList:
+			if not _bullet.move_on(True):
+				playerBulletList.remove(_bullet)
+		for _bullet in enemyBulletList:
+			if not _bullet.move_on(False):
+				enemyBulletList.remove(_bullet)
 
 # 画状态栏
 def draw_bar():
@@ -787,10 +800,11 @@ def draw():
 
 		if player.immuneTime and player.immuneTime % 20 < 10:
 			pass	# 无敌时间，为了看得更直观加个pass、else
-		else:
+		elif player.hp > 0:
 			player.actor.draw()
 			player.weapon.actor.draw()
-
+		if player.hp <= 0:
+			get_death()
 		frameCnt = frameCnt % 60 + 1
 		portalFrameCnt = portalFrameCnt % 60 + 1
 
@@ -815,6 +829,9 @@ def on_mouse_down(pos, button):
 			storyLine = 'c'
 		if roleChoose:
 			level = [1, storyLine, 1]
+	elif roleChoose == 4 and button == mouse.LEFT:  # 死亡后点击回到开始界面
+		roleChoose = 0
+		clear_level_data()
 	elif button == mouse.LEFT:
 		if chatchoose == 0:
 			player.weapon.shoot(pos)
@@ -829,26 +846,28 @@ def on_mouse_down(pos, button):
 def on_key_down(key):
 	global hFlag
 	global vFlag
-	if key == key.A:
-		hFlag -= moveSpan
-	if key == key.S:
-		vFlag += moveSpan
-	if key == key.D:
-		hFlag += moveSpan
-	if key == key.W:
-		vFlag -= moveSpan
+	if player.hp > 0:
+		if key == key.A:
+			hFlag -= moveSpan
+		if key == key.S:
+			vFlag += moveSpan
+		if key == key.D:
+			hFlag += moveSpan
+		if key == key.W:
+			vFlag -= moveSpan
 
 def on_key_up(key):
 	global hFlag
 	global vFlag
-	if key == key.A:
-		hFlag += moveSpan
-	if key == key.S:
-		vFlag -= moveSpan
-	if key == key.D:
-		hFlag -= moveSpan
-	if key == key.W:
-		vFlag += moveSpan
+	if player.hp > 0:
+		if key == key.A:
+			hFlag += moveSpan
+		if key == key.S:
+			vFlag -= moveSpan
+		if key == key.D:
+			hFlag -= moveSpan
+		if key == key.W:
+			vFlag += moveSpan
 
 # 画障碍物地图，这个太长了，直接放在最后面
 def obstacle_map():
