@@ -898,9 +898,10 @@ def draw():
 					for _ in range(enemyNum[enemyMinorType - 1]):
 						enemyList.append(Enemy(levelEnemyList[(level[0], level[1], enemyMinorType)]	))  # 这里的'a'后续要更换成根据人物变化
 			initialFlag = True
+			player.actor.topleft = spawnPoint
 		else:
 			if not enemyList:  # 敌人打完了
-				portal_create(0.5 * wallnum * wallSize, 0.5 * wallnum * wallSize)
+				portal_create(*spawnPoint)
 				slotmachine_create(0.5 * wallnum * wallSize, 0.2 * wallnum * wallSize)
 				if slotmachineFlag == 4:
 					slotmachineCnt += 1
