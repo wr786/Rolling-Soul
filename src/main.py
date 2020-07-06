@@ -1080,23 +1080,85 @@ def on_key_up(key):
 
 # 画障碍物地图，这个太长了，直接放在最后面
 def obstacle_map():
+    
     global spawnPoint
+    global slotmachinePoint
     
     if level == [1, 'a', 1]:
-        obstacle_x = 7 * wallSize#7是从左数第几个格，包括墙壁
-        obstacle_y = wallSize#1是从上数，不过不包括墙壁
-        for _ in range(14):#画了14个
+        
+        obstacle_x = 5 * wallSize
+        obstacle_y = 4 * wallSize
+        for _ in range(6):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize#就是说纵向向下画格子
-        #以上画了一堵墙（左边的）
-        obstacle_x = 15 * wallSize
-        obstacle_y = 8 * wallSize
-        for _ in range(14):#画了14个
+            obstacle_x += wallSize
+        
+        obstacle_x = 14 * wallSize
+        obstacle_y = 4 * wallSize
+        for _ in range(6):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 5 * wallSize
+        obstacle_y = 5 * wallSize
+        for _ in range(13):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_y += wallSize
-        #以上又画了一堵墙（右边的）
-        spawnPoint = (19 * wallSize, 17 * wallSize)
+        
+        obstacle_x = 19 * wallSize
+        obstacle_y = 5 * wallSize
+        for _ in range(13):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 5 * wallSize
+        obstacle_y = 18 * wallSize
+        for _ in range(6):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 14 * wallSize
+        obstacle_y = 18 * wallSize
+        for _ in range(6):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 9 * wallSize
+        obstacle_y = 8 * wallSize
+        for _ in range(3):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+            obstacle_x -= wallSize
+            
+        obstacle_x = 15 * wallSize
+        obstacle_y = 8 * wallSize
+        for _ in range(3):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+            obstacle_x += wallSize
+            
+        obstacle_x = 9 * wallSize
+        obstacle_y = 13 * wallSize
+        for _ in range(5):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+               
+        obstacle_x = 15 * wallSize
+        obstacle_y = 13 * wallSize
+        for _ in range(5):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+               
+        obstacle_x = 10 * wallSize
+        obstacle_y = 13 * wallSize
+        for _ in range(5):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        spawnPoint = (7 * wallSize, 6 * wallSize)
+        slotmachinePoint = (17 * wallSize, 6 * wallSize)
+        
     elif level == [1, 'a', 2]:
+        
         obstacle_x = 5 * wallSize
         obstacle_y = 9 * wallSize
         for _ in range(6):
@@ -1144,77 +1206,29 @@ def obstacle_map():
         for _ in range(5):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_y += wallSize
-        spawnPoint=(18 * wallSize, 5 * wallSize)
+        
+        spawnPoint = (18 * wallSize, 5 * wallSize)
+        slotmachinePoint = (6 * wallSize, 5 * wallSize)
+        
     elif level == [1, 'a', 3]:
-        obstacle_x = 5 * wallSize
+        
+        obstacle_x = 7 * wallSize
         obstacle_y = 4 * wallSize
-        for _ in range(6):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        obstacle_x = 14 * wallSize
-        obstacle_y = 4 * wallSize
-        for _ in range(6):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        obstacle_x = 5 * wallSize
-        obstacle_y = 5 * wallSize
-        for _ in range(13):
+        for _ in range(11):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_y += wallSize
         
-        obstacle_x = 19 * wallSize
-        obstacle_y = 5 * wallSize
-        for _ in range(13):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacle_x = 5 * wallSize
-        obstacle_y = 18 * wallSize
-        for _ in range(6):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        obstacle_x = 14 * wallSize
-        obstacle_y = 18 * wallSize
-        for _ in range(6):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        obstacle_x = 10 * wallSize
-        obstacle_y = 7 * wallSize
-        for _ in range(4):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-            obstacle_x -= wallSize
-            
-        obstacle_x = 14 * wallSize
-        obstacle_y = 7 * wallSize
-        for _ in range(4):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-            obstacle_x += wallSize
-            
-        obstacle_x = 9 * wallSize
-        obstacle_y = 13 * wallSize
-        for _ in range(5):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-               
         obstacle_x = 15 * wallSize
-        obstacle_y = 13 * wallSize
-        for _ in range(5):
+        obstacle_y = 8 * wallSize
+        for _ in range(11):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_y += wallSize
-               
-        obstacle_x = 10 * wallSize
-        obstacle_y = 13 * wallSize
-        for _ in range(5):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        spawnPoint=(12 * wallSize, 16 * wallSize)   
+        
+        spawnPoint = (19 * wallSize, 17 * wallSize)
+        slotmachinePoint = (10 * wallSize, 17 * wallSize)
+        
     elif level == [2, 'a', 1]:
+        
         obstacle_x = 4 * wallSize
         obstacle_y = 9 * wallSize
         for _ in range(17):
@@ -1263,12 +1277,6 @@ def obstacle_map():
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_y += wallSize
         
-        obstacleList.append(Obstacle(8 * wallSize, 12 * wallSize))
-        obstacleList.append(Obstacle(8 * wallSize, 13 * wallSize))
-        
-        obstacleList.append(Obstacle(10 * wallSize, 12 * wallSize))
-        obstacleList.append(Obstacle(10 * wallSize, 13 * wallSize))
-        
         obstacle_x = 12 * wallSize
         obstacle_y = 16 * wallSize
         for _ in range(4):
@@ -1300,9 +1308,17 @@ def obstacle_map():
             obstacle_y += wallSize
             obstacle_x -= wallSize
         
+        obstacleList.append(Obstacle(8 * wallSize, 12 * wallSize))
+        obstacleList.append(Obstacle(8 * wallSize, 13 * wallSize))
+        obstacleList.append(Obstacle(10 * wallSize, 12 * wallSize))
+        obstacleList.append(Obstacle(10 * wallSize, 13 * wallSize))
         obstacleList.append(Obstacle(19 * wallSize, 8 * wallSize))
-        spawnPoint=(9 * wallSize, 15 * wallSize)
+        
+        spawnPoint = (14 * wallSize, 10 * wallSize)
+        slotmachinePoint = (9 * wallSize, 15 * wallSize)
+        
     elif level == [2, 'a', 2]:
+        
         obstacle_x = 10 * wallSize
         obstacle_y = 4 * wallSize
         for _ in range(5):
@@ -1369,223 +1385,121 @@ def obstacle_map():
         
         obstacleList.append(Obstacle(13 * wallSize, 5 * wallSize))
         obstacleList.append(Obstacle(12 * wallSize, 6 * wallSize))
-        
         obstacleList.append(Obstacle(12 * wallSize, 16 * wallSize))
         obstacleList.append(Obstacle(11 * wallSize, 17 * wallSize))
-        
         obstacleList.append(Obstacle(12 * wallSize, 11 * wallSize))
-        
         obstacleList.append(Obstacle(10 * wallSize, 13 * wallSize))
-        
         obstacleList.append(Obstacle(14 * wallSize, 9 * wallSize))
-        spawnPoint=(20 * wallSize, 18 * wallSize)
+        obstacleList.append(Obstacle(5 * wallSize, 2 * wallSize))
+        obstacleList.append(Obstacle(5 * wallSize, 3 * wallSize))
+        obstacleList.append(Obstacle(5 * wallSize, 1 * wallSize))
+        
+        spawnPoint = (20 * wallSize, 18 * wallSize)
+        slotmachinePoint = (20 * wallSize, 4 * wallSize)
+        
     elif level == [2, 'a', 3]:
-        obstacle_x = 5 * wallSize
-        obstacle_y = 4 * wallSize
+        
+        obstacle_x = 3 * wallSize
+        obstacle_y = 2 * wallSize
         for _ in range(5):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_x += wallSize
         
-        obstacle_x = 5 * wallSize
-        obstacle_y = 8 * wallSize
+        obstacle_x = 3 * wallSize
+        obstacle_y = 6 * wallSize
         for _ in range(5):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_x += wallSize
         
-        obstacle_x = 5 * wallSize
-        obstacle_y = 5 * wallSize
+        obstacle_x = 2 * wallSize
+        obstacle_y = 3 * wallSize
         for _ in range(3):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_y += wallSize
         
-        obstacle_x = 15 * wallSize
+        obstacle_x = 17 * wallSize
+        obstacle_y = 2 * wallSize
+        for _ in range(4):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 17 * wallSize
+        obstacle_y = 3 * wallSize
+        for _ in range(5):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 17 * wallSize
         obstacle_y = 4 * wallSize
         for _ in range(4):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_x += wallSize
         
-        obstacle_x = 15 * wallSize
+        obstacle_x = 17 * wallSize
         obstacle_y = 5 * wallSize
         for _ in range(5):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_x += wallSize
         
-        obstacle_x = 15 * wallSize
+        obstacle_x = 17 * wallSize
         obstacle_y = 6 * wallSize
         for _ in range(4):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_x += wallSize
         
-        obstacle_x = 15 * wallSize
-        obstacle_y = 7 * wallSize
-        for _ in range(5):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        obstacle_x = 15 * wallSize
-        obstacle_y = 8 * wallSize
-        for _ in range(4):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        obstacle_x = 5 * wallSize
-        obstacle_y = 14 * wallSize
+        obstacle_x = 3 * wallSize
+        obstacle_y = 16 * wallSize
         for _ in range(5):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_y += wallSize
         
-        obstacle_x = 9 * wallSize
-        obstacle_y = 14 * wallSize
+        obstacle_x = 7 * wallSize
+        obstacle_y = 16 * wallSize
         for _ in range(5):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_y += wallSize
         
-        obstacleList.append(Obstacle(6 * wallSize, 14 * wallSize))
-        obstacleList.append(Obstacle(7 * wallSize, 15 * wallSize))
-        
-        obstacleList.append(Obstacle(7 * wallSize, 16 * wallSize))
-        obstacleList.append(Obstacle(7 * wallSize, 17 * wallSize))
-        
-        obstacleList.append(Obstacle(8 * wallSize, 18 * wallSize))
-        
-        obstacle_x = 15 * wallSize
-        obstacle_y = 14 * wallSize
-        for _ in range(4):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        obstacle_x = 15 * wallSize
-        obstacle_y = 15 * wallSize
-        for _ in range(5):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        obstacle_x = 15 * wallSize
+        obstacle_x = 17 * wallSize
         obstacle_y = 16 * wallSize
         for _ in range(4):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_x += wallSize
         
-        obstacle_x = 15 * wallSize
+        obstacle_x = 17 * wallSize
         obstacle_y = 17 * wallSize
         for _ in range(5):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_x += wallSize
         
-        obstacle_x = 15 * wallSize
+        obstacle_x = 17 * wallSize
         obstacle_y = 18 * wallSize
         for _ in range(4):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_x += wallSize
         
-        spawnPoint=(12 * wallSize, 11 * wallSize)
-    elif level == [1, 'b', 1]:
-        obstacle_x = 6 * wallSize
-        obstacle_y = wallSize
-        for _ in range(14):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacle_x = 12 * wallSize
-        obstacle_y = 8 * wallSize
-        for _ in range(14):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacle_x = 18 * wallSize
-        obstacle_y = wallSize
-        for _ in range(14):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        spawnPoint=(12 * wallSize, 5 * wallSize)
-    elif level == [1, 'b', 2]:
-        #obstacleList.append(Obstacle(2 * wallSize, 5 * wallSize))
-        
-        obstacle_x = 5 * wallSize
-        obstacle_y = 5 * wallSize
-        for _ in range(15):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        #obstacleList.append(Obstacle(22 * wallSize, 5 * wallSize))
-        
-        #obstacleList.append(Obstacle(2 * wallSize, 11 * wallSize))
-        
-        obstacle_x = 5 * wallSize
-        obstacle_y = 11 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        obstacle_x = 11 * wallSize
-        obstacle_y = 11 * wallSize
-        for _ in range(3):
+        obstacle_x = 17 * wallSize
+        obstacle_y = 19 * wallSize
+        for _ in range(5):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_x += wallSize
         
         obstacle_x = 17 * wallSize
-        obstacle_y = 11 * wallSize
-        for _ in range(3):
+        obstacle_y = 20 * wallSize
+        for _ in range(4):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_x += wallSize
         
-        #obstacleList.append(Obstacle(22 * wallSize, 11 * wallSize))
+        obstacleList.append(Obstacle(4 * wallSize, 16 * wallSize))
+        obstacleList.append(Obstacle(5 * wallSize, 17 * wallSize))
+        obstacleList.append(Obstacle(5 * wallSize, 18 * wallSize))
+        obstacleList.append(Obstacle(5 * wallSize, 19 * wallSize))
+        obstacleList.append(Obstacle(6 * wallSize, 20 * wallSize))
         
-        #obstacleList.append(Obstacle(2 * wallSize, 17 * wallSize))
+        spawnPoint = (12 * wallSize, 15 * wallSize)
+        slotmachinePoint = (12 * wallSize, 7 * wallSize)
         
-        obstacle_x = 5 * wallSize
-        obstacle_y = 17 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
+    elif level == [1, 'b', 1]:
         
-        obstacle_x = 11 * wallSize
-        obstacle_y = 17 * wallSize
-        for _ in range(12):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        #obstacleList.append(Obstacle(6 * wallSize, 1 * wallSize))
-        
-        obstacle_x = 6 * wallSize
-        obstacle_y = 4 * wallSize
-        for _ in range(18):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        #obstacleList.append(Obstacle(12 * wallSize, 1 * wallSize))
-        
-        obstacle_x = 12 * wallSize
-        obstacle_y = 4 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacle_x = 12 * wallSize
-        obstacle_y = 10 * wallSize
-        for _ in range(9):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        #obstacleList.append(Obstacle(12 * wallSize, 21 * wallSize))
-        
-        #obstacleList.append(Obstacle(18 * wallSize, 1 * wallSize))
-        
-        obstacle_x = 18 * wallSize
-        obstacle_y = 4 * wallSize
-        for _ in range(9):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacle_x = 18 * wallSize
-        obstacle_y = 16 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        #obstacleList.append(Obstacle(18 * wallSize, 21 * wallSize))
-        spawnPoint=(20 * wallSize, 20 * wallSize)
-    elif level == [1, 'b', 3]:
         obstacle_x = 5 * wallSize
         obstacle_y = 8 * wallSize
         for _ in range(9):
@@ -1637,56 +1551,345 @@ def obstacle_map():
             obstacle_y += wallSize
         
         obstacleList.append(Obstacle(16 * wallSize, 7 * wallSize))
-        
         obstacleList.append(Obstacle(17 * wallSize, 6 * wallSize))
         obstacleList.append(Obstacle(18 * wallSize, 5 * wallSize))
-        spawnPoint=(10 * wallSize, 13 * wallSize)
-    elif level == [2, 'b', 0]:
-        obstacle_x = 6 * wallSize
-        obstacle_y = 4 * wallSize
-        for _ in range(4):
+        
+        spawnPoint = (10 * wallSize, 13 * wallSize)
+        slotmachinePoint = (11 * wallSize, 6 * wallSize)
+            
+    elif level == [1, 'b', 2]:
+        
+        obstacle_x = 5 * wallSize
+        obstacle_y = 5 * wallSize
+        for _ in range(15):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_x += wallSize
+        
+        obstacle_x = 5 * wallSize
+        obstacle_y = 11 * wallSize
+        for _ in range(3):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 11 * wallSize
+        obstacle_y = 11 * wallSize
+        for _ in range(3):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 17 * wallSize
+        obstacle_y = 11 * wallSize
+        for _ in range(3):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 5 * wallSize
+        obstacle_y = 17 * wallSize
+        for _ in range(3):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 11 * wallSize
+        obstacle_y = 17 * wallSize
+        for _ in range(12):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 6 * wallSize
+        obstacle_y = 4 * wallSize
+        for _ in range(18):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 12 * wallSize
+        obstacle_y = 4 * wallSize
+        for _ in range(3):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 12 * wallSize
+        obstacle_y = 10 * wallSize
+        for _ in range(9):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 18 * wallSize
+        obstacle_y = 4 * wallSize
+        for _ in range(9):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 18 * wallSize
+        obstacle_y = 16 * wallSize
+        for _ in range(3):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        spawnPoint = (20 * wallSize, 20 * wallSize)
+        slotmachinePoint = (3 * wallSize, 2 * wallSize)
+            
+    elif level == [1, 'b', 3]:
         
         obstacle_x = 6 * wallSize
         obstacle_y = 6 * wallSize
+        for _ in range(9):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 12 * wallSize
+        obstacle_y = 8 * wallSize
+        for _ in range(9):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 18 * wallSize
+        obstacle_y = 6 * wallSize
+        for _ in range(9):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        spawnPoint = (18 * wallSize, 17 * wallSize)
+        slotmachinePoint = (6 * wallSize, 17 * wallSize)
+           
+    elif level == [2, 'b', 1]:
+        
+        obstacle_x = 7 * wallSize
+        obstacle_y = 3 * wallSize
         for _ in range(4):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_x += wallSize
+        
+        obstacle_x = 14 * wallSize
+        obstacle_y = 3 * wallSize
+        for _ in range(4):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 7 * wallSize
+        obstacle_y = 19 * wallSize
+        for _ in range(3):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 15 * wallSize
+        obstacle_y = 19 * wallSize
+        for _ in range(3):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 6 * wallSize
+        obstacle_y = 8 * wallSize
+        for _ in range(5):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 6 * wallSize
+        obstacle_y = 10 * wallSize
+        for _ in range(4):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 13 * wallSize
+        obstacle_y = 8 * wallSize
+        for _ in range(5):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 13 * wallSize
+        obstacle_y = 10 * wallSize
+        for _ in range(4):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 4 * wallSize
+        obstacle_y = 6 * wallSize
+        for _ in range(4):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 4 * wallSize
+        obstacle_y = 13 * wallSize
+        for _ in range(4):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 6 * wallSize
+        obstacle_y = 14 * wallSize
+        for _ in range(1):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 18 * wallSize
+        obstacle_y = 14 * wallSize
+        for _ in range(1):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 20 * wallSize
+        obstacle_y = 13 * wallSize
+        for _ in range(4):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 20 * wallSize
+        obstacle_y = 6 * wallSize
+        for _ in range(4):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacleList.append(Obstacle(19 * wallSize, 5 * wallSize))
+        obstacleList.append(Obstacle(9 * wallSize, 16 * wallSize))
+        obstacleList.append(Obstacle(10 * wallSize, 16 * wallSize))
+        obstacleList.append(Obstacle(14 * wallSize, 16 * wallSize))
+        obstacleList.append(Obstacle(15 * wallSize, 16 * wallSize))
+        obstacleList.append(Obstacle(7 * wallSize, 14 * wallSize))
+        obstacleList.append(Obstacle(7 * wallSize, 15 * wallSize))
+        obstacleList.append(Obstacle(5 * wallSize, 17 * wallSize))
+        obstacleList.append(Obstacle(10 * wallSize, 11 * wallSize))
+        obstacleList.append(Obstacle(11 * wallSize, 11 * wallSize))
+        obstacleList.append(Obstacle(18 * wallSize, 18 * wallSize))
+        obstacleList.append(Obstacle(19 * wallSize, 18 * wallSize))
+        obstacleList.append(Obstacle(5 * wallSize, 4 * wallSize))
+        obstacleList.append(Obstacle(6 * wallSize, 4 * wallSize))
+        obstacleList.append(Obstacle(18 * wallSize, 4 * wallSize))
+        obstacleList.append(Obstacle(19 * wallSize, 4 * wallSize))
+        obstacleList.append(Obstacle(5 * wallSize, 18 * wallSize))
+        obstacleList.append(Obstacle(6 * wallSize, 18 * wallSize))
+        obstacleList.append(Obstacle(17 * wallSize, 11 * wallSize))
+        obstacleList.append(Obstacle(18 * wallSize, 11 * wallSize))
+        obstacleList.append(Obstacle(11 * wallSize, 9 * wallSize))
+        obstacleList.append(Obstacle(11 * wallSize, 10 * wallSize))
+        obstacleList.append(Obstacle(18 * wallSize, 9 * wallSize))
+        obstacleList.append(Obstacle(18 * wallSize, 10 * wallSize))
+        obstacleList.append(Obstacle(5 * wallSize, 5 * wallSize))
+        obstacleList.append(Obstacle(8 * wallSize, 15 * wallSize))
+        obstacleList.append(Obstacle(8 * wallSize, 16 * wallSize))
+        obstacleList.append(Obstacle(16 * wallSize, 15 * wallSize))
+        obstacleList.append(Obstacle(16 * wallSize, 16 * wallSize))
+        obstacleList.append(Obstacle(17 * wallSize, 14 * wallSize))
+        obstacleList.append(Obstacle(17 * wallSize, 15 * wallSize))
+        obstacleList.append(Obstacle(19 * wallSize, 17 * wallSize))
+        
+        spawnPoint = (8 * wallSize, 6 * wallSize)
+        slotmachinePoint = (16 * wallSize, 6 * wallSize)
+        
+    elif level == [2, 'b', 2]:
+        
+        obstacle_x = 4 * wallSize
+        obstacle_y = 3 * wallSize
+        for _ in range(3):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 4 * wallSize
+        obstacle_y = 9 * wallSize
+        for _ in range(3):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 5 * wallSize
+        obstacle_y = 4 * wallSize
+        for _ in range(5):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 4 * wallSize
+        obstacle_y = 13 * wallSize
+        for _ in range(4):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 4 * wallSize
+        obstacle_y = 14 * wallSize
+        for _ in range(6):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 10 * wallSize
+        obstacle_y = 13 * wallSize
+        for _ in range(7):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 16 * wallSize
+        obstacle_y = 13 * wallSize
+        for _ in range(6):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 20 * wallSize
+        obstacle_y = 13 * wallSize
+        for _ in range(6):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 17 * wallSize
+        obstacle_y = 19 * wallSize
+        for _ in range(3):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 13 * wallSize
+        obstacle_y = 13 * wallSize
+        for _ in range(3):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+            obstacle_x -= wallSize
+            
+        obstacle_x = 11 * wallSize
+        obstacle_y = 17 * wallSize
+        for _ in range(3):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+            obstacle_x += wallSize
+            
+        obstacle_x = 16 * wallSize
+        obstacle_y = 10 * wallSize
+        for _ in range(5):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y -= wallSize
+            obstacle_x -= wallSize
+            
+        obstacle_x = 17 * wallSize
+        obstacle_y = 9 * wallSize
+        for _ in range(4):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y -= wallSize
+            obstacle_x += wallSize
+            
+        obstacleList.append(Obstacle(12 * wallSize, 5 * wallSize)) 
+        obstacleList.append(Obstacle(20 * wallSize, 5 * wallSize))
+        obstacleList.append(Obstacle(12 * wallSize, 4 * wallSize))
+        obstacleList.append(Obstacle(13 * wallSize, 3 * wallSize))
+        obstacleList.append(Obstacle(14 * wallSize, 3 * wallSize))
+        obstacleList.append(Obstacle(18 * wallSize, 3 * wallSize))
+        obstacleList.append(Obstacle(19 * wallSize, 3 * wallSize))
+        obstacleList.append(Obstacle(20 * wallSize, 4 * wallSize))
+        obstacleList.append(Obstacle(8 * wallSize, 14 * wallSize))
+        obstacleList.append(Obstacle(8 * wallSize, 15 * wallSize))
+        obstacleList.append(Obstacle(6 * wallSize, 16 * wallSize))
+        obstacleList.append(Obstacle(7 * wallSize, 16 * wallSize))
+        
+        spawnPoint = (10 * wallSize, 10 * wallSize)
+        slotmachinePoint = (18 * wallSize, 16 * wallSize)
+        
+    elif level == [2, 'b', 3]:
         
         obstacle_x = 5 * wallSize
         obstacle_y = 5 * wallSize
         for _ in range(6):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_x += wallSize
-        
-        obstacle_x = 15 * wallSize
-        obstacle_y = 4 * wallSize
-        for _ in range(4):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
+
         obstacle_x = 14 * wallSize
         obstacle_y = 5 * wallSize
         for _ in range(6):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_x += wallSize
         
-        obstacle_x = 15 * wallSize
-        obstacle_y = 6 * wallSize
-        for _ in range(4):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
         obstacle_x = 12 * wallSize
         obstacle_y = 10 * wallSize
         for _ in range(2):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        obstacle_x = 11 * wallSize
-        obstacle_y = 14 * wallSize
-        for _ in range(3):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_x += wallSize
         
@@ -1708,369 +1911,11 @@ def obstacle_map():
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_x += wallSize
         
-        obstacle_x = 10 * wallSize
-        obstacle_y = 18 * wallSize
-        for _ in range(5):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
+        spawnPoint = (8 * wallSize, 11 * wallSize)
+        slotmachinePoint = (16 * wallSize, 11 * wallSize)
         
-        obstacle_x = 11 * wallSize
-        obstacle_y = 19 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        spawnPoint=(12 * wallSize, 3 * wallSize)
-    elif level == [2, 'b', 1]:
-        
-        obstacle_x = 8 * wallSize
-        obstacle_y = 8 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacle_x = 9 * wallSize
-        obstacle_y = 8 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacle_x = 13 * wallSize
-        obstacle_y = 8 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacle_x = 14 * wallSize
-        obstacle_y = 8 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacle_x = 11 * wallSize
-        obstacle_y = 8 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacle_x = 16 * wallSize
-        obstacle_y = 8 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        
-        obstacle_x = 9 * wallSize
-        obstacle_y = 7 * wallSize
-        for _ in range(2):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        obstacle_x = 14 * wallSize
-        obstacle_y = 7 * wallSize
-        for _ in range(2):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        obstacle_x = 11 * wallSize
-        obstacle_y = 12 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        obstacle_x = 10 * wallSize
-        obstacle_y = 14 * wallSize
-        for _ in range(5):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        
-        obstacle_x = 10 * wallSize
-        obstacle_y = 16 * wallSize
-        for _ in range(5):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        obstacle_x = 11 * wallSize
-        obstacle_y = 17 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-            
-        
-        obstacleList.append(Obstacle(8 * wallSize, 14 * wallSize))
-        obstacleList.append(Obstacle(9 * wallSize, 13* wallSize))
-        obstacleList.append(Obstacle(15 * wallSize, 13 * wallSize))
-        obstacleList.append(Obstacle(16 * wallSize, 14 * wallSize))
-        obstacleList.append(Obstacle(10 * wallSize, 15 * wallSize))
-        obstacleList.append(Obstacle(14 * wallSize, 15 * wallSize))
-        
-        spawnPoint=(12 * wallSize, 4 * wallSize)
-    elif level == [2, 'b', 2]:
-        
-        obstacle_x = 7 * wallSize
-        obstacle_y = 3 * wallSize
-        for _ in range(4):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        obstacle_x = 14 * wallSize
-        obstacle_y = 3 * wallSize
-        for _ in range(4):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        obstacleList.append(Obstacle(5 * wallSize, 4 * wallSize))
-        obstacleList.append(Obstacle(6 * wallSize, 4 * wallSize))
-        
-        obstacleList.append(Obstacle(18 * wallSize, 4 * wallSize))
-        obstacleList.append(Obstacle(19 * wallSize, 4 * wallSize))
-        
-        obstacleList.append(Obstacle(5 * wallSize, 18 * wallSize))
-        obstacleList.append(Obstacle(6 * wallSize, 18 * wallSize))
-        
-        obstacle_x = 7 * wallSize
-        obstacle_y = 19 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        obstacle_x = 15 * wallSize
-        obstacle_y = 19 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        obstacleList.append(Obstacle(18 * wallSize, 18 * wallSize))
-        obstacleList.append(Obstacle(19 * wallSize, 18 * wallSize))
-        
-        obstacle_x = 6 * wallSize
-        obstacle_y = 8 * wallSize
-        for _ in range(5):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        obstacle_x = 6 * wallSize
-        obstacle_y = 10 * wallSize
-        for _ in range(4):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        obstacle_x = 13 * wallSize
-        obstacle_y = 8 * wallSize
-        for _ in range(5):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        obstacle_x = 13 * wallSize
-        obstacle_y = 10 * wallSize
-        for _ in range(4):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        obstacleList.append(Obstacle(10 * wallSize, 11 * wallSize))
-        obstacleList.append(Obstacle(11 * wallSize, 11 * wallSize))
-        
-        obstacleList.append(Obstacle(17 * wallSize, 11 * wallSize))
-        obstacleList.append(Obstacle(18 * wallSize, 11 * wallSize))
-        
-        
-        obstacleList.append(Obstacle(11 * wallSize, 9 * wallSize))
-        obstacleList.append(Obstacle(11 * wallSize, 10 * wallSize))
-        
-        obstacleList.append(Obstacle(18 * wallSize, 9 * wallSize))
-        obstacleList.append(Obstacle(18 * wallSize, 10 * wallSize))
-        
-        obstacleList.append(Obstacle(5 * wallSize, 5 * wallSize))
-        
-        obstacle_x = 4 * wallSize
-        obstacle_y = 6 * wallSize
-        for _ in range(4):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacle_x = 4 * wallSize
-        obstacle_y = 13 * wallSize
-        for _ in range(4):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacleList.append(Obstacle(5 * wallSize, 17 * wallSize))
-        
-        obstacle_x = 6 * wallSize
-        obstacle_y = 14 * wallSize
-        for _ in range(1):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacleList.append(Obstacle(7 * wallSize, 14 * wallSize))
-        obstacleList.append(Obstacle(7 * wallSize, 15 * wallSize))
-        
-        obstacleList.append(Obstacle(8 * wallSize, 15 * wallSize))
-        obstacleList.append(Obstacle(8 * wallSize, 16 * wallSize))
-        
-        obstacleList.append(Obstacle(16 * wallSize, 15 * wallSize))
-        obstacleList.append(Obstacle(16 * wallSize, 16 * wallSize))
-        
-        obstacleList.append(Obstacle(17 * wallSize, 14 * wallSize))
-        obstacleList.append(Obstacle(17 * wallSize, 15 * wallSize))
-        
-        obstacle_x = 18 * wallSize
-        obstacle_y = 14 * wallSize
-        for _ in range(1):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacleList.append(Obstacle(19 * wallSize, 17 * wallSize))
-        
-        obstacle_x = 20 * wallSize
-        obstacle_y = 13 * wallSize
-        for _ in range(4):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        
-        obstacle_x = 20 * wallSize
-        obstacle_y = 6 * wallSize
-        for _ in range(4):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacleList.append(Obstacle(19 * wallSize, 5 * wallSize))
-        obstacleList.append(Obstacle(9 * wallSize, 16 * wallSize))
-        obstacleList.append(Obstacle(10 * wallSize, 16 * wallSize))
-        obstacleList.append(Obstacle(14 * wallSize, 16 * wallSize))
-        obstacleList.append(Obstacle(15 * wallSize, 16 * wallSize))
-        spawnPoint=(12 * wallSize, 5 * wallSize)
-    elif level == [2, 'b', 3]:
-        obstacle_x = 4 * wallSize
-        obstacle_y = 3 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        obstacle_x = 4 * wallSize
-        obstacle_y = 9 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        obstacle_x = 5 * wallSize
-        obstacle_y = 4 * wallSize
-        for _ in range(5):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacle_x = 4 * wallSize
-        obstacle_y = 13 * wallSize
-        for _ in range(4):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        obstacleList.append(Obstacle(6 * wallSize, 16 * wallSize))
-        obstacleList.append(Obstacle(7 * wallSize, 16 * wallSize))
-        
-        obstacle_x = 4 * wallSize
-        obstacle_y = 14 * wallSize
-        for _ in range(6):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacleList.append(Obstacle(8 * wallSize, 14 * wallSize))
-        obstacleList.append(Obstacle(8 * wallSize, 15 * wallSize))
-        
-        obstacle_x = 10 * wallSize
-        obstacle_y = 13 * wallSize
-        for _ in range(7):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacle_x = 16 * wallSize
-        obstacle_y = 13 * wallSize
-        for _ in range(6):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacle_x = 20 * wallSize
-        obstacle_y = 13 * wallSize
-        for _ in range(6):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacle_x = 17 * wallSize
-        obstacle_y = 19 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        obstacle_x = 13 * wallSize
-        obstacle_y = 13 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-            obstacle_x -= wallSize
-            
-        obstacle_x = 11 * wallSize
-        obstacle_y = 17 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-            obstacle_x += wallSize
-            
-        obstacle_x = 16 * wallSize
-        obstacle_y = 10 * wallSize
-        for _ in range(5):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y -= wallSize
-            obstacle_x -= wallSize
-            
-        obstacle_x = 17 * wallSize
-        obstacle_y = 9 * wallSize
-        for _ in range(4):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y -= wallSize
-            obstacle_x += wallSize
-            
-        obstacleList.append(Obstacle(12 * wallSize, 5 * wallSize))
-            
-        obstacleList.append(Obstacle(20 * wallSize, 5 * wallSize))
-            
-        obstacleList.append(Obstacle(12 * wallSize, 4 * wallSize))
-        obstacleList.append(Obstacle(13 * wallSize, 3 * wallSize))
-            
-        obstacleList.append(Obstacle(14 * wallSize, 3 * wallSize))
-        
-        obstacleList.append(Obstacle(18 * wallSize, 3 * wallSize))
-            
-        obstacleList.append(Obstacle(19 * wallSize, 3 * wallSize))
-        obstacleList.append(Obstacle(20 * wallSize, 4 * wallSize))
-        spawnPoint=(9 * wallSize, 8 * wallSize)
     elif level == [1, 'c', 1]:
-        obstacle_x = 6 * wallSize
-        obstacle_y = 3 * wallSize
-        for _ in range(17):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
         
-        obstacle_x = 18 * wallSize
-        obstacle_y = 3 * wallSize
-        for _ in range(17):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacle_x = 7 * wallSize
-        obstacle_y = 11 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        obstacle_x = 15 * wallSize
-        obstacle_y = 11 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-              
-    elif level == [1, 'c', 2]:
         obstacle_x = 12 * wallSize
         obstacle_y = 12 * wallSize
         for _ in range(7):
@@ -2115,128 +1960,162 @@ def obstacle_map():
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_y += wallSize
         
+        obstacle_x = 8 * wallSize
+        obstacle_y = 15 * wallSize
+        for _ in range(7):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 16 * wallSize
+        obstacle_y = 15 * wallSize
+        for _ in range(7):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 5 * wallSize
+        obstacle_y = 15 * wallSize
+        for _ in range(3):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 17 * wallSize
+        obstacle_y = 15 * wallSize
+        for _ in range(3):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
         obstacleList.append(Obstacle(4 * wallSize, 6 * wallSize))
         obstacleList.append(Obstacle(4 * wallSize, 8 * wallSize))
         obstacleList.append(Obstacle(6 * wallSize, 4 * wallSize))
         obstacleList.append(Obstacle(8 * wallSize, 4 * wallSize))
-        
         obstacleList.append(Obstacle(20 * wallSize, 6 * wallSize))
         obstacleList.append(Obstacle(20 * wallSize, 8 * wallSize))
         obstacleList.append(Obstacle(16 * wallSize, 4 * wallSize))
         obstacleList.append(Obstacle(18 * wallSize, 4 * wallSize))
-        spawnPoint=(12 * wallSize, 6 * wallSize)
+        
+        spawnPoint = (6 * wallSize, 17 * wallSize)
+        slotmachinePoint = (18 * wallSize, 17 * wallSize)
+        
+    elif level == [1, 'c', 2]:
+        
+        obstacle_x = 5 * wallSize
+        obstacle_y = 4 * wallSize
+        for _ in range(4):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 10 * wallSize
+        obstacle_y = 4 * wallSize
+        for _ in range(4):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 15 * wallSize
+        obstacle_y = 4 * wallSize
+        for _ in range(4):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 5 * wallSize
+        obstacle_y = 14 * wallSize
+        for _ in range(4):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 10 * wallSize
+        obstacle_y = 14 * wallSize
+        for _ in range(4):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 15 * wallSize
+        obstacle_y = 14 * wallSize
+        for _ in range(4):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 9 * wallSize
+        obstacle_y = 11 * wallSize
+        for _ in range(3):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 14 * wallSize
+        obstacle_y = 11 * wallSize
+        for _ in range(3):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 4 * wallSize
+        obstacle_y = 5 * wallSize
+        for _ in range(3):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 9 * wallSize
+        obstacle_y = 5 * wallSize
+        for _ in range(3):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 14 * wallSize
+        obstacle_y = 5 * wallSize
+        for _ in range(3):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 19 * wallSize
+        obstacle_y = 5 * wallSize
+        for _ in range(3):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 4 * wallSize
+        obstacle_y = 11 * wallSize
+        for _ in range(3):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 19 * wallSize
+        obstacle_y = 11 * wallSize
+        for _ in range(3):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        spawnPoint = (16 * wallSize, 17 * wallSize)
+        slotmachinePoint = (8 * wallSize, 17 * wallSize)
+            
     elif level == [1, 'c', 3]:
         
-        obstacle_x = 5 * wallSize
-        obstacle_y = 7 * wallSize
-        for _ in range(4):
+        obstacle_x = 7 * wallSize
+        obstacle_y = 6 * wallSize
+        for _ in range(11):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
+            obstacle_y += wallSize
         
-        obstacle_x = 10 * wallSize
-        obstacle_y = 7 * wallSize
-        for _ in range(4):
+        obstacle_x = 17 * wallSize
+        obstacle_y = 6 * wallSize
+        for _ in range(11):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 7 * wallSize
+        obstacle_y = 11 * wallSize
+        for _ in range(3):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_x += wallSize
         
         obstacle_x = 15 * wallSize
-        obstacle_y = 7 * wallSize
-        for _ in range(4):
+        obstacle_y = 11 * wallSize
+        for _ in range(2):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_x += wallSize
+         
+        spawnPoint = (12 * wallSize, 5 * wallSize)
+        slotmachinePoint = (12 * wallSize, 16 * wallSize)
         
-        obstacle_x = 6 * wallSize
-        obstacle_y = 14 * wallSize
-        for _ in range(4):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        obstacle_x = 11 * wallSize
-        obstacle_y = 14 * wallSize
-        for _ in range(4):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        obstacle_x = 16 * wallSize
-        obstacle_y = 14 * wallSize
-        for _ in range(4):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
-        
-        
-        obstacle_x = 10 * wallSize
-        obstacle_y = 11 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacle_x = 15 * wallSize
-        obstacle_y = 11 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacle_x = 4 * wallSize
-        obstacle_y = 4 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacle_x = 9 * wallSize
-        obstacle_y = 4 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacle_x = 14 * wallSize
-        obstacle_y = 4 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacle_x = 19 * wallSize
-        obstacle_y = 4 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacle_x = 5 * wallSize
-        obstacle_y = 11 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacle_x = 20 * wallSize
-        obstacle_y = 11 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacle_x = 4 * wallSize
-        obstacle_y = 19 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacle_x = 9 * wallSize
-        obstacle_y = 19 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacle_x = 14 * wallSize
-        obstacle_y = 19 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        
-        obstacle_x = 19 * wallSize
-        obstacle_y = 19 * wallSize
-        for _ in range(3):
-            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
-        spawnPoint=(12 * wallSize, 5 * wallSize)    
     elif level == [2, 'c', 1]:
+        
         obstacle_x = 5 * wallSize
         obstacle_y = 4 * wallSize
         for _ in range(15):
@@ -2284,9 +2163,12 @@ def obstacle_map():
         for _ in range(2):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_x += wallSize
-        spawnPoint=(3 * wallSize, 3 * wallSize)
+        
+        spawnPoint = (13 * wallSize, 10 * wallSize)
+        slotmachinePoint = (11 * wallSize, 12 * wallSize)
         
     elif level == [2, 'c', 2]:
+        
         obstacle_x = 5 * wallSize
         obstacle_y = 3 * wallSize
         for _ in range(5):
@@ -2393,7 +2275,6 @@ def obstacle_map():
         
         obstacleList.append(Obstacle(4 * wallSize, 16 * wallSize))
         obstacleList.append(Obstacle(6 * wallSize, 16 * wallSize))
-        
         obstacleList.append(Obstacle(9 * wallSize, 17 * wallSize))
         obstacleList.append(Obstacle(10 * wallSize, 17 * wallSize))
         obstacleList.append(Obstacle(14 * wallSize, 17 * wallSize))
@@ -2401,62 +2282,95 @@ def obstacle_map():
         obstacleList.append(Obstacle(19 * wallSize, 17 * wallSize))
         obstacleList.append(Obstacle(20 * wallSize, 17 * wallSize))
         
-        spawnPoint=(12 * wallSize, 8 * wallSize)
-    
+        spawnPoint = (10 * wallSize, 8 * wallSize)
+        slotmachinePoint = (10 * wallSize, 13 * wallSize)
+        
     elif level == [2, 'c', 3]:
-        obstacle_x = 4 * wallSize
-        obstacle_y = 7 * wallSize
-        for _ in range(13):
+        
+        obstacle_x = 8 * wallSize
+        obstacle_y = 8 * wallSize
+        for _ in range(3):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_y += wallSize
         
-        obstacle_x = 6 * wallSize
-        obstacle_y = 17 * wallSize
-        for _ in range(5):
+        obstacle_x = 9 * wallSize
+        obstacle_y = 8 * wallSize
+        for _ in range(3):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_x += wallSize
+            obstacle_y += wallSize
         
-        obstacle_x = 12 * wallSize
-        obstacle_y = 16 * wallSize
-        for _ in range(4):
+        obstacle_x = 13 * wallSize
+        obstacle_y = 8 * wallSize
+        for _ in range(3):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_y += wallSize
         
         obstacle_x = 14 * wallSize
-        obstacle_y = 5 * wallSize
+        obstacle_y = 8 * wallSize
+        for _ in range(3):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 11 * wallSize
+        obstacle_y = 8 * wallSize
+        for _ in range(3):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 16 * wallSize
+        obstacle_y = 8 * wallSize
+        for _ in range(3):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 9 * wallSize
+        obstacle_y = 7 * wallSize
+        for _ in range(2):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 14 * wallSize
+        obstacle_y = 7 * wallSize
+        for _ in range(2):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 11 * wallSize
+        obstacle_y = 12 * wallSize
+        for _ in range(3):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 10 * wallSize
+        obstacle_y = 14 * wallSize
         for _ in range(5):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
             obstacle_x += wallSize
         
-        obstacle_x = 20 * wallSize
-        obstacle_y = 7 * wallSize
-        for _ in range(13):
+        obstacle_x = 10 * wallSize
+        obstacle_y = 16 * wallSize
+        for _ in range(5):
             obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-            obstacle_y += wallSize
+            obstacle_x += wallSize
         
-        obstacleList.append(Obstacle(5 * wallSize, 6 * wallSize))
-        obstacleList.append(Obstacle(6 * wallSize, 5 * wallSize))
+        obstacle_x = 11 * wallSize
+        obstacle_y = 17 * wallSize
+        for _ in range(3):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+            
+        obstacleList.append(Obstacle(8 * wallSize, 14 * wallSize))
+        obstacleList.append(Obstacle(9 * wallSize, 13* wallSize))
+        obstacleList.append(Obstacle(15 * wallSize, 13 * wallSize))
+        obstacleList.append(Obstacle(16 * wallSize, 14 * wallSize))
+        obstacleList.append(Obstacle(10 * wallSize, 15 * wallSize))
+        obstacleList.append(Obstacle(14 * wallSize, 15 * wallSize))
         
-        obstacleList.append(Obstacle(10 * wallSize, 5 * wallSize))
-        obstacleList.append(Obstacle(11 * wallSize, 6 * wallSize))
-        obstacleList.append(Obstacle(12 * wallSize, 7 * wallSize))
-        obstacleList.append(Obstacle(13 * wallSize, 6 * wallSize))
-        obstacleList.append(Obstacle(19 * wallSize, 6 * wallSize))
+        spawnPoint = (12 * wallSize, 4 * wallSize)
+        slotmachinePoint = (12 * wallSize, 19 * wallSize)
         
-        obstacleList.append(Obstacle(5 * wallSize, 18 * wallSize))
-        obstacleList.append(Obstacle(11 * wallSize, 18 * wallSize))
-        obstacleList.append(Obstacle(13 * wallSize, 18 * wallSize))
-        obstacleList.append(Obstacle(12 * wallSize, 9 * wallSize))
-        
-        obstacleList.append(Obstacle(12 * wallSize, 12 * wallSize))
-        obstacleList.append(Obstacle(12 * wallSize, 13 * wallSize))
-        
-        obstacleList.append(Obstacle(14 * wallSize, 17 * wallSize))
-        
-        obstacleList.append(Obstacle(18 * wallSize, 17 * wallSize))
-        obstacleList.append(Obstacle(19 * wallSize, 18 * wallSize))
-        spawnPoint=(8 * wallSize, 10 * wallSize)
     elif level == [0, 'cb', 12340]:
+        
         obstacle_x = 4 * wallSize
         obstacle_y = 3 * wallSize
         for _ in range(6):
@@ -2557,7 +2471,62 @@ def obstacle_map():
         obstacleList.append(Obstacle(19 * wallSize, 19 * wallSize))
         obstacleList.append(Obstacle(8 * wallSize, 19 * wallSize))
         obstacleList.append(Obstacle(9 * wallSize, 19 * wallSize))
-        spawnPoint=(12 * wallSize, 11 * wallSize)
+        
+        spawnPoint = (12 * wallSize, 4 * wallSize)
+        slotmachinePoint = (12 * wallSize, 19 * wallSize)
+        
+    elif level == [3, 'x', 0]:
+        
+        obstacle_x = 4 * wallSize
+        obstacle_y = 7 * wallSize
+        for _ in range(13):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 6 * wallSize
+        obstacle_y = 17 * wallSize
+        for _ in range(5):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 12 * wallSize
+        obstacle_y = 16 * wallSize
+        for _ in range(4):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacle_x = 14 * wallSize
+        obstacle_y = 5 * wallSize
+        for _ in range(5):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_x += wallSize
+        
+        obstacle_x = 20 * wallSize
+        obstacle_y = 7 * wallSize
+        for _ in range(13):
+            obstacleList.append(Obstacle(obstacle_x, obstacle_y))
+            obstacle_y += wallSize
+        
+        obstacleList.append(Obstacle(5 * wallSize, 6 * wallSize))
+        obstacleList.append(Obstacle(6 * wallSize, 5 * wallSize))
+        obstacleList.append(Obstacle(10 * wallSize, 5 * wallSize))
+        obstacleList.append(Obstacle(11 * wallSize, 6 * wallSize))
+        obstacleList.append(Obstacle(12 * wallSize, 7 * wallSize))
+        obstacleList.append(Obstacle(13 * wallSize, 6 * wallSize))
+        obstacleList.append(Obstacle(19 * wallSize, 6 * wallSize))
+        obstacleList.append(Obstacle(5 * wallSize, 18 * wallSize))
+        obstacleList.append(Obstacle(11 * wallSize, 18 * wallSize))
+        obstacleList.append(Obstacle(13 * wallSize, 18 * wallSize))
+        obstacleList.append(Obstacle(12 * wallSize, 9 * wallSize))
+        obstacleList.append(Obstacle(12 * wallSize, 12 * wallSize))
+        obstacleList.append(Obstacle(12 * wallSize, 13 * wallSize))
+        obstacleList.append(Obstacle(14 * wallSize, 17 * wallSize))
+        obstacleList.append(Obstacle(18 * wallSize, 17 * wallSize))
+        obstacleList.append(Obstacle(19 * wallSize, 18 * wallSize))
+        
+        spawnPoint = (8 * wallSize, 10 * wallSize)
+        slotmachinePoimt = (12 * wallSize, 11 * wallSize)
+
 read_data()
 
 player = Knight()   # 默认一个先，实际是会调整的
