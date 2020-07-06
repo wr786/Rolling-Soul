@@ -678,8 +678,9 @@ def slotmachine_create(x, y):
 
 # 老虎机加载
 def slotmachine_play():
-    global slotmachineFlag
+    global slotmachineFlag, curButton
     slotmachineFlag = 4
+    curButton = None
 
 # 老虎机抽奖
 def slotmachine_choice():
