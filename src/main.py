@@ -46,7 +46,8 @@ vFlag = 0
 hFlag = 0
 frameCnt = 0
 # moveSpan = 4
-moveSpan = 8
+MOVESPAN = 8
+moveSpan = MOVESPAN
 enemyMoveFlag = [0]*12 #优化怪物行走方式
 enemyMoveCnt = 0 #不同数字代表不同怪物
 enemyMoveDirection = [random.randint(0, 360)]*12 
@@ -299,6 +300,7 @@ class Player:   # 基类，用于写一些共同点
         self.skillLastTime_MAX = skillLastTimeMax
         self.skillLastTime = 0
         self.skillEffect = Actor('effect_skill_1')
+        self.weaponCD_recoverSpeed = 1
 
     def is_skill_ready(self):
         return self.skillCD == 0
@@ -372,7 +374,7 @@ class Player:   # 基类，用于写一些共同点
             awardWeapon = _tmpWeapon
 
     def update(self):   # 进行一些数值的更新，包括但不限于武器cd、护盾
-        self.weapon.cd -= 1
+        self.weapon.cd -= self.weaponCD_recoverSpeed
         if self.armorCD == self.armorCD_MAX:
             self.armor += 1
             self.armor = min(self.armor, self.armor_MAX)
@@ -449,11 +451,11 @@ class Knight(Player):
                 self.actor.image = "knight_ltwalk"
 
     def skill_recover(self):    # 取消技能所给状态
-        self.weapon.cd_MAX *= 2
+        self.weaponCD_recoverSpeed = 1
 
     def skill_emit(self):
         self.skillCD = self.skillCD_MAX
-        self.weapon.cd_MAX *= 0.5
+        self.weaponCD_recoverSpeed = 2
         self.skillLastTime = 6 * 60
         clock.schedule(self.skill_recover, 6)
 
@@ -497,12 +499,12 @@ class Assassin(Player):
 
     def skill_recover(self):    # 取消技能所给状态
         global moveSpan
-        moveSpan /= 2
+        moveSpan = MOVESPAN
 
     def skill_emit(self):
         global moveSpan
         self.skillCD = self.skillCD_MAX
-        moveSpan *= 2
+        moveSpan = 2 * MOVESPAN
         self.skillLastTime = 6 * 60
         clock.schedule(self.skill_recover, 6)
 
@@ -820,6 +822,8 @@ def clear_level_data():
     slotmachineCnt = 0
     awardFlag = ''
     awardWeapon = None
+    global moveSpan
+    moveSpan = MOVESPAN
 
 def next_level():   # 进入下一关
     #todo 这里可能要加入更复杂的逻辑（如果要错线的话
