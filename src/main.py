@@ -129,7 +129,7 @@ def sgn(x): # 判断数字的符号，简单函数就直接缩写了
 
 class Button:   # 按钮
 
-    def __init__(self, doubleButton, caption1='', caption2=''): # doubleButton是Boolean值
+    def __init__(self, doubleButton, caption1='', caption2='', posy=6*barHeight): # doubleButton是Boolean值
         self.isDouble = doubleButton
         self.caption1 = caption1
         self.caption2 = caption2
@@ -137,11 +137,11 @@ class Button:   # 按钮
         if self.isDouble:
             self.actorOK = Actor('choose_bar_2')
             self.actorNO = Actor('choose_bar_2')
-            self.actorOK.topleft = (WIDTH - barWidth, 6 * barHeight)
-            self.actorNO.topleft = (WIDTH - barWidth / 2, 6 * barHeight)
+            self.actorOK.topleft = (WIDTH - barWidth, posy)
+            self.actorNO.topleft = (WIDTH - barWidth / 2, posy)
         else:
             self.actor = Actor('choose_bar_1')
-            self.actor.topleft = (WIDTH - barWidth, 6 * barHeight)
+            self.actor.topleft = (WIDTH - barWidth, posy)
 
     def detect(self, pos):
         if self.isDouble:
