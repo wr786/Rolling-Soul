@@ -1112,31 +1112,33 @@ def on_mouse_down(pos, button):
                 pass  # todo 这里加上如果点击在某个范围内，就怎样怎样
         elif button == mouse.RIGHT:
             player.swap_weapon()
-    elif settingChoose == 1 and button == mouse.LEFT:
-        if pauseButton.detect(pos) == "OK": # 点击继续
-            settingChoose = 0
-        elif volumeButton.detect(pos) == "OK": # 点击音量键
-            settingChoose = 2
-        elif keyintroButton.detect(pos) == "OK": # 点击按键说明
-            settingChoose = 3
-        elif homeButton.detect(pos) == "OK": # 点击home键
-            settingChoose = 0
-            roleChoose = 0
-            clear_level_data()
-    elif settingChoose == 2 and button == mouse.LEFT:
-        if volumeButtonDown.detect(pos) == "OK" and volumeCnt > 0:
-            volumeCnt -= 1
-        elif volumeButtonUp.detect(pos) == "OK" and volumeCnt < 10:
-            volumeCnt += 1
-        elif pos[0] < 0.5 * WIDTH - barHeight - 5 * unitWidth or pos[0] > 0.5 * WIDTH + barHeight + 5 * unitWidth or pos[1] < 0.5 * HEIGHT - 0.5 * barHeight or pos[1] > 0.5 * HEIGHT + 0.5 * barHeight:
+    elif settingChoose == 1:
+        if button == mouse.LEFT:
+            if pauseButton.detect(pos) == "OK": # 点击继续
+                settingChoose = 0
+            elif volumeButton.detect(pos) == "OK": # 点击音量键
+                settingChoose = 2
+            elif keyintroButton.detect(pos) == "OK": # 点击按键说明
+                settingChoose = 3
+            elif homeButton.detect(pos) == "OK": # 点击home键
+                settingChoose = 0
+                roleChoose = 0
+                clear_level_data()
+    elif settingChoose == 2:
+        if button == mouse.LEFT:
+            if volumeButtonDown.detect(pos) == "OK" and volumeCnt > 0:
+                volumeCnt -= 1
+            elif volumeButtonUp.detect(pos) == "OK" and volumeCnt < 10:
+                volumeCnt += 1
+            elif pos[0] < 0.5 * WIDTH - barHeight - 5 * unitWidth or pos[0] > 0.5 * WIDTH + barHeight + 5 * unitWidth or pos[1] < 0.5 * HEIGHT - 0.5 * barHeight or pos[1] > 0.5 * HEIGHT + 0.5 * barHeight:
+                settingChoose = 1
+    elif settingChoose == 3:
+        if button == mouse.LEFT:
             settingChoose = 1
-    elif settingChoose == 3 and button == mouse.LEFT:
-        settingChoose = 1
 
 
 def on_key_down(key):
-    global hFlag
-    global vFlag
+    global hFlag, vFlag, settingChoose
     if player.hp > 0:
         if key == key.A:
             hFlag -= 1
@@ -1149,6 +1151,11 @@ def on_key_down(key):
         if key == key.SPACE:
             if player.is_skill_ready():
                 player.skill_emit()
+        if key == key.ESCAPE:
+            if settingChoose == 0:
+                settingChoose = 1
+            else:
+                settingChoose = 0
 
 def on_key_up(key):
     global hFlag
