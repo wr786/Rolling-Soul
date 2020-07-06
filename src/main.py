@@ -194,8 +194,10 @@ class Bullet:
             return False
         # 判断障碍物
         for _obstacle in obstacleList:
-            if self.actor.colliderect(_obstacle.actor):
+            if _obstacle.actor.collidepoint(self.actor.center): # 优化子弹撞墙体验
                 return False
+            # if self.actor.colliderect(_obstacle.actor):
+            #     return False
         # 判断命中
         if friendly:    # 是玩家射出的命中了敌人
             for _enemy in enemyList:
@@ -256,7 +258,7 @@ class Weapon:
 
     def shoot(self, pos):   
         if self.cd <= 0 and player.mp >= self.cost:
-            playerBulletList.append(Bullet(self.bulletType, self.actor.topright, pos, self.bulletSpeed, self.atk))
+            playerBulletList.append(Bullet(self.bulletType, (self.actor.center[0], self.actor.top - heroHeight / 4), pos, self.bulletSpeed, self.atk))
             sounds.gun.play()
             self.cd = self.cd_MAX
             player.mp -= self.cost # 只有玩家会使用Weapon类，所以直接减少玩家的mp
