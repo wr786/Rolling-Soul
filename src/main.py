@@ -274,7 +274,8 @@ class Weapon:
 
     def shoot(self, pos):   
         if self.cd <= 0 and player.mp >= self.cost:
-            playerBulletList.append(Bullet(self.bulletType, (self.actor.center[0] + wallSize / 4 * (-1 if self.actor.pos[0] > WIDTH / 2 else 1), self.actor.top - heroHeight / 4), pos, self.bulletSpeed, self.atk))
+            # playerBulletList.append(Bullet(self.bulletType, (self.actor.center[0] + wallSize / 4 * (-1 if self.actor.pos[0] > WIDTH / 2 else 1), self.actor.top - heroHeight / 4), pos, self.bulletSpeed, self.atk))
+            playerBulletList.append(Bullet(self.bulletType, (self.actor.right - wallSize / 4 if 'rt' in self.actor.image else self.actor.left + wallSize / 4, self.actor.top - heroHeight / 4), pos, self.bulletSpeed, self.atk))
             sounds.gun.play()
             self.cd = self.cd_MAX
             player.mp -= self.cost # 只有玩家会使用Weapon类，所以直接减少玩家的mp
