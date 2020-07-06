@@ -2,6 +2,7 @@ import pgzrun
 import random
 from random import randint
 from math import *
+from PIL import Image
 import os
 
 ###########################################################################################
@@ -85,9 +86,11 @@ levelEnemyList = {}
 weaponData = {} # key为武器名<rarity>_<name>, value为(atkRange, cost, cd, bulletSpeed)
 WEAPON_CD_STD = 50
 WEAPON_BULLET_SPEED_STD = 20
-# ENEMY_SPEED_STD = wallSize * 1.5
 ENEMY_SPEED_STD = wallSize * 1.5
 enemyData = {}  # key为敌人名，value为(HP, cd, walkSpeed, bulletData)
+
+# 动画效果相关
+skillCD_cover = Actor('skill_ready_backup')
 
 ##########################################################################################
 
@@ -816,6 +819,19 @@ def start_view():
     screen.draw.text("Max Armor:4", center=(0.75 * WIDTH, 0.5 * HEIGHT + 2.3 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="grey40")
     screen.draw.text("Max Power:200", center=(0.75 * WIDTH, 0.5 * HEIGHT + 2.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="blue")
 
+# 裁剪技能条，使技能条看起来是动态的
+def generate_skillCD_png():
+    _skillreadyImg = Image.open('./images/skill_ready_backup.png')
+    _width, _height = _skillreadyImg.size
+    _borderHeight = 20
+    cuttedHeight = min((_height - 2*_borderHeight) * player.skillCD // player.skillCD_MAX, (_height - 2*_borderHeight) - 1)
+    # _cropped = _skillreadyImg.crop((0, _borderHeight+cuttedHeight, _width, _height-_borderHeight))
+    # _cropped.save(f'./images/skillcd/skill_ready_{30 * player.skillCD // player.skillCD_MAX}.png')
+
+    skillCD_cover.image = f'skillcd/skill_ready_{30 * player.skillCD // player.skillCD_MAX}'
+    # screen.blit('skill_ready', (WIDTH - 0.5 * barWidth - 0.5 * barHeight, 7 * barHeight + cuttedHeight))
+    skillCD_cover.bottomleft = (WIDTH - 0.5 * barWidth - 0.5 * barHeight, 7 * barHeight + _height - _borderHeight)
+
 def update():
     global hFlag
     global vFlag
@@ -878,15 +894,17 @@ def draw_bar():
     screen.blit("talk_bar", (WIDTH - barWidth, 3 * barHeight))
     # CD显示
     if player.skillCD == 0:
-        screen.blit("skill_ready", (WIDTH - 0.5 * barWidth - 0.5 * barHeight, 7 * barHeight))
+        screen.blit("skill_ready_backup", (WIDTH - 0.5 * barWidth - 0.5 * barHeight, 7 * barHeight))
     else:
         screen.blit("skill_loading", (WIDTH - 0.5 * barWidth - 0.5 * barHeight, 7 * barHeight))
-        if player.skillCD / 60 >= 1:
-            screen.draw.text(f"{player.skillCD / 60 * 10 // 10}", center=(WIDTH - 0.5 * barWidth, 7.5 * barHeight),
-                             fontsize=50, color="green")
-        else:
-            screen.draw.text(f"{round(player.skillCD / 60, 1)}", center=(WIDTH - 0.5 * barWidth, 7.5 * barHeight),
-                             fontsize=50, color="green")
+        cuttedHeight = generate_skillCD_png()
+        skillCD_cover.draw()
+        # if player.skillCD / 60 >= 1:
+        #     screen.draw.text(f"{player.skillCD / 60 * 10 // 10}", center=(WIDTH - 0.5 * barWidth, 7.5 * barHeight),
+        #                      fontsize=50, color="green")
+        # else:
+        #     screen.draw.text(f"{round(player.skillCD / 60, 1)}", center=(WIDTH - 0.5 * barWidth, 7.5 * barHeight),
+        #                      fontsize=50, color="green")
 # todo 这里的字体可以换一个更适合的
 
 # 画按钮
