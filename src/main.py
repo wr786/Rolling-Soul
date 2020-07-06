@@ -1149,7 +1149,7 @@ def on_key_down(key):
         if key == key.W:
             vFlag -= 1
         if key == key.SPACE:
-            if player.is_skill_ready():
+            if player.is_skill_ready() and not settingChoose:
                 player.skill_emit()
         if key == key.ESCAPE:
             if settingChoose == 0:
