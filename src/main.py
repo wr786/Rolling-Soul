@@ -264,6 +264,7 @@ class Player:   # 基类，用于写一些共同点
 
     def __init__(self, weaponName, hpMax, armorMax, skillCDMax):
         self.weapon = Weapon(weaponName)
+        self.weapon2 = None
         self.hp_MAX = hpMax
         self.hp = hpMax
         self.armor_MAX = armorMax
@@ -326,8 +327,21 @@ class Player:   # 基类，用于写一些共同点
         if vFlag != 0:
             self.up_down()
 
+    def swap_weapon(self):
+        if self.weapon2:
+            _tmpWeapon = self.weapon
+            self.weapon = self.weapon2
+            self.weapon2 = _tmpWeapon    
+
     def change_weapon(self, _weapon):
+        global awardWeapon
+        _tmpWeapon = self.weapon
         self.weapon = _weapon
+        if not self.weapon2:
+            self.weapon2 = _tmpWeapon
+            awardWeapon = None
+        else:
+            awardWeapon = _tmpWeapon
 
     def update(self):   # 进行一些数值的更新，包括但不限于武器cd、护盾
         self.weapon.cd -= 1
@@ -342,11 +356,11 @@ class Player:   # 基类，用于写一些共同点
         self.skillCD -= 1
         self.skillCD = max(self.skillCD, 0)
         if self.mpRecoverCD == self.mpRecoverCD_MAX:
-        	self.mp += 1
-        	self.mp = min(self.mp, self.mp_MAX)
-        	self.mpRecoverCD = 0
+            self.mp += 1
+            self.mp = min(self.mp, self.mp_MAX)
+            self.mpRecoverCD = 0
         else:
-        	self.mpRecoverCD += 1
+            self.mpRecoverCD += 1
 
     def get_damage(self, damage=1):
         if self.immuneTime: # 免疫伤害的时间
@@ -609,23 +623,23 @@ def get_death():
 
 # 生成传送门
 def portal_create(x, y):
-	global curButton
-	global chatchoose
-	if 0 <= portalFrameCnt < 20:
-		screen.blit("portal_01", (x - 0.5 * portalWidth, y - 0.5 * portalHeight))
-	elif 20 <= portalFrameCnt < 40:
-		screen.blit("portal_02", (x - 0.5 * portalWidth, y - 0.5 * portalHeight))
-	elif 40 <= portalFrameCnt < 60:
-		screen.blit("portal_03", (x - 0.5 * portalWidth, y - 0.5 * portalHeight))
-	if x - 0.5 * portalWidth - player.actor.width <= player.actor.left <= x + 0.5 * portalWidth and y - 0.5 * portalHeight - player.actor.height <= player.actor.top <= y + 0.5 * portalHeight:
-		screen.draw.text(f"It's a PORTAL!\nLet's go into it!", center=(WIDTH - 0.5 * barWidth, 4.5 * barHeight),
-						 fontname="hanyinuomituan")
-		chatchoose = 1
-		curButton = Button(False, "GO!")
-	else:	# 离开传送门，重新设置
-		if chatchoose == 1:
-			chatchoose = 0
-			curButton = None
+    global curButton
+    global chatchoose
+    if 0 <= portalFrameCnt < 20:
+       screen.blit("portal_01", (x - 0.5 * portalWidth, y - 0.5 * portalHeight))
+    elif 20 <= portalFrameCnt < 40:
+       screen.blit("portal_02", (x - 0.5 * portalWidth, y - 0.5 * portalHeight))
+    elif 40 <= portalFrameCnt < 60:
+       screen.blit("portal_03", (x - 0.5 * portalWidth, y - 0.5 * portalHeight))
+    if x - 0.5 * portalWidth - player.actor.width <= player.actor.left <= x + 0.5 * portalWidth and y - 0.5 * portalHeight - player.actor.height <= player.actor.top <= y + 0.5 * portalHeight:
+       screen.draw.text(f"It's a PORTAL!\nLet's go into it!", center=(WIDTH - 0.5 * barWidth, 4.5 * barHeight),
+                  fontname="hanyinuomituan")
+       chatchoose = 1
+       curButton = Button(False, "GO!")
+    else:  # 离开传送门，重新设置
+       if chatchoose == 1:
+         chatchoose = 0
+         curButton = None
 
 
 # 生成老虎机
@@ -689,8 +703,6 @@ def slotmachine_award():
         slotmachineFlag = 5
 # todo 武器奖励部分暂时这样写，以后有拾取武器了再改
 
-
-
 # 随机画地图背景
 def draw_map():
     global floorcnt
@@ -720,36 +732,36 @@ def generate_map_cells():
 
 # 清除关卡数据，为进入下一关做准备
 def clear_level_data():
-	global vFlag, hFlag, frameCnt, initialFlag, curButton
-	curButton = None
-	vFlag = hFlag = frameCnt = 0
-	initialFlag = False
-	global floors, walls
-	floors = {}
-	walls = {}
-	global enemyMoveFlag, enemyMoveCnt, chatchoose
-	enemyMoveFlag = [0]*12 
-	enemyMoveCnt = 0
-	chatchoose = 0
-	global playerBulletList, enemyBulletList, enemyList, obstacleList
-	obstacleList = []
-	playerBulletList = []
-	enemyBulletList = []
-	enemyList = []
-	music.stop()
-	global slotmachineFlag, slotmachineCnt, awardFlag, awardWeapon
-	slotmachineFlag = 0
-	slotmachineCnt = 0
-	awardFlag = ''
-	awardWeapon = None
+    global vFlag, hFlag, frameCnt, initialFlag, curButton
+    curButton = None
+    vFlag = hFlag = frameCnt = 0
+    initialFlag = False
+    global floors, walls
+    floors = {}
+    walls = {}
+    global enemyMoveFlag, enemyMoveCnt, chatchoose
+    enemyMoveFlag = [0]*12 
+    enemyMoveCnt = 0
+    chatchoose = 0
+    global playerBulletList, enemyBulletList, enemyList, obstacleList
+    obstacleList = []
+    playerBulletList = []
+    enemyBulletList = []
+    enemyList = []
+    music.stop()
+    global slotmachineFlag, slotmachineCnt, awardFlag, awardWeapon
+    slotmachineFlag = 0
+    slotmachineCnt = 0
+    awardFlag = ''
+    awardWeapon = None
 
-def next_level():	# 进入下一关
-	#todo 这里可能要加入更复杂的逻辑（如果要错线的话
-	if level[2] == 3:
-		level[0] += 1
-		level[2] = 1
-	else:
-		level[2] += 1
+def next_level():   # 进入下一关
+    #todo 这里可能要加入更复杂的逻辑（如果要错线的话
+    if level[2] == 3:
+       level[0] += 1
+       level[2] = 1
+    else:
+       level[2] += 1
 
 
 # 人物选择
@@ -859,124 +871,129 @@ def draw_button():
         screen.draw.text(curButton.caption1, center=curButton.actor.center, fontname="hanyinuomituan")
 
 def draw():
-	global frameCnt, portalFrameCnt, initialFlag, slotmachineCnt
-	global awardFlag, awardWeapon
-	screen.clear()
+    global frameCnt, portalFrameCnt, initialFlag, slotmachineCnt
+    global awardFlag, awardWeapon
+    screen.clear()
 
-	draw_bar()
-	draw_button()		
+    draw_bar()
+    draw_button()        
 
-	if initialFlag:
-		draw_map()
-		for _obstacle in obstacleList:
-			_obstacle.actor.draw()
-		for _enemy in enemyList:
-			_enemy.actor.draw()
-		for _bullet in playerBulletList:
-			_bullet.actor.draw()
-		for _bullet in enemyBulletList:
-			_bullet.actor.draw()
+    if initialFlag:
+        draw_map()
+        for _obstacle in obstacleList:
+            _obstacle.actor.draw()
+        for _enemy in enemyList:
+            _enemy.actor.draw()
+        for _bullet in playerBulletList:
+            _bullet.actor.draw()
+        for _bullet in enemyBulletList:
+            _bullet.actor.draw()
 
-	# 关卡信息初始化
-	global roleChoose, level
-	if roleChoose == 0: # 选择人物
-		start_view()
-	else:
-		if not music.is_playing(f'bgm_{level[0]}{level[1]}'):	# 用bgm有没有播放就可以判断是否初始化过关卡了
-			music.play(f'bgm_{level[0]}{level[1]}')
-			music.set_volume(0.1)
-			generate_map_cells()
-			obstacle_map()
-			if level[0] == 1:
-				if level[2] == 1:
-					enemyNum = [3, 3, 0, 0]
-				elif level[2] == 2:
-					enemyNum = [4, 3, 1, 0]
-				elif level[2] == 3:
-					enemyNum = [0, 0, 1, 1]
-			elif level[0] == 2:
-				if level[2] == 1:
-					enemyNum = [5, 4, 1, 0]
-				elif level[2] == 2:
-					enemyNum = [5, 4, 2, 0]
-				elif level[2] == 3:
-					enemyNum = [0, 0, 2, 1]
-			else:
-				pass	# 这之后继续写后续关卡的参数
-			for enemyMinorType in range(1, 5):
-					for _ in range(enemyNum[enemyMinorType - 1]):
-						enemyList.append(Enemy(levelEnemyList[(level[0], level[1], enemyMinorType)]	))  # 这里的'a'后续要更换成根据人物变化
-			initialFlag = True
-			player.actor.center = spawnPoint
-		else:
-			if not enemyList:  # 敌人打完了
-				portal_create(*spawnPoint)
-				slotmachine_create(0.5 * wallnum * wallSize, 0.2 * wallnum * wallSize)
-				if slotmachineFlag == 4:
-					slotmachineCnt += 1
-					slotmachine_choice()
-				if awardWeapon:
-					awardWeapon.actor.draw()
-		if awardFlag != '':	# 有武器
-			awardWeapon = Weapon(awardFlag, 0.5 * wallnum * wallSize, 0.2 * wallnum * wallSize)	# 这个位置随老虎机一起改
-			awardFlag = ''
+    # 关卡信息初始化
+    global roleChoose, level
+    if roleChoose == 0: # 选择人物
+        start_view()
+    else:
+        if not music.is_playing(f'bgm_{level[0]}{level[1]}'):    # 用bgm有没有播放就可以判断是否初始化过关卡了
+            music.play(f'bgm_{level[0]}{level[1]}')
+            music.set_volume(0.1)
+            generate_map_cells()
+            obstacle_map()
+            if level[0] == 1:
+                if level[2] == 1:
+                    enemyNum = [3, 3, 0, 0]
+                elif level[2] == 2:
+                    enemyNum = [4, 3, 1, 0]
+                elif level[2] == 3:
+                    enemyNum = [0, 0, 1, 1]
+            elif level[0] == 2:
+                if level[2] == 1:
+                    enemyNum = [5, 4, 1, 0]
+                elif level[2] == 2:
+                    enemyNum = [5, 4, 2, 0]
+                elif level[2] == 3:
+                    enemyNum = [0, 0, 2, 1]
+            else:
+                pass    # 这之后继续写后续关卡的参数
+            for enemyMinorType in range(1, 5):
+                    for _ in range(enemyNum[enemyMinorType - 1]):
+                        enemyList.append(Enemy(levelEnemyList[(level[0], level[1], enemyMinorType)]    ))  # 这里的'a'后续要更换成根据人物变化
+            initialFlag = True
+            player.actor.center = spawnPoint
+        else:
+            if not enemyList:  # 敌人打完了
+                portal_create(*spawnPoint)
+                slotmachine_create(0.5 * wallnum * wallSize, 0.2 * wallnum * wallSize)
+                if slotmachineFlag == 4:
+                    slotmachineCnt += 1
+                    slotmachine_choice()
+                if awardWeapon:
+                    awardWeapon.actor.draw()
+        if awardFlag != '':    # 有武器
+            awardWeapon = Weapon(awardFlag, 0.5 * wallnum * wallSize, 0.2 * wallnum * wallSize)    # 这个位置随老虎机一起改
+            awardFlag = ''
 
-		if player.immuneTime and player.immuneTime % 20 < 10:
-			pass	# 无敌时间，为了看得更直观加个pass、else
-		elif player.hp > 0:
-			player.actor.draw()
-			player.weapon.actor.draw()
-		if player.hp <= 0:
-			get_death()
-		frameCnt = frameCnt % 60 + 1
-		portalFrameCnt = portalFrameCnt % 60 + 1
+        if player.immuneTime and player.immuneTime % 20 < 10:
+            pass    # 无敌时间，为了看得更直观加个pass、else
+        elif player.hp > 0:
+            player.actor.draw()
+            player.weapon.actor.draw()
+        if player.hp <= 0:
+            get_death()
+        frameCnt = frameCnt % 60 + 1
+        portalFrameCnt = portalFrameCnt % 60 + 1
 
 # 处理武器跟随旋转
 def on_mouse_move(pos):
     player.weapon.rotate_to(pos)
+    if player.weapon2:
+        player.weapon2.rotate_to(pos)
 
 def on_mouse_down(pos, button):
-	#todo 这里应该加个判断，判断当前是否在战斗中
-	global player, level
-	global roleChoose, chatchoose
-	global awardWeapon
-	if roleChoose == 0 and button == mouse.LEFT:
-		choose_role(pos)
-		if roleChoose == 1:
-			player = Knight()
-			storyLine = 'a'
-		elif roleChoose == 2:
-			player = Assassin()
-			storyLine = 'b'
-		elif roleChoose == 3:
-			player = Paladin()
-			storyLine = 'c'
-		if roleChoose:
-			level = [1, storyLine, 1]
-	elif roleChoose == 4 and button == mouse.LEFT:  # 死亡后点击回到开始界面
-		roleChoose = 0
-		clear_level_data()
-	elif button == mouse.LEFT:
-		if chatchoose == 0:
-			# 用鼠标拾取武器
-			if awardWeapon and awardWeapon.actor.collidepoint(pos):
-				_tmpWeapon = player.weapon
-				player.change_weapon(awardWeapon)
-				awardWeapon = _tmpWeapon
-			else:
-				player.weapon.shoot(pos)
-		elif chatchoose == 1:	# 选择传送门
-			response = curButton.detect(pos)
-			if response == "OK":
-				clear_level_data()
-				next_level()
-		elif chatchoose == 998:  # 选择老虎机
-			response = curButton.detect(pos)
-			if response == "OK":
-				slotmachine_play()
-				chatchoose = 0
-		elif chatchoose == 2:
-			pass  # todo 这里加上如果点击在某个范围内，就怎样怎样
+    #todo 这里应该加个判断，判断当前是否在战斗中
+    global player, level
+    global roleChoose, chatchoose
+    global awardWeapon
+    if roleChoose == 0:
+        if button == mouse.LEFT:
+            choose_role(pos)
+            if roleChoose == 1:
+                player = Knight()
+                storyLine = 'a'
+            elif roleChoose == 2:
+                player = Assassin()
+                storyLine = 'b'
+            elif roleChoose == 3:
+                player = Paladin()
+                storyLine = 'c'
+            if roleChoose:
+                level = [1, storyLine, 1]
+    elif roleChoose == 4:  # 死亡后点击回到开始界面
+        if button == mouse.LEFT:
+            roleChoose = 0
+            clear_level_data()
+    else:
+        if button == mouse.LEFT:
+            if chatchoose == 0:
+                # 用鼠标拾取武器
+                if awardWeapon and awardWeapon.actor.collidepoint(pos) and player.actor.distance_to(awardWeapon.actor) <= 4 * wallSize:
+                    player.change_weapon(awardWeapon)
+                else:
+                    player.weapon.shoot(pos)
+            elif chatchoose == 1:    # 选择传送门
+                response = curButton.detect(pos)
+                if response == "OK":
+                    clear_level_data()
+                    next_level()
+            elif chatchoose == 998:  # 选择老虎机
+                response = curButton.detect(pos)
+                if response == "OK":
+                    slotmachine_play()
+                    chatchoose = 0
+            elif chatchoose == 2:
+                pass  # todo 这里加上如果点击在某个范围内，就怎样怎样
+        elif button == mouse.RIGHT:
+            player.swap_weapon()
 
 
 def on_key_down(key):
