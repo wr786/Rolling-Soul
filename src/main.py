@@ -57,6 +57,18 @@ chatchoose = 0 # 0表示没有对话的状态，数字为剧情的编号
 # 选项相关
 curButton = None    # 想让按钮不显示的话，记得重设为None
 
+# 设置相关
+pauseButton = None # 暂停按钮
+volumeButton = None # 音量按钮
+volumeButtonUp = None # 音量调大按钮
+volumeButtonDown = None # 音量调小按钮
+keyintroButton = None # 键位说明按钮
+homeButton = None # 返回开始界面按钮
+settingChoose = 0 # 设置状态标记
+volumeCnt = 5 # 音量大小
+unitWidth = 10
+unitHeight = 49
+
 # 传送门相关
 portalFrameCnt = 0
 portalWidth = 122
@@ -132,7 +144,7 @@ def sgn(x): # 判断数字的符号，简单函数就直接缩写了
 
 class Button:   # 按钮
 
-    def __init__(self, doubleButton, caption1='', caption2='', posy=6*barHeight): # doubleButton是Boolean值
+    def __init__(self, doubleButton, caption1='', caption2='', posx=WIDTH - barWidth, posy=6*barHeight, buttonPicture = 'choose_bar_1'): # doubleButton是Boolean值
         self.isDouble = doubleButton
         self.caption1 = caption1
         self.caption2 = caption2
@@ -140,11 +152,11 @@ class Button:   # 按钮
         if self.isDouble:
             self.actorOK = Actor('choose_bar_2')
             self.actorNO = Actor('choose_bar_2')
-            self.actorOK.topleft = (WIDTH - barWidth, posy)
-            self.actorNO.topleft = (WIDTH - barWidth / 2, posy)
+            self.actorOK.topleft = (posx, posy)
+            self.actorNO.topleft = (posx / 2, posy)
         else:
-            self.actor = Actor('choose_bar_1')
-            self.actor.topleft = (WIDTH - barWidth, posy)
+            self.actor = Actor(buttonPicture)
+            self.actor.topleft = (posx, posy)
 
     def detect(self, pos):
         if self.isDouble:
@@ -737,6 +749,27 @@ def slotmachine_award():
         slotmachineFlag = 5
 # todo 武器奖励部分暂时这样写，以后有拾取武器了再改
 
+# 设置界面产生
+def setting_create():
+    global settingChoose, pauseButton, volumeButton, keyintroButton, homeButton
+    pauseButton = Button(False, '', '', 0.5 * WIDTH - 1.5 * barHeight, 0.5 * HEIGHT - barHeight, "button_continue")
+    volumeButton = Button(False, '', '', 0.5 * WIDTH - 1.5 * barHeight, 0.5 * HEIGHT, "button_volume")
+    keyintroButton = Button(False, '', '', 0.5 * WIDTH + 0.5 * barHeight, 0.5 * HEIGHT, "button_key")
+    homeButton = Button(False, '', '', 0.5 * WIDTH - 0.5 * barHeight, 0.5 * HEIGHT, "button_home")
+
+# 音量调节界面
+def volume_control():
+    global volumeCnt, volumeButtonUp, volumeButtonDown
+    screen.blit("volume_bar", (0.5 * WIDTH - barHeight - 5 * unitWidth, 0.5 * HEIGHT - 0.5 * barHeight))
+    volumeButtonDown = Button(False, '', '', 0.5 * WIDTH - barHeight - 5 * unitWidth, 0.5 * HEIGHT - 0.5 * barHeight, "button_volumedown")
+    volumeButtonUp = Button(False, '', '', 0.5 * WIDTH + 5 * unitWidth, 0.5 * HEIGHT - 0.5 * barHeight, "button_volumeup")
+    if volumeCnt > 0:
+        for i in range(1, volumeCnt + 1):
+            screen.blit("button_volumeunit", (0.5 * WIDTH - 6 * unitWidth + i * unitWidth, 0.5 * HEIGHT - 0.5 * unitHeight))
+
+
+
+
 # 随机画地图背景
 def draw_map():
     global floorcnt
@@ -848,7 +881,7 @@ def update():
     global enemyMoveCnt
     enemyMoveCnt = 0
     # 移动处理
-    if player.hp > 0:
+    if player.hp > 0 and settingChoose == 0:
         player.walk()
         player.turn()
         player.update()
@@ -909,12 +942,11 @@ def draw_bar():
         screen.blit("skill_loading", (WIDTH - 0.5 * barWidth - 0.5 * barHeight, 7 * barHeight))
         generate_skillCD_png()
         skillCD_cover.draw()
-        # if player.skillCD / 60 >= 1:
-        #     screen.draw.text(f"{player.skillCD / 60 * 10 // 10}", center=(WIDTH - 0.5 * barWidth, 7.5 * barHeight),
-        #                      fontsize=50, color="green")
-        # else:
-        #     screen.draw.text(f"{round(player.skillCD / 60, 1)}", center=(WIDTH - 0.5 * barWidth, 7.5 * barHeight),
-        #                      fontsize=50, color="green")
+    # 画暂停按钮
+    global pauseButton
+    if settingChoose == 0:
+        pauseButton = Button(False, '', '', WIDTH - 1.5 * barHeight, HEIGHT - barHeight, "button_pause")
+
 # todo 这里的字体可以换一个更适合的
 
 # 画按钮
@@ -929,6 +961,17 @@ def draw_button():
     else:
         curButton.actor.draw()
         screen.draw.text(curButton.caption1, center=curButton.actor.center, fontname="hanyinuomituan")
+    if settingChoose == 0:
+        pauseButton.actor.draw()
+    elif settingChoose == 1:
+        pauseButton.actor.draw()
+        volumeButton.actor.draw()
+        keyintroButton.actor.draw()
+        homeButton.actor.draw()
+    elif settingChoose == 2:
+        volumeButtonDown.actor.draw()
+        volumeButtonUp.actor.draw()
+
 
 def draw():
     global frameCnt, portalFrameCnt, initialFlag, slotmachineCnt
@@ -936,7 +979,6 @@ def draw():
     screen.clear()
 
     draw_bar()
-    draw_button()        
 
     if initialFlag:
         draw_map()
@@ -956,7 +998,7 @@ def draw():
     else:
         if not music.is_playing(f'bgm_{level[0]}{level[1]}'):    # 用bgm有没有播放就可以判断是否初始化过关卡了
             music.play(f'bgm_{level[0]}{level[1]}')
-            music.set_volume(0.1)
+            music.set_volume(0.02 * volumeCnt)
             generate_map_cells()
             obstacle_map()
             if level[0] == 1:
@@ -995,7 +1037,7 @@ def draw():
             awardFlag = ''
 
         if player.immuneTime and player.immuneTime % 20 < 10:
-            pass    # 无敌时间，为了看得更直观加个pass、else
+            pass  # 无敌时间，为了看得更直观加个pass、else
         elif player.hp > 0:
             if player.is_skill_on():
                 player.skillEffect.draw()
@@ -1007,6 +1049,16 @@ def draw():
         frameCnt = frameCnt % 60 + 1
         portalFrameCnt = portalFrameCnt % 60 + 1
 
+        if settingChoose == 1:
+            setting_create()
+        elif settingChoose == 2:
+            volume_control()
+        elif settingChoose ==3:
+            screen.blit("control_introduction", (0.5 * WIDTH - 0.5 * slotmachineWidth_big, 0.5 * HEIGHT - 0.5 * slotmachineHeight_big))
+
+        draw_button()
+        music.set_volume(0.02 * volumeCnt)
+
 # 处理武器跟随旋转
 def on_mouse_move(pos):
     player.weapon.rotate_to(pos)
@@ -1015,8 +1067,8 @@ def on_mouse_move(pos):
 
 def on_mouse_down(pos, button):
     #todo 这里应该加个判断，判断当前是否在战斗中
-    global player, level
-    global roleChoose, chatchoose
+    global player, level, volumeCnt
+    global roleChoose, chatchoose, settingChoose
     global awardWeapon
     if roleChoose == 0:
         if button == mouse.LEFT:
@@ -1036,9 +1088,11 @@ def on_mouse_down(pos, button):
         if button == mouse.LEFT:
             roleChoose = 0
             clear_level_data()
-    else:
+    elif settingChoose == 0:
         if button == mouse.LEFT:
-            if chatchoose == 0:
+            if pauseButton.detect(pos) == "OK": # 点击暂停
+                settingChoose = 1
+            elif chatchoose == 0:
                 # 用鼠标拾取武器
                 if awardWeapon and awardWeapon.actor.collidepoint(pos) and player.actor.distance_to(awardWeapon.actor) <= 4 * wallSize:
                     player.change_weapon(awardWeapon)
@@ -1058,6 +1112,26 @@ def on_mouse_down(pos, button):
                 pass  # todo 这里加上如果点击在某个范围内，就怎样怎样
         elif button == mouse.RIGHT:
             player.swap_weapon()
+    elif settingChoose == 1 and button == mouse.LEFT:
+        if pauseButton.detect(pos) == "OK": # 点击继续
+            settingChoose = 0
+        elif volumeButton.detect(pos) == "OK": # 点击音量键
+            settingChoose = 2
+        elif keyintroButton.detect(pos) == "OK": # 点击按键说明
+            settingChoose = 3
+        elif homeButton.detect(pos) == "OK": # 点击home键
+            settingChoose = 0
+            roleChoose = 0
+            clear_level_data()
+    elif settingChoose == 2 and button == mouse.LEFT:
+        if volumeButtonDown.detect(pos) == "OK" and volumeCnt > 0:
+            volumeCnt -= 1
+        elif volumeButtonUp.detect(pos) == "OK" and volumeCnt < 10:
+            volumeCnt += 1
+        elif pos[0] < 0.5 * WIDTH - barHeight - 5 * unitWidth or pos[0] > 0.5 * WIDTH + barHeight + 5 * unitWidth or pos[1] < 0.5 * HEIGHT - 0.5 * barHeight or pos[1] > 0.5 * HEIGHT + 0.5 * barHeight:
+            settingChoose = 1
+    elif settingChoose == 3 and button == mouse.LEFT:
+        settingChoose = 1
 
 
 def on_key_down(key):
