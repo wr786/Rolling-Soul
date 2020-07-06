@@ -871,77 +871,77 @@ def draw_button():
         screen.draw.text(curButton.caption1, center=curButton.actor.center, fontname="hanyinuomituan")
 
 def draw():
-	global frameCnt, portalFrameCnt, initialFlag, slotmachineCnt
-	global awardFlag, awardWeapon
-	screen.clear()
+    global frameCnt, portalFrameCnt, initialFlag, slotmachineCnt
+    global awardFlag, awardWeapon
+    screen.clear()
 
-	draw_bar()
-	draw_button()		
+    draw_bar()
+    draw_button()        
 
-	if initialFlag:
-		draw_map()
-		for _obstacle in obstacleList:
-			_obstacle.actor.draw()
-		for _enemy in enemyList:
-			_enemy.actor.draw()
-		for _bullet in playerBulletList:
-			_bullet.actor.draw()
-		for _bullet in enemyBulletList:
-			_bullet.actor.draw()
+    if initialFlag:
+        draw_map()
+        for _obstacle in obstacleList:
+            _obstacle.actor.draw()
+        for _enemy in enemyList:
+            _enemy.actor.draw()
+        for _bullet in playerBulletList:
+            _bullet.actor.draw()
+        for _bullet in enemyBulletList:
+            _bullet.actor.draw()
 
-	# 关卡信息初始化
-	global roleChoose, level
-	if roleChoose == 0: # 选择人物
-		start_view()
-	else:
-		if not music.is_playing(f'bgm_{level[0]}{level[1]}'):	# 用bgm有没有播放就可以判断是否初始化过关卡了
-			music.play(f'bgm_{level[0]}{level[1]}')
-			music.set_volume(0.1)
-			generate_map_cells()
-			obstacle_map()
-			if level[0] == 1:
-				if level[2] == 1:
-					enemyNum = [3, 3, 0, 0]
-				elif level[2] == 2:
-					enemyNum = [4, 3, 1, 0]
-				elif level[2] == 3:
-					enemyNum = [0, 0, 1, 1]
-			elif level[0] == 2:
-				if level[2] == 1:
-					enemyNum = [5, 4, 1, 0]
-				elif level[2] == 2:
-					enemyNum = [5, 4, 2, 0]
-				elif level[2] == 3:
-					enemyNum = [0, 0, 2, 1]
-			else:
-				pass	# 这之后继续写后续关卡的参数
-			for enemyMinorType in range(1, 5):
-					for _ in range(enemyNum[enemyMinorType - 1]):
-						enemyList.append(Enemy(levelEnemyList[(level[0], level[1], enemyMinorType)]	))  # 这里的'a'后续要更换成根据人物变化
-			initialFlag = True
-			player.actor.center = spawnPoint
-		else:
-			if not enemyList:  # 敌人打完了
-				portal_create(*spawnPoint)
-				slotmachine_create(0.5 * wallnum * wallSize, 0.2 * wallnum * wallSize)
-				if slotmachineFlag == 4:
-					slotmachineCnt += 1
-					slotmachine_choice()
-				if awardWeapon:
-					awardWeapon.actor.draw()
-		if awardFlag != '':	# 有武器
-			awardWeapon = Weapon(awardFlag, 0.5 * wallnum * wallSize, 0.2 * wallnum * wallSize)	# 这个位置随老虎机一起改
-			awardFlag = ''
+    # 关卡信息初始化
+    global roleChoose, level
+    if roleChoose == 0: # 选择人物
+        start_view()
+    else:
+        if not music.is_playing(f'bgm_{level[0]}{level[1]}'):    # 用bgm有没有播放就可以判断是否初始化过关卡了
+            music.play(f'bgm_{level[0]}{level[1]}')
+            music.set_volume(0.1)
+            generate_map_cells()
+            obstacle_map()
+            if level[0] == 1:
+                if level[2] == 1:
+                    enemyNum = [3, 3, 0, 0]
+                elif level[2] == 2:
+                    enemyNum = [4, 3, 1, 0]
+                elif level[2] == 3:
+                    enemyNum = [0, 0, 1, 1]
+            elif level[0] == 2:
+                if level[2] == 1:
+                    enemyNum = [5, 4, 1, 0]
+                elif level[2] == 2:
+                    enemyNum = [5, 4, 2, 0]
+                elif level[2] == 3:
+                    enemyNum = [0, 0, 2, 1]
+            else:
+                pass    # 这之后继续写后续关卡的参数
+            for enemyMinorType in range(1, 5):
+                    for _ in range(enemyNum[enemyMinorType - 1]):
+                        enemyList.append(Enemy(levelEnemyList[(level[0], level[1], enemyMinorType)]    ))  # 这里的'a'后续要更换成根据人物变化
+            initialFlag = True
+            player.actor.center = spawnPoint
+        else:
+            if not enemyList:  # 敌人打完了
+                portal_create(*spawnPoint)
+                slotmachine_create(0.5 * wallnum * wallSize, 0.2 * wallnum * wallSize)
+                if slotmachineFlag == 4:
+                    slotmachineCnt += 1
+                    slotmachine_choice()
+                if awardWeapon:
+                    awardWeapon.actor.draw()
+        if awardFlag != '':    # 有武器
+            awardWeapon = Weapon(awardFlag, 0.5 * wallnum * wallSize, 0.2 * wallnum * wallSize)    # 这个位置随老虎机一起改
+            awardFlag = ''
 
-		if player.immuneTime and player.immuneTime % 20 < 10:
-			pass	# 无敌时间，为了看得更直观加个pass、else
-		elif player.hp > 0:
-			player.actor.draw()
-			player.weapon.actor.draw()
-		if player.hp <= 0:
-			get_death()
-		frameCnt = frameCnt % 60 + 1
-		portalFrameCnt = portalFrameCnt % 60 + 1
+        if player.immuneTime and player.immuneTime % 20 < 10:
+            pass    # 无敌时间，为了看得更直观加个pass、else
+        elif player.hp > 0:
+            player.actor.draw()
+            player.weapon.actor.draw()
+        if player.hp <= 0:
+            get_death()
+        frameCnt = frameCnt % 60 + 1
+        portalFrameCnt = portalFrameCnt % 60 + 1
 
 # 处理武器跟随旋转
 def on_mouse_move(pos):
@@ -956,22 +956,22 @@ def on_mouse_down(pos, button):
     global awardWeapon
     if roleChoose == 0:
         if button == mouse.LEFT:
-        choose_role(pos)
-        if roleChoose == 1:
-            player = Knight()
-            storyLine = 'a'
-        elif roleChoose == 2:
-            player = Assassin()
-            storyLine = 'b'
-        elif roleChoose == 3:
-            player = Paladin()
-            storyLine = 'c'
-        if roleChoose:
-            level = [1, storyLine, 1]
+            choose_role(pos)
+            if roleChoose == 1:
+                player = Knight()
+                storyLine = 'a'
+            elif roleChoose == 2:
+                player = Assassin()
+                storyLine = 'b'
+            elif roleChoose == 3:
+                player = Paladin()
+                storyLine = 'c'
+            if roleChoose:
+                level = [1, storyLine, 1]
     elif roleChoose == 4:  # 死亡后点击回到开始界面
         if button == mouse.LEFT:
-        roleChoose = 0
-        clear_level_data()
+            roleChoose = 0
+            clear_level_data()
     else:
         if button == mouse.LEFT:
             if chatchoose == 0:
