@@ -403,7 +403,6 @@ class Knight(Player):
         self.weapon.cd_MAX *= 0.5
         clock.schedule(self.skill_recover, 6)
 
-
 class Assassin(Player):
 
     def __init__(self):
@@ -506,9 +505,9 @@ class Enemy:
         self.enemyType = enemyType
         self.actor = Actor(f'monster_{enemyType}_rt')
         # 如果加了障碍物的话，这里就得复杂一些
-        self.actor.topright = (randint(wallSize, WIDTH - wallSize - barWidth), randint(wallSize, HEIGHT - wallSize))
+        self.actor.center = (randint(wallSize, WIDTH - wallSize - barWidth), randint(wallSize, HEIGHT - wallSize))
         while self.collide_obstacles():
-            self.actor.topright = (randint(wallSize, WIDTH - wallSize - barWidth), randint(wallSize, HEIGHT - wallSize))
+            self.actor.center = (randint(wallSize, WIDTH - wallSize - barWidth), randint(wallSize, HEIGHT - wallSize))
         self.moveCD = randint(0, self.moveCD_MAX)
         self.shootCD = randint(0, self.shootCD_MAX)
         self.hp = enemyData[self.enemyType][0]  # 这个是会变化的，所以就不用@property了
@@ -898,7 +897,7 @@ def draw():
 					for _ in range(enemyNum[enemyMinorType - 1]):
 						enemyList.append(Enemy(levelEnemyList[(level[0], level[1], enemyMinorType)]	))  # 这里的'a'后续要更换成根据人物变化
 			initialFlag = True
-			player.actor.topleft = spawnPoint
+			player.actor.center = spawnPoint
 		else:
 			if not enemyList:  # 敌人打完了
 				portal_create(*spawnPoint)
