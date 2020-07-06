@@ -2,8 +2,6 @@ import pgzrun
 import random
 from random import randint
 from math import *
-from math import sin
-from math import cos
 import os
 
 ###########################################################################################
@@ -74,6 +72,7 @@ slotItem1 = 'slotmachine_item1'
 slotItem2 = 'slotmachine_item1'
 slotItem3 = 'slotmachine_item1'
 itemSize = 99
+awardWeapon = None
 
 # 战斗相关
 # 屏幕中的子弹列表，每次画都需要更新，然后用不同的列表来区分伤害判定
@@ -214,11 +213,12 @@ class Bullet:
 
 class Weapon:
 
-    def __init__(self, gunType): 
+    def __init__(self, gunType, x=0, y=0): 
         self.gunType = gunType
         self.actor = Actor(gunType + '_rt') # 默认朝右
         self.cd = 0 
         self.cd_MAX = weaponData[self.gunType][2] * WEAPON_CD_STD
+        self.actor.center = (x, y)
 
     @property
     def bulletType(self):   # 如果这里出错了，就检查武器图片命名
@@ -275,6 +275,8 @@ class Player:   # 基类，用于写一些共同点
         self.immuneTime = 0 # 无敌时间
         self.skillCD_MAX = skillCDMax
         self.skillCD = 0
+        self.mpRecoverCD_MAX = 100
+        self.mpRecoverCD = 0
 
     def is_skill_ready(self):
         return self.skillCD == 0
@@ -286,12 +288,12 @@ class Player:   # 基类，用于写一些共同点
         return False
 
     def walk(self):
-        self.actor.left += hFlag
+        self.actor.left += hFlag * moveSpan
         if self.collide_obstacles():    # reverse这次移动
-            self.actor.left -= hFlag
-        self.actor.top += vFlag
+            self.actor.left -= hFlag * moveSpan
+        self.actor.top += vFlag * moveSpan
         if self.collide_obstacles():    # reverse这次移动
-            self.actor.top -= vFlag
+            self.actor.top -= vFlag * moveSpan
         # 判断敌人碰撞
         for _enemy in enemyList:
             if self.actor.colliderect(_enemy.actor):
@@ -339,6 +341,12 @@ class Player:   # 基类，用于写一些共同点
             self.immuneTime -= 1
         self.skillCD -= 1
         self.skillCD = max(self.skillCD, 0)
+        if self.mpRecoverCD == self.mpRecoverCD_MAX:
+        	self.mp += 1
+        	self.mp = min(self.mp, self.mp_MAX)
+        	self.mpRecoverCD = 0
+        else:
+        	self.mpRecoverCD += 1
 
     def get_damage(self, damage=1):
         if self.immuneTime: # 免疫伤害的时间
@@ -353,7 +361,7 @@ class Player:   # 基类，用于写一些共同点
         else:
             self.hp -= damage
         self.armorCD = 0    # 一段时间内不被打中才能回护盾
-        self.immuneTime = 90    # 受伤后1.5s的无敌时间
+        self.immuneTime = 60    # 受伤后1s的无敌时间
         if self.hp <= 0:
             self.hp = 0
 
@@ -402,7 +410,6 @@ class Knight(Player):
         self.skillCD = self.skillCD_MAX
         self.weapon.cd_MAX *= 0.5
         clock.schedule(self.skill_recover, 6)
-
 
 class Assassin(Player):
 
@@ -506,9 +513,9 @@ class Enemy:
         self.enemyType = enemyType
         self.actor = Actor(f'monster_{enemyType}_rt')
         # 如果加了障碍物的话，这里就得复杂一些
-        self.actor.topright = (randint(wallSize, WIDTH - wallSize - barWidth), randint(wallSize, HEIGHT - wallSize))
+        self.actor.center = (randint(wallSize, WIDTH - wallSize - barWidth), randint(wallSize, HEIGHT - wallSize))
         while self.collide_obstacles():
-            self.actor.topright = (randint(wallSize, WIDTH - wallSize - barWidth), randint(wallSize, HEIGHT - wallSize))
+            self.actor.center = (randint(wallSize, WIDTH - wallSize - barWidth), randint(wallSize, HEIGHT - wallSize))
         self.moveCD = randint(0, self.moveCD_MAX)
         self.shootCD = randint(0, self.shootCD_MAX)
         self.hp = enemyData[self.enemyType][0]  # 这个是会变化的，所以就不用@property了
@@ -668,11 +675,11 @@ def slotmachine_choice():
 def slotmachine_award():
     global awardFlag, roleChoose, slotmachineFlag
     if slotmachineFlag == 3:
-        awardFlag = random.choice(["orange_unicorn_rt", "blue_ice_rt", "blue_sakura_rt"])
+        awardFlag = random.choice(["orange_unicorn", "blue_ice", "blue_sakura"])
     elif slotmachineFlag == 2:
-        awardFlag = random.choice(["green_snowfox_rt", "green_firegun_rt", "green_rattlesnake_rt"])
+        awardFlag = random.choice(["green_snowfox", "green_firegun", "green_rattlesnake"])
     elif slotmachineFlag == 1:
-        awardFlag = random.choice(["white_ak47_rt", "white_m4_rt", "white_sniper_rt", "white_shotgun_rt"])
+        awardFlag = random.choice(["white_ak47", "white_m4", "white_sniper", "white_shotgun"])
     if slotItem1 != "slotmachine_item1" and slotItem2 != "slotmachine_item1" and slotItem3 != "slotmachine_item1":
         player.hp += slotmachineFlag
         if player.hp >= player.hp_MAX:
@@ -730,10 +737,11 @@ def clear_level_data():
 	enemyBulletList = []
 	enemyList = []
 	music.stop()
-	global slotmachineFlag, slotmachineCnt, awardFlag
+	global slotmachineFlag, slotmachineCnt, awardFlag, awardWeapon
 	slotmachineFlag = 0
 	slotmachineCnt = 0
 	awardFlag = ''
+	awardWeapon = None
 
 def next_level():	# 进入下一关
 	#todo 这里可能要加入更复杂的逻辑（如果要错线的话
@@ -852,6 +860,7 @@ def draw_button():
 
 def draw():
 	global frameCnt, portalFrameCnt, initialFlag, slotmachineCnt
+	global awardFlag, awardWeapon
 	screen.clear()
 
 	draw_bar()
@@ -906,8 +915,11 @@ def draw():
 				if slotmachineFlag == 4:
 					slotmachineCnt += 1
 					slotmachine_choice()
-		if awardFlag != '':
-			screen.blit(awardFlag, (0.5 * wallnum * wallSize, 0.2 * wallnum * wallSize))
+				if awardWeapon:
+					awardWeapon.actor.draw()
+		if awardFlag != '':	# 有武器
+			awardWeapon = Weapon(awardFlag, 0.5 * wallnum * wallSize, 0.2 * wallnum * wallSize)	# 这个位置随老虎机一起改
+			awardFlag = ''
 
 		if player.immuneTime and player.immuneTime % 20 < 10:
 			pass	# 无敌时间，为了看得更直观加个pass、else
@@ -927,6 +939,7 @@ def on_mouse_down(pos, button):
 	#todo 这里应该加个判断，判断当前是否在战斗中
 	global player, level
 	global roleChoose, chatchoose
+	global awardWeapon
 	if roleChoose == 0 and button == mouse.LEFT:
 		choose_role(pos)
 		if roleChoose == 1:
@@ -945,7 +958,13 @@ def on_mouse_down(pos, button):
 		clear_level_data()
 	elif button == mouse.LEFT:
 		if chatchoose == 0:
-			player.weapon.shoot(pos)
+			# 用鼠标拾取武器
+			if awardWeapon and awardWeapon.actor.collidepoint(pos):
+				_tmpWeapon = player.weapon
+				player.change_weapon(awardWeapon)
+				awardWeapon = _tmpWeapon
+			else:
+				player.weapon.shoot(pos)
 		elif chatchoose == 1:	# 选择传送门
 			response = curButton.detect(pos)
 			if response == "OK":
@@ -965,13 +984,13 @@ def on_key_down(key):
     global vFlag
     if player.hp > 0:
         if key == key.A:
-            hFlag -= moveSpan
+            hFlag -= 1
         if key == key.S:
-            vFlag += moveSpan
+            vFlag += 1
         if key == key.D:
-            hFlag += moveSpan
+            hFlag += 1
         if key == key.W:
-            vFlag -= moveSpan
+            vFlag -= 1
         if key == key.SPACE:
             if player.is_skill_ready():
                 player.skill_emit()
@@ -981,13 +1000,13 @@ def on_key_up(key):
     global vFlag
     if player.hp > 0:
         if key == key.A:
-            hFlag += moveSpan
+            hFlag += 1
         if key == key.S:
-            vFlag -= moveSpan
+            vFlag -= 1
         if key == key.D:
-            hFlag -= moveSpan
+            hFlag -= 1
         if key == key.W:
-            vFlag += moveSpan
+            vFlag += 1
 
 # 画障碍物地图，这个太长了，直接放在最后面
 def obstacle_map():
