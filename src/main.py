@@ -209,7 +209,7 @@ class Bullet:
             return False
         # 判断障碍物
         for _obstacle in obstacleList:
-            if _obstacle.actor.collidepoint(self.actor.center): # 优化子弹撞墙体验
+            if _obstacle.actor.colliderect((self.actor.center[0] - 3, self.actor.center[1] - 3, 6, 6)): # 优化子弹撞墙体验
                 return False
             # if self.actor.colliderect(_obstacle.actor):
             #     return False
