@@ -288,12 +288,12 @@ class Player:   # 基类，用于写一些共同点
         return False
 
     def walk(self):
-        self.actor.left += hFlag
+        self.actor.left += hFlag * moveSpan
         if self.collide_obstacles():    # reverse这次移动
-            self.actor.left -= hFlag
-        self.actor.top += vFlag
+            self.actor.left -= hFlag * moveSpan
+        self.actor.top += vFlag * moveSpan
         if self.collide_obstacles():    # reverse这次移动
-            self.actor.top -= vFlag
+            self.actor.top -= vFlag * moveSpan
         # 判断敌人碰撞
         for _enemy in enemyList:
             if self.actor.colliderect(_enemy.actor):
@@ -984,13 +984,13 @@ def on_key_down(key):
     global vFlag
     if player.hp > 0:
         if key == key.A:
-            hFlag -= moveSpan
+            hFlag -= 1
         if key == key.S:
-            vFlag += moveSpan
+            vFlag += 1
         if key == key.D:
-            hFlag += moveSpan
+            hFlag += 1
         if key == key.W:
-            vFlag -= moveSpan
+            vFlag -= 1
         if key == key.SPACE:
             if player.is_skill_ready():
                 player.skill_emit()
@@ -1000,13 +1000,13 @@ def on_key_up(key):
     global vFlag
     if player.hp > 0:
         if key == key.A:
-            hFlag += moveSpan
+            hFlag += 1
         if key == key.S:
-            vFlag -= moveSpan
+            vFlag -= 1
         if key == key.D:
-            hFlag -= moveSpan
+            hFlag -= 1
         if key == key.W:
-            vFlag += moveSpan
+            vFlag += 1
 
 # 画障碍物地图，这个太长了，直接放在最后面
 def obstacle_map():
