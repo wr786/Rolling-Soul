@@ -26,6 +26,7 @@ HEIGHT = wallnum * wallSize
 floors = {}
 walls = {}
 spawnPoint = (314.5 , 314.5)
+slotmachinePoint = (314.5 , 314.5)
 
 wallSize = 37   # 一个方块的大小
 level = [1, 'a', 1] # 现在是第几关
@@ -262,7 +263,7 @@ class Weapon:
 
 class Player:   # 基类，用于写一些共同点
 
-    def __init__(self, weaponName, hpMax, armorMax, skillCDMax):
+    def __init__(self, weaponName, hpMax, armorMax, skillCDMax, skillLastTimeMax):
         self.weapon = Weapon(weaponName)
         self.weapon2 = None
         self.hp_MAX = hpMax
@@ -278,9 +279,20 @@ class Player:   # 基类，用于写一些共同点
         self.skillCD = 0
         self.mpRecoverCD_MAX = 100
         self.mpRecoverCD = 0
+        self.skillLastTime_MAX = skillLastTimeMax
+        self.skillLastTime = 0
+        self.skillEffect = Actor('effect_skill_1')
 
     def is_skill_ready(self):
         return self.skillCD == 0
+
+    def is_skill_on(self):
+        return self.skillLastTime
+
+    def skill_effect(self):
+        if self.skillLastTime:
+            self.skillEffect.image = f'effect_skill_{1 if self.skillLastTime % 20 < 10 else 2}'
+            self.skillEffect.center = self.actor.center
 
     def collide_obstacles(self):
         for _obstacle in obstacleList:
@@ -361,6 +373,9 @@ class Player:   # 基类，用于写一些共同点
             self.mpRecoverCD = 0
         else:
             self.mpRecoverCD += 1
+        if self.is_skill_on():
+            self.skill_effect()
+            self.skillLastTime -= 1
 
     def get_damage(self, damage=1):
         if self.immuneTime: # 免疫伤害的时间
@@ -383,7 +398,7 @@ class Knight(Player):
 
     def __init__(self):
         self.actor = Actor('knight_rt')
-        Player.__init__(self, 'initial_worngat', 4, 6, 18*60)
+        Player.__init__(self, 'initial_worngat', 4, 6, 18*60, 6)
 
     # 移动部分
 
@@ -423,13 +438,14 @@ class Knight(Player):
     def skill_emit(self):
         self.skillCD = self.skillCD_MAX
         self.weapon.cd_MAX *= 0.5
+        self.skillLastTime = 6 * 60
         clock.schedule(self.skill_recover, 6)
 
 class Assassin(Player):
 
     def __init__(self):
         self.actor = Actor('assassin_rt')
-        Player.__init__(self, 'initial_p250', 5, 5, 12*60)
+        Player.__init__(self, 'initial_p250', 5, 5, 12*60, 6)
 
     # 移动部分
 
@@ -471,13 +487,14 @@ class Assassin(Player):
         global moveSpan
         self.skillCD = self.skillCD_MAX
         moveSpan *= 2
+        self.skillLastTime = 6 * 60
         clock.schedule(self.skill_recover, 6)
 
 class Paladin(Player):
 
     def __init__(self):
         self.actor = Actor('paladin_rt')
-        Player.__init__(self, 'initial_uzi', 7, 4, 12*60)
+        Player.__init__(self, 'initial_uzi', 7, 4, 12*60, 180)
 
     # 移动部分
 
@@ -513,6 +530,7 @@ class Paladin(Player):
 
     def skill_emit(self):
         self.skillCD = self.skillCD_MAX
+        self.skillLastTime = 180
         self.immuneTime += 180
 
 class Enemy:
@@ -936,8 +954,11 @@ def draw():
         if player.immuneTime and player.immuneTime % 20 < 10:
             pass    # 无敌时间，为了看得更直观加个pass、else
         elif player.hp > 0:
+            if player.is_skill_on():
+                player.skillEffect.draw()
             player.actor.draw()
             player.weapon.actor.draw()
+
         if player.hp <= 0:
             get_death()
         frameCnt = frameCnt % 60 + 1
