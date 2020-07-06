@@ -875,7 +875,7 @@ def draw():
 	else:
 		if not music.is_playing(f'bgm_{level[0]}{level[1]}'):	# 用bgm有没有播放就可以判断是否初始化过关卡了
 			music.play(f'bgm_{level[0]}{level[1]}')
-			music.set_volume(0.2)
+			music.set_volume(0.1)
 			generate_map_cells()
 			obstacle_map()
 			if level[0] == 1:
@@ -898,7 +898,7 @@ def draw():
 					for _ in range(enemyNum[enemyMinorType - 1]):
 						enemyList.append(Enemy(levelEnemyList[(level[0], level[1], enemyMinorType)]	))  # 这里的'a'后续要更换成根据人物变化
 			initialFlag = True
-			player.actor.topleft = spawnPoint
+			player.actor.center = spawnPoint
 		else:
 			if not enemyList:  # 敌人打完了
 				portal_create(*spawnPoint)
