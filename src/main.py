@@ -263,7 +263,7 @@ class Weapon:
         pass    #todo 对当前所对的方向释放"特效"，待写
 
     def rotate_to(self, pos):
-        #todo 处理枪械的旋转中心，如果是_rt的话，应该偏向左边，如果是_lt的话，应该偏向右边（即靠枪把子
+        #self.actor.anchor = ()#todo 处理枪械的旋转中心，如果是_rt的话，应该偏向左边，如果是_lt的话，应该偏向右边（即靠枪把子
         if pos[0] < self.actor.pos[0]:  # 要翻转
             self.actor.image = self.actor.image[:-3] + '_lt'
             self.actor.angle = -1 * self.actor.angle_to((2*self.actor.pos[0] - pos[0], pos[1])) # 反转后角度也要相应地变换
@@ -337,8 +337,7 @@ class Player:   # 基类，用于写一些共同点
         self.actor.top = max(self.actor.top, wallSize)
         self.actor.top = min(self.actor.top, HEIGHT - self.actor.height - wallSize)
 
-        self.weapon.actor.left = self.actor.left + 0.5 * self.actor.width - 0.5 * self.weapon.actor.width
-        self.weapon.actor.top = self.actor.top + 0.5 * self.actor.height
+        self.weapon.actor.center = (self.actor.left + 0.5 * self.actor.width, self.actor.top + 0.75 * self.actor.height)
 
     def turn(self):
         if hFlag > 0:
@@ -1061,9 +1060,10 @@ def draw():
 
 # 处理武器跟随旋转
 def on_mouse_move(pos):
-    player.weapon.rotate_to(pos)
-    if player.weapon2:
-        player.weapon2.rotate_to(pos)
+    if settingChoose == 0:
+        player.weapon.rotate_to(pos)
+        if player.weapon2:
+            player.weapon2.rotate_to(pos)
 
 def on_mouse_down(pos, button):
     #todo 这里应该加个判断，判断当前是否在战斗中
