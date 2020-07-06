@@ -86,7 +86,7 @@ levelEnemyList = {}
 weaponData = {} # key为武器名<rarity>_<name>, value为(atkRange, cost, cd, bulletSpeed)
 WEAPON_CD_STD = 50
 WEAPON_BULLET_SPEED_STD = 20
-ENEMY_SPEED_STD = wallSize * 1.5
+ENEMY_SPEED_STD = wallSize
 enemyData = {}  # key为敌人名，value为(HP, cd, walkSpeed, bulletData)
 
 # 动画效果相关
@@ -563,7 +563,7 @@ class Enemy:
     
     @property
     def moveCD_MAX(self):   # 移动CD
-        return 20
+        return 5
 
     @property
     def shootCD_MAX(self):
@@ -609,12 +609,22 @@ class Enemy:
                 self.actor.left -= dx
                 self.actor.bottom -= dy
                 enemyMoveFlag[enemyMoveCnt] = 0 # 如果碰到障碍物了，就不要继续往这个方向死磕了
-            #todo 可以类似上面那行，让敌人不要一直撞墙
-
-            self.actor.left = max(self.actor.left, wallSize)
-            self.actor.left = min(self.actor.left, WIDTH - self.actor.width - wallSize - barWidth)
-            self.actor.top = max(self.actor.top, wallSize)
-            self.actor.top = min(self.actor.top, HEIGHT - self.actor.height - wallSize)
+            # self.actor.left = max(self.actor.left, wallSize)
+            # self.actor.left = min(self.actor.left, WIDTH - self.actor.width - wallSize - barWidth)
+            # self.actor.top = max(self.actor.top, wallSize)
+            # self.actor.top = min(self.actor.top, HEIGHT - self.actor.height - wallSize)
+            if self.actor.left < wallSize:
+                self.actor.left = wallSize
+                enemyMoveFlag[enemyMoveCnt] = 0
+            if self.actor.right > WIDTH - wallSize - barWidth:
+                self.actor.right = WIDTH - wallSize - barWidth
+                enemyMoveFlag[enemyMoveCnt] = 0
+            if self.actor.top < wallSize:
+                self.actor.top = wallSize
+                enemyMoveFlag[enemyMoveCnt] = 0
+            if self.actor.bottom > HEIGHT - wallSize:
+                self.actor.bottom = HEIGHT - wallSize
+                enemyMoveFlag[enemyMoveCnt] = 0
             # for _enemy in enemyList:
             #    while self.actor.colliderect(_enemy.actor) and self != _enemy:
             #        self.actor.left -= dx
@@ -973,14 +983,15 @@ def draw():
         else:
             if not enemyList:  # 敌人打完了
                 portal_create(*spawnPoint)
-                slotmachine_create(0.5 * wallnum * wallSize, 0.2 * wallnum * wallSize)
+                # slotmachine_create(0.5 * wallnum * wallSize, 0.2 * wallnum * wallSize)
+                slotmachine_create(*slotmachinePoint)
                 if slotmachineFlag == 4:
                     slotmachineCnt += 1
                     slotmachine_choice()
                 if awardWeapon:
                     awardWeapon.actor.draw()
         if awardFlag != '':    # 有武器
-            awardWeapon = Weapon(awardFlag, 0.5 * wallnum * wallSize, 0.2 * wallnum * wallSize)    # 这个位置随老虎机一起改
+            awardWeapon = Weapon(awardFlag, *slotmachinePoint)    # 这个位置随老虎机一起改
             awardFlag = ''
 
         if player.immuneTime and player.immuneTime % 20 < 10:
