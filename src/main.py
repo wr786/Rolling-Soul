@@ -873,6 +873,17 @@ def draw_bar():
                      fontname="hanyinuomituan", color="yellow")
     # 产生对话栏
     screen.blit("talk_bar", (WIDTH - barWidth, 3 * barHeight))
+    # CD显示
+    if player.skillCD == 0:
+        screen.blit("skill_ready", (WIDTH - 0.5 * barWidth - 0.5 * barHeight, 7 * barHeight))
+    else:
+        screen.blit("skill_loading", (WIDTH - 0.5 * barWidth - 0.5 * barHeight, 7 * barHeight))
+        if player.skillCD / 60 >= 1:
+            screen.draw.text(f"{player.skillCD / 60 * 10 // 10}", center=(WIDTH - 0.5 * barWidth, 7.5 * barHeight),
+                             fontsize=50, color="green")
+        else:
+            screen.draw.text(f"{round(player.skillCD / 60, 1)}", center=(WIDTH - 0.5 * barWidth, 7.5 * barHeight),
+                             fontsize=50, color="green")
 # todo 这里的字体可以换一个更适合的
 
 # 画按钮
