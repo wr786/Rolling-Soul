@@ -907,7 +907,7 @@ def draw_bar():
         screen.blit("skill_ready_backup", (WIDTH - 0.5 * barWidth - 0.5 * barHeight, 7 * barHeight))
     else:
         screen.blit("skill_loading", (WIDTH - 0.5 * barWidth - 0.5 * barHeight, 7 * barHeight))
-        cuttedHeight = generate_skillCD_png()
+        generate_skillCD_png()
         skillCD_cover.draw()
         # if player.skillCD / 60 >= 1:
         #     screen.draw.text(f"{player.skillCD / 60 * 10 // 10}", center=(WIDTH - 0.5 * barWidth, 7.5 * barHeight),
