@@ -41,7 +41,6 @@ beginningAssassinNum4 = 0
 beginningAssassinNum5 = 0
 tabForBeginningAssassinDialog = 0
 
-
 #游侠开头：
 isBeginningPaladin = 0
 beginningPaladinNum1 = 0
@@ -764,7 +763,7 @@ def Beginning_knight():
         if tabForBeginningKnightDialog == 3 or tabForBeginningKnightDialog == 4 or tabForBeginningKnightDialog == 5:
             dialogBox1.topleft = 0.12*WIDTH, 0.01*HEIGHT
             dialogBox1.draw()
-            dialog4 = 'Enemies?! My worriors, '
+            dialog4 = 'Enemies?! My warriors, '
             length4 = len(dialog4)
             if beginningKnightNum4 < length4:
                 for i in range(beginningKnightNum4+1):
@@ -1158,13 +1157,17 @@ def generate_skillCD_png():
     # screen.blit('skill_ready', (WIDTH - 0.5 * barWidth - 0.5 * barHeight, 7 * barHeight + cuttedHeight))
     skillCD_cover.bottomleft = (WIDTH - 0.5 * barWidth - 0.5 * barHeight, 7 * barHeight + _height - _borderHeight)
 
+# 判断当前人物的剧情是否已经播放
+def is_begun():
+    return isBeginningAll and (isBeginningKnight == 1 or isBeginningAssassin == 1 or isBeginningPaladin == 1)
+
 def update():
     global hFlag
     global vFlag
     global enemyMoveCnt
     enemyMoveCnt = 0
     # 移动处理
-    if player.hp > 0 and settingChoose == 0:
+    if player.hp > 0 and settingChoose == 0 and is_begun():
         player.walk()
         player.turn()
         player.update()
@@ -1255,29 +1258,9 @@ def draw_button():
         volumeButtonDown.actor.draw()
         volumeButtonUp.actor.draw()
 
-
-def draw():
-    global roleChoose, frameCnt, portalFrameCnt, initialFlag, slotmachineCnt,isBeginningKnight, isBeginningAssassin, isBeginningPaladin, knightDeathTime 
-    global awardFlag, awardWeapon
-    screen.clear()
-
-    if isBeginningKnight == 1 or isBeginningAssassin == 1 or isBeginningPaladin == 1:
-        draw_bar()
-
-    if initialFlag:
-        draw_map()
-        if (roleChoose == 1 and isBeginningKnight == 1) or (roleChoose == 2 and isBeginningAssassin == 1) or (roleChoose == 3 and isBeginningPaladin == 1):
-            for _obstacle in obstacleList:
-                _obstacle.actor.draw()
-            for _enemy in enemyList:
-                _enemy.actor.draw()
-            for _bullet in playerBulletList:
-                _bullet.actor.draw()
-            for _bullet in enemyBulletList:
-                _bullet.actor.draw()
-
-    # 关卡信息初始化
-    global level, isBeginningAll, beginningAllNum
+# 迁移wxh在draw里写的一大堆东西
+def show_beginning():
+    global level, isBeginningAll, beginningAllNum, knightDeathTime
     global beginningKnightNum1, beginningKnightNum2, beginningKnightNum3, beginningKnightNum4, beginningKnightNum5
     global beginningAssassinNum1, beginningAssassinNum2, beginningAssassinNum3, beginningAssassinNum4, beginningAssassinNum5
     global beginningPaladinNum1, beginningPaladinNum2, beginningPaladinNum3, beginningPaladinNum4, beginningPaladinNum5, beginningPaladinNum6
@@ -1286,6 +1269,7 @@ def draw():
         beginningAllNum += 1
     if isBeginningAll == 1 and roleChoose == 0: # 选择人物
         start_view()
+        return False
     elif isBeginningAll == 1:
         if isBeginningKnight == 0 and roleChoose == 1:
             Beginning_knight()
@@ -1339,8 +1323,48 @@ def draw():
                 player.weapon.actor.draw()
             elif tabForBeginningPaladinDialog == 6:
                 beginningPaladinNum6 += 1
-                
-        if (isBeginningKnight == 1 or isBeginningAssassin == 1 or isBeginningPaladin == 1) and (not music.is_playing(f'bgm_{level[0]}{level[1]}')):   # 用bgm有没有播放就可以判断是否初始化过关卡了
+    return True
+
+def reset_game():
+    global level, isBeginningAll, beginningAllNum, knightDeathTime
+    global isBeginningKnight, isBeginningAssassin, isBeginningPaladin
+    global beginningKnightNum1, beginningKnightNum2, beginningKnightNum3, beginningKnightNum4, beginningKnightNum5
+    global beginningAssassinNum1, beginningAssassinNum2, beginningAssassinNum3, beginningAssassinNum4, beginningAssassinNum5
+    global beginningPaladinNum1, beginningPaladinNum2, beginningPaladinNum3, beginningPaladinNum4, beginningPaladinNum5, beginningPaladinNum6
+    isBeginningKnight = isBeginningAssassin = isBeginningPaladin = 0
+    beginningKnightNum1 = beginningKnightNum2 = beginningKnightNum3 = beginningKnightNum4 = beginningKnightNum5 = 0
+    beginningAssassinNum1 = beginningAssassinNum2 = beginningAssassinNum3 = beginningAssassinNum4 = beginningAssassinNum5 = 0
+    beginningPaladinNum1 = beginningPaladinNum2 = beginningPaladinNum3 = beginningPaladinNum4 = beginningPaladinNum5 = beginningPaladinNum6 = 0
+    
+    global initialFlag, settingChoose, roleChoose
+    initialFlag = False
+    settingChoose = 0
+    roleChoose = 0
+
+def draw():
+    global roleChoose, frameCnt, portalFrameCnt, initialFlag, slotmachineCnt
+    global isBeginningKnight, isBeginningAssassin, isBeginningPaladin, knightDeathTime 
+    global awardFlag, awardWeapon
+    screen.clear()
+
+    if is_begun():
+        draw_bar()
+
+    if initialFlag: # 有initialFlag必然is_begun
+        draw_map()
+        for _obstacle in obstacleList:
+            _obstacle.actor.draw()
+        for _enemy in enemyList:
+            _enemy.actor.draw()
+        for _bullet in playerBulletList:
+            _bullet.actor.draw()
+        for _bullet in enemyBulletList:
+            _bullet.actor.draw()
+
+    # 关卡信息初始化
+     
+    if show_beginning() and is_begun():           
+        if not music.is_playing(f'bgm_{level[0]}{level[1]}'):   # 用bgm有没有播放就可以判断是否初始化过关卡了
             music.play(f'bgm_{level[0]}{level[1]}')
             music.set_volume(0.02 * volumeCnt)
             generate_map_cells()
@@ -1366,7 +1390,7 @@ def draw():
                         enemyList.append(Enemy(levelEnemyList[(level[0], level[1], enemyMinorType)]    ))  # 这里的'a'后续要更换成根据人物变化
             initialFlag = True
             player.actor.center = spawnPoint
-        elif isBeginningKnight == 1 or isBeginningAssassin == 1 or isBeginningPaladin == 1:
+        else:
             if not enemyList:  # 敌人打完了
                 portal_create(*spawnPoint)
                 # slotmachine_create(0.5 * wallnum * wallSize, 0.2 * wallnum * wallSize)
@@ -1376,19 +1400,20 @@ def draw():
                     slotmachine_choice()
                 if awardWeapon:
                     awardWeapon.actor.draw()
-        if (isBeginningKnight == 1 or isBeginningAssassin == 1 or isBeginningPaladin == 1) and awardFlag != '':
+
+        if awardFlag != '':
             awardWeapon = Weapon(awardFlag, *slotmachinePoint)    # 这个位置随老虎机一起改
             awardFlag = ''
 
-        if (isBeginningKnight == 1 or isBeginningAssassin == 1 or isBeginningPaladin == 1) and player.immuneTime and player.immuneTime % 20 < 10:
+        if player.immuneTime and player.immuneTime % 20 < 10:
             pass  # 无敌时间，为了看得更直观加个pass、else
-        elif (isBeginningKnight == 1 or isBeginningAssassin == 1 or isBeginningPaladin == 1) and player.hp > 0:
+        elif player.hp > 0:
             if player.is_skill_on():
                 player.skillEffect.draw()
             player.actor.draw()
             player.weapon.actor.draw()
 
-        if (isBeginningKnight == 1 or isBeginningAssassin == 1 or isBeginningPaladin == 1) and player.hp <= 0:
+        if player.hp <= 0:
             get_death()
         frameCnt = frameCnt % 60 + 1
         portalFrameCnt = portalFrameCnt % 60 + 1
@@ -1400,13 +1425,12 @@ def draw():
         elif settingChoose ==3:
             screen.blit("control_introduction", (0.5 * WIDTH - 0.5 * slotmachineWidth_big, 0.5 * HEIGHT - 0.5 * slotmachineHeight_big))
 
-        if isBeginningKnight == 1 or isBeginningAssassin == 1 or isBeginningPaladin == 1:
-            draw_button()
-            music.set_volume(0.02 * volumeCnt)
+        draw_button()
+        music.set_volume(0.02 * volumeCnt)
 
 # 处理武器跟随旋转
 def on_mouse_move(pos):
-    if settingChoose == 0:
+    if settingChoose == 0 and is_begun():
         player.weapon.rotate_to(pos)
         if player.weapon2:
             player.weapon2.rotate_to(pos)
@@ -1419,6 +1443,7 @@ def on_mouse_down(pos, button):
     global isBeginningAssassin, tabForBeginningAssassinDialog, beginningAssassinNum1, beginningAssassinNum2, beginningAssassinNum3, beginningAssassinNum4, beginningAssassinNum5
     global isBeginningPaladin, tabForBeginningPaladinDialog, beginningPaladinNum1, beginningPaladinNum2, beginningPaladinNum3, beginningPaladinNum4, beginningPaladinNum5
     global awardWeapon
+
     if isBeginningAll == 0 and button == mouse.LEFT and beginningAllNum <= 99999:
         beginningAllNum = 999999
     elif isBeginningAll == 0 and button == mouse.LEFT:
@@ -1518,9 +1543,8 @@ def on_mouse_down(pos, button):
             elif keyintroButton.detect(pos) == "OK": # 点击按键说明
                 settingChoose = 3
             elif homeButton.detect(pos) == "OK": # 点击home键
-                settingChoose = 0
-                roleChoose = 0
                 clear_level_data()
+                reset_game()
     elif settingChoose == 2:
         if button == mouse.LEFT:
             if volumeButtonDown.detect(pos) == "OK" and volumeCnt > 0:
@@ -1532,53 +1556,6 @@ def on_mouse_down(pos, button):
     elif settingChoose == 3:
         if button == mouse.LEFT:
             settingChoose = 1
-    else:
-        if roleChoose == 1 and isBeginningKnight == 0:
-            if tabForBeginningKnightDialog != 6:
-                tabForBeginningKnightDialog += 1
-                if tabForBeginningKnightDialog == 1:
-                    beginningKnightNum1 = 999999
-                elif tabForBeginningKnightDialog == 2:
-                    beginningKnightNum2 = 999999
-                elif tabForBeginningKnightDialog == 3:
-                    beginningKnightNum3 = 999999
-                elif tabForBeginningKnightDialog == 4:
-                    beginningKnightNum4 = 999999
-                elif tabForBeginningKnightDialog == 5:
-                    beginningKnightNum5 = 999999
-            if tabForBeginningKnightDialog == 6:
-                    isBeginningKnight = 1
-        elif roleChoose == 2 and isBeginningAssassin == 0:
-            if tabForBeginningAssassinDialog != 6:
-                tabForBeginningAssassinDialog += 1
-                if tabForBeginningAssassinDialog == 1:
-                    beginningAssassinNum1 = 999999
-                elif tabForBeginningAssassinDialog == 2:
-                    beginningAssassinNum2 = 999999
-                elif tabForBeginningAssassinDialog == 3:
-                    beginningAssassinNum3 = 999999
-                elif tabForBeginningAssassinDialog == 4:
-                    beginningAssassinNum4 = 999999
-                elif tabForBeginningAssassinDialog == 5:
-                    beginningAssassinNum5 = 999999
-            if tabForBeginningAssassinDialog == 6:
-                    isBeginningAssassin = 1
-        elif roleChoose == 3 and isBeginningPaladin == 0:
-            if tabForBeginningPaladinDialog != 7:
-                tabForBeginningPaladinDialog += 1
-                if tabForBeginningPaladinDialog == 1:
-                    beginningPaladinNum1 = 999999
-                elif tabForBeginningPaladinDialog == 2:
-                    beginningPaladinNum2 = 999999
-                elif tabForBeginningPaladinDialog == 3:
-                    beginningPaladinNum3 = 999999
-                elif tabForBeginningPaladinDialog == 4:
-                    beginningPaladinNum4 = 999999
-                elif tabForBeginningPaladinDialog == 5:
-                    beginningPaladinNum5 = 999999
-            if tabForBeginningPaladinDialog == 7:
-                    isBeginningPaladin = 1  
-
 
 def on_key_down(key):
     global hFlag, vFlag, settingChoose
