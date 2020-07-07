@@ -237,11 +237,21 @@ class Bullet:
                 return False
         self.actor.left += self.speed * cos(self.actor.angle / 180 * pi)
         self.actor.bottom += -1 * self.speed * sin(self.actor.angle / 180 * pi)
-        # 上下两堵墙
-        if self.actor.colliderect((0, 0), (WIDTH, wallSize)) or self.actor.colliderect((0, HEIGHT - wallSize), (WIDTH, HEIGHT)):
+        # # 上下两堵墙
+        # if self.actor.colliderect((0, 0), (WIDTH, wallSize)) or self.actor.colliderect((0, HEIGHT - wallSize), (WIDTH, HEIGHT)):
+        #     return False
+        # # 左右两堵墙
+        # if self.actor.colliderect((0, 0), (wallSize, HEIGHT)) or self.actor.colliderect((WIDTH - wallSize - barWidth, 0), (WIDTH, HEIGHT)):
+        #     return False
+        # 新的判断撞墙
+        _x, _y = self.actor.center
+        if _x < wallSize:
             return False
-        # 左右两堵墙
-        if self.actor.colliderect((0, 0), (wallSize, HEIGHT)) or self.actor.colliderect((WIDTH - wallSize - barWidth, 0), (WIDTH, HEIGHT)):
+        if _x > WIDTH - wallSize - barWidth:
+            return False
+        if _y < wallSize:
+            return False
+        if _y > HEIGHT - wallSize:
             return False
         # 判断障碍物
         for _obstacle in obstacleList:
@@ -310,7 +320,8 @@ class Weapon:
     def shoot(self, pos):   
         if self.cd <= 0 and player.mp >= self.cost:
             # playerBulletList.append(Bullet(self.bulletType, (self.actor.center[0] + wallSize / 4 * (-1 if self.actor.pos[0] > WIDTH / 2 else 1), self.actor.top - heroHeight / 4), pos, self.bulletSpeed, self.atk))
-            playerBulletList.append(Bullet(self.bulletType, (self.actor.right - wallSize / 4 if 'rt' in self.actor.image else self.actor.left + wallSize / 4, self.actor.top - heroHeight / 4), pos, self.bulletSpeed, self.atk))
+            # playerBulletList.append(Bullet(self.bulletType, (self.actor.right - wallSize / 4 if 'rt' in self.actor.image else self.actor.left + wallSize / 4, self.actor.top - heroHeight / 4), pos, self.bulletSpeed, self.atk))
+            playerBulletList.append(Bullet(self.bulletType, (self.actor.center[0], self.actor.top), pos, self.bulletSpeed, self.atk))
             sounds.gun.play()
             self.cd = self.cd_MAX
             player.mp -= self.cost # 只有玩家会使用Weapon类，所以直接减少玩家的mp
