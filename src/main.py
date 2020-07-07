@@ -9,6 +9,7 @@ import os
 
 # 选角色相关
 roleChoose = 0
+roleChoice = 0
 storyLine = 'a'
 
 # 角色高度
@@ -1112,6 +1113,17 @@ def next_level():   # 进入下一关
     else:
        level[2] += 1
 
+# 人物选择特效
+def choice_role(pos):
+    global roleChoice
+    if 0.25 * WIDTH - 25 < pos[0] < 0.25 * WIDTH + 45 and 0.5 * HEIGHT < pos[1] < 0.5 * HEIGHT + 70:
+        roleChoice = 1
+    elif 0.5 * WIDTH - 25 < pos[0] < 0.5 * WIDTH + 45 and 0.5 * HEIGHT < pos[1] < 0.5 * HEIGHT + 70:
+        roleChoice = 2
+    elif 0.75 * WIDTH - 25 < pos[0] < 0.75 * WIDTH + 45 and 0.5 * HEIGHT < pos[1] < 0.5 * HEIGHT + 70:
+        roleChoice = 3
+    else:
+        roleChoice = 0
 
 # 人物选择
 def choose_role(pos):
@@ -1143,6 +1155,12 @@ def start_view():
     screen.draw.text("Max Life:7", center=(0.75 * WIDTH, 0.5 * HEIGHT + 1.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="red")
     screen.draw.text("Max Armor:4", center=(0.75 * WIDTH, 0.5 * HEIGHT + 2.3 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="grey40")
     screen.draw.text("Max Power:200", center=(0.75 * WIDTH, 0.5 * HEIGHT + 2.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="blue")
+    if roleChoice == 1:
+        screen.blit("knight_choose", (0.25 * WIDTH - 25, 0.5 * HEIGHT))
+    elif roleChoice == 2:
+        screen.blit("assassin_choose", (0.5 * WIDTH - 25, 0.5 * HEIGHT))
+    elif roleChoice == 3:
+        screen.blit("paladin_choose", (0.75 * WIDTH - 25, 0.5 * HEIGHT))
 
 # 裁剪技能条，使技能条看起来是动态的
 def generate_skillCD_png():
@@ -1430,7 +1448,9 @@ def draw():
 
 # 处理武器跟随旋转
 def on_mouse_move(pos):
-    if settingChoose == 0 and is_begun():
+    if isBeginningAll == 1 and roleChoose == 0:
+        choice_role(pos)
+    elif settingChoose == 0 and is_begun():
         player.weapon.rotate_to(pos)
         if player.weapon2:
             player.weapon2.rotate_to(pos)
