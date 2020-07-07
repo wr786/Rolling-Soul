@@ -1933,7 +1933,7 @@ def obstacle_map():
         obstacleList.append(Obstacle(10 * wallSize, 13 * wallSize))
         obstacleList.append(Obstacle(19 * wallSize, 8 * wallSize))
         
-        spawnPoint = (14 * wallSize, 10 * wallSize)
+        spawnPoint = (14 * wallSize, 13 * wallSize)
         slotmachinePoint = (9 * wallSize, 15 * wallSize)
         
     elif level == [2, 'a', 2]:
