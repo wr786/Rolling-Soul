@@ -257,7 +257,7 @@ class Bullet:
                     self.actor.image = 'effect_hit_small'
                     return True
         else:   # 敌人的子弹射中了玩家
-            if self.actor.colliderect(player.actor):
+            if self.actor.colliderect((player.actor.center[0] - wallSize, player.actor.center[1] - wallSize, 2 * wallSize, 2 * wallSize)):
                 player.get_damage(self.atk)
                 self.actor.image = 'effect_hit_big'
                 return True
