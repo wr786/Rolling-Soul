@@ -18,6 +18,40 @@ heroHeight = 68
 barWidth = 174
 barHeight = 85
 
+#开头相关
+isBeginningAll = 0
+beginningAllNum = 0
+ 
+#骑士开头
+isBeginningKnight = 0
+beginningKnightNum1 = 0
+beginningKnightNum2 = 0
+beginningKnightNum3 = 0
+beginningKnightNum4 = 0
+beginningKnightNum5 = 0
+tabForBeginningKnightDialog = 0
+knightDeathTime = 12
+
+#刺客开头：
+isBeginningAssassin = 0
+beginningAssassinNum1 = 0
+beginningAssassinNum2 = 0
+beginningAssassinNum3 = 0
+beginningAssassinNum4 = 0
+beginningAssassinNum5 = 0
+tabForBeginningAssassinDialog = 0
+
+
+#游侠开头：
+isBeginningPaladin = 0
+beginningPaladinNum1 = 0
+beginningPaladinNum2 = 0
+beginningPaladinNum3 = 0
+beginningPaladinNum4 = 0
+beginningPaladinNum5 = 0
+beginningPaladinNum6 = 0
+tabForBeginningPaladinDialog = 0
+
 # 地图设置
 floornum = 21 # 一行地砖的数量
 wallnum = 23 # 一行墙砖的数量
@@ -656,6 +690,251 @@ class Enemy:
         else:
             self.shootCD -= 1
 
+#总开头
+def Beginning_all():
+    global beginningAllNum
+    screen.fill((0, 0, 0))
+    Dreamtale = 'Once upon a time, an alien-king attempted to invade the earth. At this crucial moment, three heroes stand out to protect their beautiful motherland. Now, let us experience their epic legend together!'
+    length = len(Dreamtale)
+    screen.draw.text('You can tab mouse left to skip this part.', center = (0.5 * WIDTH , 0.6 * HEIGHT), fontname = "hanyinuomituan", fontsize = 50)
+    if beginningAllNum < length:
+        for i in range(beginningAllNum+1):
+            if i <= 65:
+                screen.draw.text(Dreamtale[i], center = (0.12 * WIDTH + (2*i / length) * WIDTH, 0.2 * HEIGHT), fontname = "hanyinuomituan", fontsize = 20)
+            elif i <= 136:
+                screen.draw.text(Dreamtale[i], center = (0.09 * WIDTH + (2*(i-65) / length) * WIDTH, 0.3 * HEIGHT), fontname = "hanyinuomituan", fontsize = 20)
+            else:
+                screen.draw.text(Dreamtale[i], center = (0.12 * WIDTH + (2*(i-136) / length) * WIDTH, 0.4 * HEIGHT), fontname = "hanyinuomituan", fontsize = 20)
+    else:
+        for i in range(length):
+            if i <= 65:
+                screen.draw.text(Dreamtale[i], center = (0.12 * WIDTH + (2*i / length) * WIDTH, 0.2 * HEIGHT), fontname = "hanyinuomituan", fontsize = 20)
+            elif i <= 136:
+                screen.draw.text(Dreamtale[i], center = (0.09 * WIDTH + (2*(i-65) / length) * WIDTH, 0.3 * HEIGHT), fontname = "hanyinuomituan", fontsize = 20)
+            else:
+                screen.draw.text(Dreamtale[i], center = (0.12 * WIDTH + (2*(i-136) / length) * WIDTH, 0.4 * HEIGHT), fontname = "hanyinuomituan", fontsize = 20)
+
+#骑士开头：
+def Beginning_knight():
+    beginningBackground = Actor('background_for_knight')
+    beginningBackground.topleft = 0, 0
+    beginningBackground.draw()
+    global player, dialogBox1, dialogBox2, knightDeathTime, beginningKnightNum1, beginningKnightNum2, beginningKnightNum3, beginningKnightNum4, beginningKnightNum5, tabForBeginningKnightDialog
+    player.actor.topleft = 0.07*WIDTH, 0.43*HEIGHT
+    if knightDeathTime != 0:
+        player.actor.image = 'knight_rtdeath'
+        player.actor.draw()
+    else:
+        player.actor.image = 'knight_rt'
+        player.actor.draw()
+        if tabForBeginningKnightDialog == 0 or tabForBeginningKnightDialog == 1 or tabForBeginningKnightDialog == 2:
+            dialogBox1.topleft = 0.12*WIDTH, 0.01*HEIGHT
+            dialogBox1.draw()
+            dialog1 = '...Where am I? A forest? I should '
+            length1 = len(dialog1)
+            if beginningKnightNum1 < length1:
+                for i in range(beginningKnightNum1+1):
+                    screen.draw.text(dialog1[i], center = (0.2*WIDTH + i/length1 * 0.33*WIDTH, 0.1 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
+            else:
+                for i in range(length1):
+                    screen.draw.text(dialog1[i], center = (0.2*WIDTH + i/length1 * 0.33*WIDTH, 0.1 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
+        if tabForBeginningKnightDialog == 1 or tabForBeginningKnightDialog == 2:
+            dialog2 = 'have been fighting beside the king!'
+            length2 = len(dialog2)
+            if beginningKnightNum2 < length2:
+                for i in range(beginningKnightNum2+1):
+                    screen.draw.text(dialog2[i], center = (0.2*WIDTH + i/length2 * 0.33*WIDTH, 0.15 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
+            else:
+                for i in range(length2):
+                    screen.draw.text(dialog2[i], center = (0.2*WIDTH + i/length2 * 0.33*WIDTH, 0.15 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
+        if tabForBeginningKnightDialog == 2 or tabForBeginningKnightDialog == 3 or tabForBeginningKnightDialog == 4 or tabForBeginningKnightDialog == 5:
+            npc = Actor('monster_1a_01_lt')
+            npc.topleft = 0.88*WIDTH, 0.79*HEIGHT
+            npc.draw()
+            dialogBox2.bottomright = 0.88*WIDTH, 0.79*HEIGHT
+            dialogBox2.draw()
+            dialog3 = 'Wooooooow!!'
+            length3 = len(dialog3)
+            if beginningKnightNum3 < length3:
+                for i in range(beginningKnightNum3+1):
+                    screen.draw.text(dialog3[i], center = (0.52*WIDTH + i/length3 * 0.32*WIDTH, 0.56 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 60, color = 'red')
+            else:
+                for i in range(length3):
+                    screen.draw.text(dialog3[i], center = (0.52*WIDTH + i/length3 * 0.32*WIDTH, 0.56 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 60, color = 'red')
+        if tabForBeginningKnightDialog == 3 or tabForBeginningKnightDialog == 4 or tabForBeginningKnightDialog == 5:
+            dialogBox1.topleft = 0.12*WIDTH, 0.01*HEIGHT
+            dialogBox1.draw()
+            dialog4 = 'Enemies?! My worriors, '
+            length4 = len(dialog4)
+            if beginningKnightNum4 < length4:
+                for i in range(beginningKnightNum4+1):
+                    screen.draw.text(dialog4[i], center = (0.2*WIDTH + i/length4 * 0.35*WIDTH, 0.1 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
+            else:
+                for i in range(length4):
+                    screen.draw.text(dialog4[i], center = (0.2*WIDTH + i/length4 * 0.35*WIDTH, 0.1 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
+        if tabForBeginningKnightDialog == 4 or tabForBeginningKnightDialog == 5:
+        
+            dialog5 = 'FIGHT FOR THE KING!'
+            length5 = len(dialog5)
+            if beginningKnightNum5 < length5:
+                for i in range(beginningKnightNum5+1):
+                    screen.draw.text(dialog5[i], center = (0.18*WIDTH + i/length5 * 0.35*WIDTH, 0.15 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 45, color = 'black')
+            else:
+                for i in range(length5):
+                    screen.draw.text(dialog5[i], center = (0.18*WIDTH + i/length5 * 0.35*WIDTH, 0.15 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 45, color = 'black')
+
+#刺客开头：
+def Beginning_assassin():
+    beginningBackground = Actor('background_for_assassin')
+    beginningBackground.topleft = 0, 0
+    beginningBackground.draw()
+    global player, dialogBox1, dialogBox2, tabForBeginningAssassinDialog, beginningAssassinNum1, beginningAssassinNum2, beginningAssassinNum3, beginningAssassinNum4, beginningAssassinNum5
+    player.actor.topleft = 0.07*WIDTH, 0.43*HEIGHT
+    if tabForBeginningAssassinDialog != 6:
+        if tabForBeginningAssassinDialog == 0 or tabForBeginningAssassinDialog == 1 or tabForBeginningAssassinDialog == 2:
+            player.actor.draw()
+            dialogBox1.topleft = 0.12*WIDTH, 0.01*HEIGHT
+            dialogBox1.draw()
+            dialog1 = 'Goddame it, I am freezing to death!'
+            length1 = len(dialog1)
+            if beginningAssassinNum1 < length1:
+                for i in range(beginningAssassinNum1+1):
+                    screen.draw.text(dialog1[i], center = (0.2*WIDTH + i/length1 * 0.33*WIDTH, 0.1 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
+            else:
+                for i in range(length1):
+                    screen.draw.text(dialog1[i], center = (0.2*WIDTH + i/length1 * 0.33*WIDTH, 0.1 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
+        if tabForBeginningAssassinDialog == 1 or tabForBeginningAssassinDialog == 2:
+            dialog2 = 'I miss the sakura in my home...'
+            length2 = len(dialog2)
+            if beginningAssassinNum2 < length2:
+                for i in range(beginningAssassinNum2+1):
+                    screen.draw.text(dialog2[i], center = (0.2*WIDTH + i/length2 * 0.33*WIDTH, 0.15 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
+            else:
+                for i in range(length2):
+                    screen.draw.text(dialog2[i], center = (0.2*WIDTH + i/length2 * 0.33*WIDTH, 0.15 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
+        if tabForBeginningAssassinDialog == 2 or tabForBeginningAssassinDialog == 3 or tabForBeginningAssassinDialog == 4 or tabForBeginningAssassinDialog == 5:
+            npc1 = Actor('monster_1b_01_lt')
+            npc2 = Actor('monster_1b_02_lt')
+            npc3 = Actor('monster_1b_03_lt')
+            npc4 = Actor('monster_1b_02_lt')
+            npc5 = Actor('monster_1b_01_lt')
+            if beginningAssassinNum3 < 15:
+                npc1.topright = 1.2 * WIDTH - 0.4 * WIDTH * beginningAssassinNum3 / 15, 0.85*HEIGHT
+                npc2.topright = 1.1 * WIDTH - 0.3 * WIDTH * beginningAssassinNum3 / 15, 0.65*HEIGHT
+                npc3.topright = WIDTH - 0.2 * WIDTH * beginningAssassinNum3 / 15, 0.43*HEIGHT
+                npc4.topright = 1.1 * WIDTH - 0.3 * WIDTH * beginningAssassinNum3 / 15, 0.25*HEIGHT
+                npc5.topright = 1.2 * WIDTH - 0.4 * WIDTH * beginningAssassinNum3 / 15, 0.05*HEIGHT
+            else:
+                npc1.topright = 0.8 * WIDTH, 0.85*HEIGHT
+                npc2.topright = 0.8 * WIDTH, 0.65*HEIGHT
+                npc3.topright = 0.8 * WIDTH, 0.43*HEIGHT
+                npc4.topright = 0.8 * WIDTH, 0.25*HEIGHT
+                npc5.topright = 0.8 * WIDTH, 0.05*HEIGHT
+            npc1.draw()
+            npc2.draw()
+            npc3.draw()
+            npc4.draw()
+            npc5.draw()
+        if tabForBeginningAssassinDialog == 3 or tabForBeginningAssassinDialog == 4 or tabForBeginningAssassinDialog == 5:
+            player.actor.image = 'assassin_rtwalk'
+            player.actor.draw()
+            dialogBox1.topleft = 0.12*WIDTH, 0.01*HEIGHT
+            dialogBox1.draw()
+            dialog4 = 'I hate this mission...'
+            length4 = len(dialog4)
+            if beginningAssassinNum4 < length4:
+                for i in range(beginningAssassinNum4+1):
+                    screen.draw.text(dialog4[i], center = (0.2*WIDTH + i/length4 * 0.35*WIDTH, 0.1 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
+            else:
+                for i in range(length4):
+                    screen.draw.text(dialog4[i], center = (0.2*WIDTH + i/length4 * 0.35*WIDTH, 0.1 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
+        if tabForBeginningAssassinDialog == 4 or tabForBeginningAssassinDialog == 5:
+            dialog5 = 'I am out of patience...'
+            length5 = len(dialog5)
+            if beginningAssassinNum5 < length5:
+                for i in range(beginningAssassinNum5+1):
+                    screen.draw.text(dialog5[i], center = (0.2*WIDTH + i/length5 * 0.35*WIDTH, 0.15 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
+            else:
+                for i in range(length5):
+                    screen.draw.text(dialog5[i], center = (0.2*WIDTH + i/length5 * 0.35*WIDTH, 0.15 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
+
+#游侠开头：
+def Beginning_paladin():
+    beginningBackground = Actor('background_for_paladin')
+    beginningBackground.topleft = 0, 0
+    beginningBackground.draw()
+    global player, dialogBox1, dialogBox2, tabForBeginningPaladinDialog, beginningPaladinNum1, beginningPaladinNum2, beginningPaladinNum3, beginningPaladinNum4, beginningPaladinNum5, beginningPaladinNum6
+    player.actor.topleft = 0.07*WIDTH, 0.43*HEIGHT
+    if tabForBeginningPaladinDialog != 7:
+        if tabForBeginningPaladinDialog == 0 or tabForBeginningPaladinDialog == 1 or tabForBeginningPaladinDialog == 2:
+            player.actor.draw()
+            dialogBox1.topleft = 0.12*WIDTH, 0.01*HEIGHT
+            dialogBox1.draw()
+            dialog1 = 'Wow, lovely monkeys! Can you lead'
+            length1 = len(dialog1)
+            if beginningPaladinNum1 < length1:
+                for i in range(beginningPaladinNum1+1):
+                    screen.draw.text(dialog1[i], center = (0.2*WIDTH + i/length1 * 0.33*WIDTH, 0.1 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
+            else:
+                for i in range(length1):
+                    screen.draw.text(dialog1[i], center = (0.2*WIDTH + i/length1 * 0.33*WIDTH, 0.1 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
+        if tabForBeginningPaladinDialog == 1 or tabForBeginningPaladinDialog == 2:
+            dialog2 = 'me out of this canyon? I am lost.'
+            length2 = len(dialog2)
+            if beginningPaladinNum2 < length2:
+                for i in range(beginningPaladinNum2+1):
+                    screen.draw.text(dialog2[i], center = (0.2*WIDTH + i/length2 * 0.33*WIDTH, 0.15 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
+            else:
+                for i in range(length2):
+                    screen.draw.text(dialog2[i], center = (0.2*WIDTH + i/length2 * 0.33*WIDTH, 0.15 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
+        if tabForBeginningPaladinDialog == 2 or tabForBeginningPaladinDialog == 3 or tabForBeginningPaladinDialog == 4 or tabForBeginningPaladinDialog == 5 or tabForBeginningPaladinDialog == 6:
+            npc = Actor('monster_1c_04_lt')
+            npc.topleft = 0.78*WIDTH, 0.79*HEIGHT
+            npc.draw()
+            dialogBox2.bottomright = 0.78*WIDTH, 0.79*HEIGHT
+            dialogBox2.draw()
+            dialog3 = 'My kids, kill the invader!'
+            length3 = len(dialog3)
+            if beginningPaladinNum3 < length3:
+                for i in range(beginningPaladinNum3+1):
+                    screen.draw.text(dialog3[i], center = (0.42*WIDTH + i/length3 * 0.32*WIDTH, 0.57 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 35, color = 'red')
+            else:
+                for i in range(length3):
+                    screen.draw.text(dialog3[i], center = (0.42*WIDTH + i/length3 * 0.32*WIDTH, 0.57 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 35, color = 'red')
+        if tabForBeginningPaladinDialog == 3 or tabForBeginningPaladinDialog == 4 or tabForBeginningPaladinDialog == 5:
+            player.actor.image = 'paladin_ltwalk'
+            player.actor.draw()
+            dialogBox1.topleft = 0.12*WIDTH, 0.01*HEIGHT
+            dialogBox1.draw()
+            dialog4 = 'I just want to ask the direction.'
+            length4 = len(dialog4)
+            if beginningPaladinNum4 < length4:
+                for i in range(beginningPaladinNum4+1):
+                    screen.draw.text(dialog4[i], center = (0.2*WIDTH + i/length4 * 0.35*WIDTH, 0.1 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
+            else:
+                for i in range(length4):
+                    screen.draw.text(dialog4[i], center = (0.2*WIDTH + i/length4 * 0.35*WIDTH, 0.1 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
+        if tabForBeginningPaladinDialog == 4 or tabForBeginningPaladinDialog == 5:
+            dialog5 = 'SOMEBODY HELP————!!'
+            length5 = len(dialog5)
+            if beginningPaladinNum5 < length5:
+                for i in range(beginningPaladinNum5+1):
+                    screen.draw.text(dialog5[i], center = (0.2*WIDTH + i/length5 * 0.35*WIDTH, 0.15 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
+            else:
+                for i in range(length5):
+                    screen.draw.text(dialog5[i], center = (0.2*WIDTH + i/length5 * 0.35*WIDTH, 0.15 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
+        if tabForBeginningPaladinDialog == 6:
+            player.actor.image = 'paladin_ltwalk'
+            player.actor.topleft = 0.07*WIDTH - WIDTH * beginningPaladinNum6 / 15, 0.43*HEIGHT
+            dialogBox1.topleft = 0.12*WIDTH - WIDTH * beginningPaladinNum6 / 15, 0.01*HEIGHT
+            player.actor.draw()
+            dialogBox1.draw()
+            dialog6 = 'SOMEBODY HELP————!!'
+            length6 = len(dialog6)
+            for i in range(length6):
+                screen.draw.text(dialog6[i], center = (0.2*WIDTH + i/length6 * 0.35*WIDTH - WIDTH * beginningPaladinNum6 / 15, 0.15 * HEIGHT) , fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
+
+
 # 死亡界面
 def get_death():
     global roleChoose
@@ -978,29 +1257,90 @@ def draw_button():
 
 
 def draw():
-    global frameCnt, portalFrameCnt, initialFlag, slotmachineCnt
+    global roleChoose, frameCnt, portalFrameCnt, initialFlag, slotmachineCnt,isBeginningKnight, isBeginningAssassin, isBeginningPaladin, knightDeathTime 
     global awardFlag, awardWeapon
     screen.clear()
 
-    draw_bar()
+    if isBeginningKnight == 1 or isBeginningAssassin == 1 or isBeginningPaladin == 1:
+        draw_bar()
 
     if initialFlag:
         draw_map()
-        for _obstacle in obstacleList:
-            _obstacle.actor.draw()
-        for _enemy in enemyList:
-            _enemy.actor.draw()
-        for _bullet in playerBulletList:
-            _bullet.actor.draw()
-        for _bullet in enemyBulletList:
-            _bullet.actor.draw()
+        if (roleChoose == 1 and isBeginningKnight == 1) or (roleChoose == 2 and isBeginningAssassin == 1) or (roleChoose == 3 and isBeginningPaladin == 1):
+            for _obstacle in obstacleList:
+                _obstacle.actor.draw()
+            for _enemy in enemyList:
+                _enemy.actor.draw()
+            for _bullet in playerBulletList:
+                _bullet.actor.draw()
+            for _bullet in enemyBulletList:
+                _bullet.actor.draw()
 
     # 关卡信息初始化
-    global roleChoose, level
-    if roleChoose == 0: # 选择人物
+    global level, isBeginningAll, beginningAllNum
+    global beginningKnightNum1, beginningKnightNum2, beginningKnightNum3, beginningKnightNum4, beginningKnightNum5
+    global beginningAssassinNum1, beginningAssassinNum2, beginningAssassinNum3, beginningAssassinNum4, beginningAssassinNum5
+    global beginningPaladinNum1, beginningPaladinNum2, beginningPaladinNum3, beginningPaladinNum4, beginningPaladinNum5, beginningPaladinNum6
+    if isBeginningAll == 0:
+        Beginning_all()
+        beginningAllNum += 1
+    if isBeginningAll == 1 and roleChoose == 0: # 选择人物
         start_view()
-    else:
-        if not music.is_playing(f'bgm_{level[0]}{level[1]}'):    # 用bgm有没有播放就可以判断是否初始化过关卡了
+    elif isBeginningAll == 1:
+        if isBeginningKnight == 0 and roleChoose == 1:
+            Beginning_knight()
+            if knightDeathTime != 0:
+                knightDeathTime -= 1
+            elif tabForBeginningKnightDialog == 0:
+                beginningKnightNum1 += 1
+            elif tabForBeginningKnightDialog == 1:
+                beginningKnightNum2 += 1
+            elif tabForBeginningKnightDialog == 2:
+                beginningKnightNum3 += 1
+            elif tabForBeginningKnightDialog == 3:
+                player.weapon.actor.draw()
+                beginningKnightNum4 += 1
+            elif tabForBeginningKnightDialog == 4:
+                player.weapon.actor.draw()
+                beginningKnightNum5 += 1
+            elif tabForBeginningKnightDialog == 5:
+                player.weapon.actor.draw()
+        elif isBeginningAssassin == 0 and roleChoose == 2:
+            Beginning_assassin()
+            if tabForBeginningAssassinDialog == 0:
+                beginningAssassinNum1 += 1
+            elif tabForBeginningAssassinDialog == 1:
+                beginningAssassinNum2 += 1
+            elif tabForBeginningAssassinDialog == 2:
+                beginningAssassinNum3 += 1
+            elif tabForBeginningAssassinDialog == 3:
+                player.weapon.actor.draw()
+                beginningAssassinNum4 += 1
+            elif tabForBeginningAssassinDialog == 4:
+                player.weapon.actor.draw()
+                beginningAssassinNum5 += 1
+            elif tabForBeginningAssassinDialog == 5:
+                player.weapon.actor.draw()
+        elif isBeginningPaladin == 0 and roleChoose == 3:
+            Beginning_paladin()
+            if tabForBeginningPaladinDialog == 0:
+                beginningPaladinNum1 += 1
+            elif tabForBeginningPaladinDialog == 1:
+                beginningPaladinNum2 += 1
+            elif tabForBeginningPaladinDialog == 2:
+                beginningPaladinNum3 += 1
+            elif tabForBeginningPaladinDialog == 3:
+                player.weapon.actor.draw()
+                beginningPaladinNum4 += 1
+            elif tabForBeginningPaladinDialog == 4:
+                player.weapon.actor.draw()
+                beginningPaladinNum5 += 1
+            elif tabForBeginningPaladinDialog == 5:
+                player.weapon.actor.draw()
+            elif tabForBeginningPaladinDialog == 6:
+                beginningPaladinNum6 += 1
+                
+        if (isBeginningKnight == 1 or isBeginningAssassin == 1 or isBeginningPaladin == 1) and (not music.is_playing(f'bgm_{level[0]}{level[1]}')):   # 用bgm有没有播放就可以判断是否初始化过关卡了
             music.play(f'bgm_{level[0]}{level[1]}')
             music.set_volume(0.02 * volumeCnt)
             generate_map_cells()
@@ -1026,7 +1366,7 @@ def draw():
                         enemyList.append(Enemy(levelEnemyList[(level[0], level[1], enemyMinorType)]    ))  # 这里的'a'后续要更换成根据人物变化
             initialFlag = True
             player.actor.center = spawnPoint
-        else:
+        elif isBeginningKnight == 1 or isBeginningAssassin == 1 or isBeginningPaladin == 1:
             if not enemyList:  # 敌人打完了
                 portal_create(*spawnPoint)
                 # slotmachine_create(0.5 * wallnum * wallSize, 0.2 * wallnum * wallSize)
@@ -1036,19 +1376,19 @@ def draw():
                     slotmachine_choice()
                 if awardWeapon:
                     awardWeapon.actor.draw()
-        if awardFlag != '':    # 有武器
+        if (isBeginningKnight == 1 or isBeginningAssassin == 1 or isBeginningPaladin == 1) and awardFlag != '':
             awardWeapon = Weapon(awardFlag, *slotmachinePoint)    # 这个位置随老虎机一起改
             awardFlag = ''
 
-        if player.immuneTime and player.immuneTime % 20 < 10:
+        if (isBeginningKnight == 1 or isBeginningAssassin == 1 or isBeginningPaladin == 1) and player.immuneTime and player.immuneTime % 20 < 10:
             pass  # 无敌时间，为了看得更直观加个pass、else
-        elif player.hp > 0:
+        elif (isBeginningKnight == 1 or isBeginningAssassin == 1 or isBeginningPaladin == 1) and player.hp > 0:
             if player.is_skill_on():
                 player.skillEffect.draw()
             player.actor.draw()
             player.weapon.actor.draw()
 
-        if player.hp <= 0:
+        if (isBeginningKnight == 1 or isBeginningAssassin == 1 or isBeginningPaladin == 1) and player.hp <= 0:
             get_death()
         frameCnt = frameCnt % 60 + 1
         portalFrameCnt = portalFrameCnt % 60 + 1
@@ -1060,8 +1400,9 @@ def draw():
         elif settingChoose ==3:
             screen.blit("control_introduction", (0.5 * WIDTH - 0.5 * slotmachineWidth_big, 0.5 * HEIGHT - 0.5 * slotmachineHeight_big))
 
-        draw_button()
-        music.set_volume(0.02 * volumeCnt)
+        if isBeginningKnight == 1 or isBeginningAssassin == 1 or isBeginningPaladin == 1:
+            draw_button()
+            music.set_volume(0.02 * volumeCnt)
 
 # 处理武器跟随旋转
 def on_mouse_move(pos):
@@ -1073,10 +1414,16 @@ def on_mouse_move(pos):
 def on_mouse_down(pos, button):
     #todo 这里应该加个判断，判断当前是否在战斗中
     global player, level, volumeCnt
-    global roleChoose, chatchoose, settingChoose
+    global roleChoose, chatchoose, settingChoose, isBeginningAll, beginningAllNum
+    global isBeginningKnight, tabForBeginningKnightDialog, beginningKnightNum1, beginningKnightNum2, beginningKnightNum3, beginningKnightNum4, beginningKnightNum5
+    global isBeginningAssassin, tabForBeginningAssassinDialog, beginningAssassinNum1, beginningAssassinNum2, beginningAssassinNum3, beginningAssassinNum4, beginningAssassinNum5
+    global isBeginningPaladin, tabForBeginningPaladinDialog, beginningPaladinNum1, beginningPaladinNum2, beginningPaladinNum3, beginningPaladinNum4, beginningPaladinNum5
     global awardWeapon
-    if roleChoose == 0:
-        if button == mouse.LEFT:
+    if isBeginningAll == 0 and button == mouse.LEFT and beginningAllNum <= 99999:
+        beginningAllNum = 999999
+    elif isBeginningAll == 0 and button == mouse.LEFT:
+        isBeginningAll = 1
+    elif roleChoose == 0 and button == mouse.LEFT:        
             choose_role(pos)
             if roleChoose == 1:
                 player = Knight()
@@ -1093,6 +1440,51 @@ def on_mouse_down(pos, button):
         if button == mouse.LEFT:
             roleChoose = 0
             clear_level_data()
+    elif roleChoose == 1 and isBeginningKnight == 0:
+        if tabForBeginningKnightDialog != 6:
+            tabForBeginningKnightDialog += 1
+            if tabForBeginningKnightDialog == 1:
+                beginningKnightNum1 = 999999
+            elif tabForBeginningKnightDialog == 2:
+                beginningKnightNum2 = 999999
+            elif tabForBeginningKnightDialog == 3:
+                beginningKnightNum3 = 999999
+            elif tabForBeginningKnightDialog == 4:
+                beginningKnightNum4 = 999999
+            elif tabForBeginningKnightDialog == 5:
+                beginningKnightNum5 = 999999
+        if tabForBeginningKnightDialog == 6:
+                isBeginningKnight = 1
+    elif roleChoose == 2 and isBeginningAssassin == 0:
+        if tabForBeginningAssassinDialog != 6:
+            tabForBeginningAssassinDialog += 1
+            if tabForBeginningAssassinDialog == 1:
+                beginningAssassinNum1 = 999999
+            elif tabForBeginningAssassinDialog == 2:
+                beginningAssassinNum2 = 999999
+            elif tabForBeginningAssassinDialog == 3:
+                beginningAssassinNum3 = 999999
+            elif tabForBeginningAssassinDialog == 4:
+                beginningAssassinNum4 = 999999
+            elif tabForBeginningAssassinDialog == 5:
+                beginningAssassinNum5 = 999999
+        if tabForBeginningAssassinDialog == 6:
+                isBeginningAssassin = 1
+    elif roleChoose == 3 and isBeginningPaladin == 0:
+        if tabForBeginningPaladinDialog != 7:
+            tabForBeginningPaladinDialog += 1
+            if tabForBeginningPaladinDialog == 1:
+                beginningPaladinNum1 = 999999
+            elif tabForBeginningPaladinDialog == 2:
+                beginningPaladinNum2 = 999999
+            elif tabForBeginningPaladinDialog == 3:
+                beginningPaladinNum3 = 999999
+            elif tabForBeginningPaladinDialog == 4:
+                beginningPaladinNum4 = 999999
+            elif tabForBeginningPaladinDialog == 5:
+                beginningPaladinNum5 = 999999
+        if tabForBeginningPaladinDialog == 7:
+                isBeginningPaladin = 1  
     elif settingChoose == 0:
         if button == mouse.LEFT:
             if pauseButton.detect(pos) == "OK": # 点击暂停
@@ -1140,6 +1532,52 @@ def on_mouse_down(pos, button):
     elif settingChoose == 3:
         if button == mouse.LEFT:
             settingChoose = 1
+    else:
+        if roleChoose == 1 and isBeginningKnight == 0:
+            if tabForBeginningKnightDialog != 6:
+                tabForBeginningKnightDialog += 1
+                if tabForBeginningKnightDialog == 1:
+                    beginningKnightNum1 = 999999
+                elif tabForBeginningKnightDialog == 2:
+                    beginningKnightNum2 = 999999
+                elif tabForBeginningKnightDialog == 3:
+                    beginningKnightNum3 = 999999
+                elif tabForBeginningKnightDialog == 4:
+                    beginningKnightNum4 = 999999
+                elif tabForBeginningKnightDialog == 5:
+                    beginningKnightNum5 = 999999
+            if tabForBeginningKnightDialog == 6:
+                    isBeginningKnight = 1
+        elif roleChoose == 2 and isBeginningAssassin == 0:
+            if tabForBeginningAssassinDialog != 6:
+                tabForBeginningAssassinDialog += 1
+                if tabForBeginningAssassinDialog == 1:
+                    beginningAssassinNum1 = 999999
+                elif tabForBeginningAssassinDialog == 2:
+                    beginningAssassinNum2 = 999999
+                elif tabForBeginningAssassinDialog == 3:
+                    beginningAssassinNum3 = 999999
+                elif tabForBeginningAssassinDialog == 4:
+                    beginningAssassinNum4 = 999999
+                elif tabForBeginningAssassinDialog == 5:
+                    beginningAssassinNum5 = 999999
+            if tabForBeginningAssassinDialog == 6:
+                    isBeginningAssassin = 1
+        elif roleChoose == 3 and isBeginningPaladin == 0:
+            if tabForBeginningPaladinDialog != 7:
+                tabForBeginningPaladinDialog += 1
+                if tabForBeginningPaladinDialog == 1:
+                    beginningPaladinNum1 = 999999
+                elif tabForBeginningPaladinDialog == 2:
+                    beginningPaladinNum2 = 999999
+                elif tabForBeginningPaladinDialog == 3:
+                    beginningPaladinNum3 = 999999
+                elif tabForBeginningPaladinDialog == 4:
+                    beginningPaladinNum4 = 999999
+                elif tabForBeginningPaladinDialog == 5:
+                    beginningPaladinNum5 = 999999
+            if tabForBeginningPaladinDialog == 7:
+                    isBeginningPaladin = 1  
 
 
 def on_key_down(key):
@@ -2627,6 +3065,8 @@ def obstacle_map():
 read_data()
 
 player = Knight()   # 默认一个先，实际是会调整的
+dialogBox1 = Actor('dialog_box_lt')
+dialogBox2 = Actor('dialog_box_rt')
 player.actor.topright = (314.5, 314.5)
 player.weapon.actor.topright = (314.5, 314.5)
 
