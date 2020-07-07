@@ -15,10 +15,6 @@ storyLine = 'a'
 # 角色高度
 heroHeight = 68
 
-# 状态栏相关
-barWidth = 174
-barHeight = 85
-
 #开头相关
 isBeginningAll = 0
 beginningAllNum = 0
@@ -51,6 +47,10 @@ beginningPaladinNum4 = 0
 beginningPaladinNum5 = 0
 beginningPaladinNum6 = 0
 tabForBeginningPaladinDialog = 0
+
+# 状态栏相关
+barWidth = 174
+barHeight = 85
 
 # 地图设置
 floornum = 21 # 一行地砖的数量
@@ -716,23 +716,31 @@ def Beginning_all():
     screen.fill((0, 0, 0))
     Dreamtale = 'Once upon a time, an alien-king attempted to invade the earth. At this crucial moment, three heroes stand out to protect their beautiful motherland. Now, let us experience their epic legend together!'
     length = len(Dreamtale)
-    screen.draw.text('You can tab mouse left to skip this part.', center = (0.5 * WIDTH , 0.6 * HEIGHT), fontname = "hanyinuomituan", fontsize = 50)
+
+    # 加入插图
+    _illustBeginning = Image.open('./images/illust_beginning.png')
+    _width = _illustBeginning.size[0]
+    screen.blit('illust_beginning', (WIDTH / 2 - _width / 2, 0.1 * HEIGHT))
+
+    dreamtaleFont = "berlinsans-demi"
+
+    screen.draw.text('You can tab mouse left to skip this part.', center = (0.5 * WIDTH , 0.8 * HEIGHT), fontname = dreamtaleFont, fontsize = 50)
     if beginningAllNum < length:
         for i in range(beginningAllNum+1):
             if i <= 65:
-                screen.draw.text(Dreamtale[i], center = (0.12 * WIDTH + (2*i / length) * WIDTH, 0.2 * HEIGHT), fontname = "hanyinuomituan", fontsize = 20)
+                screen.draw.text(Dreamtale[i], center = (0.12 * WIDTH + (2*i / length) * WIDTH, 0.5 * HEIGHT), fontname = dreamtaleFont, fontsize = 20)
             elif i <= 136:
-                screen.draw.text(Dreamtale[i], center = (0.09 * WIDTH + (2*(i-65) / length) * WIDTH, 0.3 * HEIGHT), fontname = "hanyinuomituan", fontsize = 20)
+                screen.draw.text(Dreamtale[i], center = (0.09 * WIDTH + (2*(i-65) / length) * WIDTH, 0.6 * HEIGHT), fontname = dreamtaleFont, fontsize = 20)
             else:
-                screen.draw.text(Dreamtale[i], center = (0.12 * WIDTH + (2*(i-136) / length) * WIDTH, 0.4 * HEIGHT), fontname = "hanyinuomituan", fontsize = 20)
+                screen.draw.text(Dreamtale[i], center = (0.12 * WIDTH + (2*(i-136) / length) * WIDTH, 0.7 * HEIGHT), fontname = dreamtaleFont, fontsize = 20)
     else:
         for i in range(length):
             if i <= 65:
-                screen.draw.text(Dreamtale[i], center = (0.12 * WIDTH + (2*i / length) * WIDTH, 0.2 * HEIGHT), fontname = "hanyinuomituan", fontsize = 20)
+                screen.draw.text(Dreamtale[i], center = (0.12 * WIDTH + (2*i / length) * WIDTH, 0.5 * HEIGHT), fontname = dreamtaleFont, fontsize = 20)
             elif i <= 136:
-                screen.draw.text(Dreamtale[i], center = (0.09 * WIDTH + (2*(i-65) / length) * WIDTH, 0.3 * HEIGHT), fontname = "hanyinuomituan", fontsize = 20)
+                screen.draw.text(Dreamtale[i], center = (0.09 * WIDTH + (2*(i-65) / length) * WIDTH, 0.6 * HEIGHT), fontname = dreamtaleFont, fontsize = 20)
             else:
-                screen.draw.text(Dreamtale[i], center = (0.12 * WIDTH + (2*(i-136) / length) * WIDTH, 0.4 * HEIGHT), fontname = "hanyinuomituan", fontsize = 20)
+                screen.draw.text(Dreamtale[i], center = (0.12 * WIDTH + (2*(i-136) / length) * WIDTH, 0.7 * HEIGHT), fontname = dreamtaleFont, fontsize = 20)
 
 #骑士开头：
 def Beginning_knight():
@@ -1124,6 +1132,9 @@ def clear_level_data():
     global moveSpan, battleWave
     moveSpan = MOVESPAN
     battleWave = 0
+
+    player.mp = player.mp_MAX
+    player.armor = player.armor_MAX
 
 def next_level():   # 进入下一关
     #todo 这里可能要加入更复杂的逻辑（如果要错线的话
