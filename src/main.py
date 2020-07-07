@@ -129,6 +129,7 @@ playerBulletList = []
 enemyBulletList = []
 enemyList = []
 levelEnemyList = {}
+battleWave = 0
 # 战斗数值
 weaponData = {} # key为武器名<rarity>_<name>, value为(atkRange, cost, cd, bulletSpeed)
 WEAPON_CD_STD = 50
@@ -934,7 +935,6 @@ def Beginning_paladin():
             for i in range(length6):
                 screen.draw.text(dialog6[i], center = (0.2*WIDTH + i/length6 * 0.35*WIDTH - WIDTH * beginningPaladinNum6 / 15, 0.15 * HEIGHT) , fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
 
-
 # 死亡界面
 def get_death():
     global roleChoose
@@ -1102,8 +1102,9 @@ def clear_level_data():
     slotmachineCnt = 0
     awardFlag = ''
     awardWeapon = None
-    global moveSpan
+    global moveSpan, battleWave
     moveSpan = MOVESPAN
+    battleWave = 0
 
 def next_level():   # 进入下一关
     #todo 这里可能要加入更复杂的逻辑（如果要错线的话
@@ -1366,6 +1367,7 @@ def draw():
     global roleChoose, frameCnt, portalFrameCnt, initialFlag, slotmachineCnt
     global isBeginningKnight, isBeginningAssassin, isBeginningPaladin, knightDeathTime 
     global awardFlag, awardWeapon
+    global battleWave
     screen.clear()
 
     if is_begun():
@@ -1390,37 +1392,56 @@ def draw():
             music.set_volume(0.02 * volumeCnt)
             generate_map_cells()
             obstacle_map()
-            if level[0] == 1:
-                if level[2] == 1:
-                    enemyNum = [3, 3, 0, 0]
-                elif level[2] == 2:
-                    enemyNum = [4, 3, 1, 0]
-                elif level[2] == 3:
-                    enemyNum = [0, 0, 1, 1]
-            elif level[0] == 2:
-                if level[2] == 1:
-                    enemyNum = [5, 4, 1, 0]
-                elif level[2] == 2:
-                    enemyNum = [5, 4, 2, 0]
-                elif level[2] == 3:
-                    enemyNum = [0, 0, 2, 1]
-            else:
-                pass    # 这之后继续写后续关卡的参数
-            for enemyMinorType in range(1, 5):
-                    for _ in range(enemyNum[enemyMinorType - 1]):
-                        enemyList.append(Enemy(levelEnemyList[(level[0], level[1], enemyMinorType)]    ))  # 这里的'a'后续要更换成根据人物变化
             initialFlag = True
             player.actor.center = spawnPoint
         else:
             if not enemyList:  # 敌人打完了
-                portal_create(*spawnPoint)
-                # slotmachine_create(0.5 * wallnum * wallSize, 0.2 * wallnum * wallSize)
-                slotmachine_create(*slotmachinePoint)
-                if slotmachineFlag == 4:
-                    slotmachineCnt += 1
-                    slotmachine_choice()
-                if awardWeapon:
-                    awardWeapon.actor.draw()
+                if battleWave == 2:
+                    portal_create(*spawnPoint)
+                    # slotmachine_create(0.5 * wallnum * wallSize, 0.2 * wallnum * wallSize)
+                    slotmachine_create(*slotmachinePoint)
+                    if slotmachineFlag == 4:
+                        slotmachineCnt += 1
+                        slotmachine_choice()
+                    if awardWeapon:
+                        awardWeapon.actor.draw()
+                elif battleWave == 0:
+                    if level[0] == 1:
+                        if level[2] == 1:
+                            enemyNum = [2, 1, 0, 0]
+                        elif level[2] == 2:
+                            enemyNum = [2, 2, 0, 0]
+                        elif level[2] == 3:
+                            enemyNum = [0, 0, 0, 0]
+                    elif level[0] == 2:
+                        if level[2] == 1:
+                            enemyNum = [3, 2, 0, 0]
+                        elif level[2] == 2:
+                            enemyNum = [2, 2, 1, 0]
+                        elif level[2] == 3:
+                            enemyNum = [0, 0, 0, 0]
+                    for enemyMinorType in range(1, 5):
+                        for _ in range(enemyNum[enemyMinorType - 1]):
+                            enemyList.append(Enemy(levelEnemyList[(level[0], level[1], enemyMinorType)])) 
+                elif battleWave == 1:
+                    if level[0] == 1:
+                        if level[2] == 1:
+                            enemyNum = [1, 2, 0, 0]
+                        elif level[2] == 2:
+                            enemyNum = [2, 1, 1, 0]
+                        elif level[2] == 3:
+                            enemyNum = [0, 0, 0, 1]
+                    elif level[0] == 2:
+                        if level[2] == 1:
+                            enemyNum = [2, 2, 1, 0]
+                        elif level[2] == 2:
+                            enemyNum = [3, 2, 1, 0]
+                        elif level[2] == 3:
+                            enemyNum = [0, 0, 0, 1]
+                    for enemyMinorType in range(1, 5):
+                        for _ in range(enemyNum[enemyMinorType - 1]):
+                            enemyList.append(Enemy(levelEnemyList[(level[0], level[1], enemyMinorType)])) 
+                battleWave = min(battleWave + 1, 2)
 
         if awardFlag != '':
             awardWeapon = Weapon(awardFlag, *slotmachinePoint)    # 这个位置随老虎机一起改
