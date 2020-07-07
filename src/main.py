@@ -128,9 +128,15 @@ awardWeapon = None
 playerBulletList = []
 enemyBulletList = []
 enemyList = []
-enemyListLazy = []  # 用来给怪物的出现打好标记，lazyTag (x
 levelEnemyList = {}
 battleWave = 0
+
+# 显示敌人出现位置
+enemyListLazy = []  # 用来给怪物的出现打好标记，lazyTag (x
+enemyPredictImage = 'effect_monster_15'
+enemyPredictCountdown = 0
+enemyPredictFlag = False
+
 # 战斗数值
 weaponData = {} # key为武器名<rarity>_<name>, value为(atkRange, cost, cd, bulletSpeed)
 WEAPON_CD_STD = 50
@@ -505,7 +511,6 @@ class Knight(Player):
         self.skillCD = self.skillCD_MAX
         self.weaponCD_recoverSpeed = 2
         self.skillLastTime = 6 * 60
-        clock.schedule(self.skill_recover, 6)
 
 class Assassin(Player):
 
@@ -554,7 +559,6 @@ class Assassin(Player):
         self.skillCD = self.skillCD_MAX
         moveSpan = 2 * MOVESPAN
         self.skillLastTime = 6 * 60
-        clock.schedule(self.skill_recover, 6)
 
 class Paladin(Player):
 
@@ -593,6 +597,9 @@ class Paladin(Player):
                 self.actor.image = "paladin_lt"
             else:
                 self.actor.image = "paladin_ltwalk"
+
+    def skill_recover(self):    # 取消技能所给状态
+        pass    # 无敌时间自然会update没
 
     def skill_emit(self):
         self.skillCD = self.skillCD_MAX
@@ -1192,16 +1199,41 @@ def generate_skillCD_png():
 def is_begun():
     return isBeginningAll and (isBeginningKnight == 1 or isBeginningAssassin == 1 or isBeginningPaladin == 1)
 
+# 敌人出场特效
+def show_enemy_pos():
+    for _enemy in enemyListLazy:
+        _enemyPred = Image.open(f'./images/{enemyPredictImage}.png')
+        effectWidth = _enemyPred.size[0]
+        screen.blit(enemyPredictImage, (_enemy.actor.center[0] - effectWidth / 2, _enemy.actor.center[1] - effectWidth / 2))
+
+# 显现敌人
+def show_enemy():
+    global enemyListLazy, enemyList
+    enemyList = enemyListLazy
+    enemyListLazy = []
+
+
 def update():
-    global hFlag
-    global vFlag
-    global enemyMoveCnt
+    global hFlag, vFlag
+    global enemyMoveCnt, enemyPredictFlag, enemyPredictCountdown
+    global frameCnt, portalFrameCnt
+
     enemyMoveCnt = 0
     # 移动处理
     if player.hp > 0 and settingChoose == 0 and is_begun():
         player.walk()
         player.turn()
         player.update()
+        # 技能
+        if not player.is_skill_on():
+            player.skill_recover()
+        # 显示敌人
+        if enemyPredictFlag:
+            enemyPredictCountdown -= 1
+            if enemyPredictCountdown == 0:
+                enemyPredictFlag = False
+                show_enemy()
+        # 战斗常规
         for _enemy in enemyList:
             _enemy.move()
             _enemy.shoot()
@@ -1212,6 +1244,10 @@ def update():
         for _bullet in enemyBulletList:
             if not _bullet.move_on(False):
                 enemyBulletList.remove(_bullet)
+
+        # 这两个计数器移入update，方便暂停
+        frameCnt = frameCnt % 60 + 1
+        portalFrameCnt = portalFrameCnt % 60 + 1
 
 # 画状态栏
 def draw_bar():
@@ -1356,18 +1392,6 @@ def show_beginning():
                 beginningPaladinNum6 += 1
     return True
 
-# 敌人出场特效
-def show_enemy_pos():
-    for _enemy in enemyListLazy:
-        effectWidth = 56
-        screen.blit('effect_monster_15', (_enemy.actor.center[0] - effectWidth / 2, _enemy.actor.center[1] - effectWidth / 2))
-
-# 显现敌人
-def show_enemy():
-    global enemyListLazy, enemyList
-    enemyList = enemyListLazy
-    enemyListLazy = []
-
 def reset_game():
     global level, isBeginningAll, beginningAllNum, knightDeathTime
     global isBeginningKnight, isBeginningAssassin, isBeginningPaladin
@@ -1391,7 +1415,7 @@ def draw():
     global roleChoose, frameCnt, portalFrameCnt, initialFlag, slotmachineCnt
     global isBeginningKnight, isBeginningAssassin, isBeginningPaladin, knightDeathTime 
     global awardFlag, awardWeapon
-    global battleWave
+    global battleWave, enemyPredictImage, enemyPredictCountdown, enemyPredictFlag
     screen.clear()
 
     if is_begun():
@@ -1408,6 +1432,7 @@ def draw():
         for _bullet in enemyBulletList:
             _bullet.actor.draw()
         if enemyListLazy:
+            enemyPredictImage = f'effect_monster_{(frameCnt % 20 + 10) // 5 * 5}'
             show_enemy_pos()
 
     # 关卡信息初始化
@@ -1469,7 +1494,8 @@ def draw():
                             enemyListLazy.append(Enemy(levelEnemyList[(level[0], level[1], enemyMinorType)])) 
                 battleWave = min(battleWave + 1, 2)
                 if enemyListLazy:   # 这次创建了敌人，则需要定时迁移
-                    clock.schedule(show_enemy, 2)
+                    enemyPredictCountdown = 120
+                    enemyPredictFlag = True
 
         if awardFlag != '':
             awardWeapon = Weapon(awardFlag, *slotmachinePoint)    # 这个位置随老虎机一起改
@@ -1485,8 +1511,6 @@ def draw():
 
         if player.hp <= 0:
             get_death()
-        frameCnt = frameCnt % 60 + 1
-        portalFrameCnt = portalFrameCnt % 60 + 1
 
         if settingChoose == 1:
             setting_create()
