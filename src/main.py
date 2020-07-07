@@ -128,6 +128,7 @@ awardWeapon = None
 playerBulletList = []
 enemyBulletList = []
 enemyList = []
+enemyListLazy = []  # 用来给怪物的出现打好标记，lazyTag (x
 levelEnemyList = {}
 battleWave = 0
 # 战斗数值
@@ -1355,6 +1356,18 @@ def show_beginning():
                 beginningPaladinNum6 += 1
     return True
 
+# 敌人出场特效
+def show_enemy_pos():
+    for _enemy in enemyListLazy:
+        effectWidth = 56
+        screen.blit('effect_monster_15', (_enemy.actor.center[0] - effectWidth / 2, _enemy.actor.center[1] - effectWidth / 2))
+
+# 显现敌人
+def show_enemy():
+    global enemyListLazy, enemyList
+    enemyList = enemyListLazy
+    enemyListLazy = []
+
 def reset_game():
     global level, isBeginningAll, beginningAllNum, knightDeathTime
     global isBeginningKnight, isBeginningAssassin, isBeginningPaladin
@@ -1394,6 +1407,8 @@ def draw():
             _bullet.actor.draw()
         for _bullet in enemyBulletList:
             _bullet.actor.draw()
+        if enemyListLazy:
+            show_enemy_pos()
 
     # 关卡信息初始化
      
@@ -1406,7 +1421,7 @@ def draw():
             initialFlag = True
             player.actor.center = spawnPoint
         else:
-            if not enemyList:  # 敌人打完了
+            if not enemyList and not enemyListLazy:  # 敌人打完了
                 if battleWave == 2:
                     portal_create(*spawnPoint)
                     # slotmachine_create(0.5 * wallnum * wallSize, 0.2 * wallnum * wallSize)
@@ -1433,7 +1448,7 @@ def draw():
                             enemyNum = [0, 0, 0, 0]
                     for enemyMinorType in range(1, 5):
                         for _ in range(enemyNum[enemyMinorType - 1]):
-                            enemyList.append(Enemy(levelEnemyList[(level[0], level[1], enemyMinorType)])) 
+                            enemyListLazy.append(Enemy(levelEnemyList[(level[0], level[1], enemyMinorType)])) 
                 elif battleWave == 1:
                     if level[0] == 1:
                         if level[2] == 1:
@@ -1451,8 +1466,10 @@ def draw():
                             enemyNum = [0, 0, 0, 1]
                     for enemyMinorType in range(1, 5):
                         for _ in range(enemyNum[enemyMinorType - 1]):
-                            enemyList.append(Enemy(levelEnemyList[(level[0], level[1], enemyMinorType)])) 
+                            enemyListLazy.append(Enemy(levelEnemyList[(level[0], level[1], enemyMinorType)])) 
                 battleWave = min(battleWave + 1, 2)
+                if enemyListLazy:   # 这次创建了敌人，则需要定时迁移
+                    clock.schedule(show_enemy, 2)
 
         if awardFlag != '':
             awardWeapon = Weapon(awardFlag, *slotmachinePoint)    # 这个位置随老虎机一起改
