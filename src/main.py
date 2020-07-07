@@ -1354,6 +1354,9 @@ def reset_game():
     beginningAssassinNum1 = beginningAssassinNum2 = beginningAssassinNum3 = beginningAssassinNum4 = beginningAssassinNum5 = 0
     beginningPaladinNum1 = beginningPaladinNum2 = beginningPaladinNum3 = beginningPaladinNum4 = beginningPaladinNum5 = beginningPaladinNum6 = 0
     
+    global tabForBeginningKnightDialog, tabForBeginningPaladinDialog, tabForBeginningAssassinDialog
+    tabForBeginningKnightDialog = tabForBeginningPaladinDialog = tabForBeginningAssassinDialog = 0
+
     global initialFlag, settingChoose, roleChoose
     initialFlag = False
     settingChoose = 0
