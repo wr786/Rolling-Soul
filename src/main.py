@@ -68,6 +68,11 @@ level = [1, 'a', 1] # 现在是第几关
 initialFlag = False # 关卡是否被初始化过
 obstacleList = []   # 关卡障碍物列表
 
+# 剧情相关
+plotChoose = [0, True] # True表示是否错线，0是对话相关变量
+dialogBoxWitdh = 470
+dialogBoxHeight = 290
+
 #怪物数量
 enemyNum = [0] * 4
 
@@ -190,7 +195,7 @@ class Button:   # 按钮
             self.actorOK = Actor('choose_bar_2')
             self.actorNO = Actor('choose_bar_2')
             self.actorOK.topleft = (posx, posy)
-            self.actorNO.topleft = (posx / 2, posy)
+            self.actorNO.topleft = (posx + 0.5 * barWidth, posy)
         else:
             self.actor = Actor(buttonPicture)
             self.actor.topleft = (posx, posy)
@@ -703,250 +708,6 @@ class Enemy:
         else:
             self.shootCD -= 1
 
-#总开头
-def Beginning_all():
-    global beginningAllNum
-    screen.fill((0, 0, 0))
-    Dreamtale = 'Once upon a time, an alien-king attempted to invade the earth. At this crucial moment, three heroes stand out to protect their beautiful motherland. Now, let us experience their epic legend together!'
-    length = len(Dreamtale)
-    screen.draw.text('You can tab mouse left to skip this part.', center = (0.5 * WIDTH , 0.6 * HEIGHT), fontname = "hanyinuomituan", fontsize = 50)
-    if beginningAllNum < length:
-        for i in range(beginningAllNum+1):
-            if i <= 65:
-                screen.draw.text(Dreamtale[i], center = (0.12 * WIDTH + (2*i / length) * WIDTH, 0.2 * HEIGHT), fontname = "hanyinuomituan", fontsize = 20)
-            elif i <= 136:
-                screen.draw.text(Dreamtale[i], center = (0.09 * WIDTH + (2*(i-65) / length) * WIDTH, 0.3 * HEIGHT), fontname = "hanyinuomituan", fontsize = 20)
-            else:
-                screen.draw.text(Dreamtale[i], center = (0.12 * WIDTH + (2*(i-136) / length) * WIDTH, 0.4 * HEIGHT), fontname = "hanyinuomituan", fontsize = 20)
-    else:
-        for i in range(length):
-            if i <= 65:
-                screen.draw.text(Dreamtale[i], center = (0.12 * WIDTH + (2*i / length) * WIDTH, 0.2 * HEIGHT), fontname = "hanyinuomituan", fontsize = 20)
-            elif i <= 136:
-                screen.draw.text(Dreamtale[i], center = (0.09 * WIDTH + (2*(i-65) / length) * WIDTH, 0.3 * HEIGHT), fontname = "hanyinuomituan", fontsize = 20)
-            else:
-                screen.draw.text(Dreamtale[i], center = (0.12 * WIDTH + (2*(i-136) / length) * WIDTH, 0.4 * HEIGHT), fontname = "hanyinuomituan", fontsize = 20)
-
-#骑士开头：
-def Beginning_knight():
-    beginningBackground = Actor('background_for_knight')
-    beginningBackground.topleft = 0, 0
-    beginningBackground.draw()
-    global player, dialogBox1, dialogBox2, knightDeathTime, beginningKnightNum1, beginningKnightNum2, beginningKnightNum3, beginningKnightNum4, beginningKnightNum5, tabForBeginningKnightDialog
-    player.actor.topleft = 0.07*WIDTH, 0.43*HEIGHT
-    if knightDeathTime != 0:
-        player.actor.image = 'knight_rtdeath'
-        player.actor.draw()
-    else:
-        player.actor.image = 'knight_rt'
-        player.actor.draw()
-        if tabForBeginningKnightDialog == 0 or tabForBeginningKnightDialog == 1 or tabForBeginningKnightDialog == 2:
-            dialogBox1.topleft = 0.12*WIDTH, 0.01*HEIGHT
-            dialogBox1.draw()
-            dialog1 = '...Where am I? A forest? I should '
-            length1 = len(dialog1)
-            if beginningKnightNum1 < length1:
-                for i in range(beginningKnightNum1+1):
-                    screen.draw.text(dialog1[i], center = (0.2*WIDTH + i/length1 * 0.33*WIDTH, 0.1 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
-            else:
-                for i in range(length1):
-                    screen.draw.text(dialog1[i], center = (0.2*WIDTH + i/length1 * 0.33*WIDTH, 0.1 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
-        if tabForBeginningKnightDialog == 1 or tabForBeginningKnightDialog == 2:
-            dialog2 = 'have been fighting beside the king!'
-            length2 = len(dialog2)
-            if beginningKnightNum2 < length2:
-                for i in range(beginningKnightNum2+1):
-                    screen.draw.text(dialog2[i], center = (0.2*WIDTH + i/length2 * 0.33*WIDTH, 0.15 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
-            else:
-                for i in range(length2):
-                    screen.draw.text(dialog2[i], center = (0.2*WIDTH + i/length2 * 0.33*WIDTH, 0.15 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
-        if tabForBeginningKnightDialog == 2 or tabForBeginningKnightDialog == 3 or tabForBeginningKnightDialog == 4 or tabForBeginningKnightDialog == 5:
-            npc = Actor('monster_1a_01_lt')
-            npc.topleft = 0.88*WIDTH, 0.79*HEIGHT
-            npc.draw()
-            dialogBox2.bottomright = 0.88*WIDTH, 0.79*HEIGHT
-            dialogBox2.draw()
-            dialog3 = 'Wooooooow!!'
-            length3 = len(dialog3)
-            if beginningKnightNum3 < length3:
-                for i in range(beginningKnightNum3+1):
-                    screen.draw.text(dialog3[i], center = (0.52*WIDTH + i/length3 * 0.32*WIDTH, 0.56 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 60, color = 'red')
-            else:
-                for i in range(length3):
-                    screen.draw.text(dialog3[i], center = (0.52*WIDTH + i/length3 * 0.32*WIDTH, 0.56 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 60, color = 'red')
-        if tabForBeginningKnightDialog == 3 or tabForBeginningKnightDialog == 4 or tabForBeginningKnightDialog == 5:
-            dialogBox1.topleft = 0.12*WIDTH, 0.01*HEIGHT
-            dialogBox1.draw()
-            dialog4 = 'Enemies?! My warriors, '
-            length4 = len(dialog4)
-            if beginningKnightNum4 < length4:
-                for i in range(beginningKnightNum4+1):
-                    screen.draw.text(dialog4[i], center = (0.2*WIDTH + i/length4 * 0.35*WIDTH, 0.1 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
-            else:
-                for i in range(length4):
-                    screen.draw.text(dialog4[i], center = (0.2*WIDTH + i/length4 * 0.35*WIDTH, 0.1 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
-        if tabForBeginningKnightDialog == 4 or tabForBeginningKnightDialog == 5:
-        
-            dialog5 = 'FIGHT FOR THE KING!'
-            length5 = len(dialog5)
-            if beginningKnightNum5 < length5:
-                for i in range(beginningKnightNum5+1):
-                    screen.draw.text(dialog5[i], center = (0.18*WIDTH + i/length5 * 0.35*WIDTH, 0.15 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 45, color = 'black')
-            else:
-                for i in range(length5):
-                    screen.draw.text(dialog5[i], center = (0.18*WIDTH + i/length5 * 0.35*WIDTH, 0.15 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 45, color = 'black')
-
-#刺客开头：
-def Beginning_assassin():
-    beginningBackground = Actor('background_for_assassin')
-    beginningBackground.topleft = 0, 0
-    beginningBackground.draw()
-    global player, dialogBox1, dialogBox2, tabForBeginningAssassinDialog, beginningAssassinNum1, beginningAssassinNum2, beginningAssassinNum3, beginningAssassinNum4, beginningAssassinNum5
-    player.actor.topleft = 0.07*WIDTH, 0.43*HEIGHT
-    if tabForBeginningAssassinDialog != 6:
-        if tabForBeginningAssassinDialog == 0 or tabForBeginningAssassinDialog == 1 or tabForBeginningAssassinDialog == 2:
-            player.actor.draw()
-            dialogBox1.topleft = 0.12*WIDTH, 0.01*HEIGHT
-            dialogBox1.draw()
-            dialog1 = 'Goddame it, I am freezing to death!'
-            length1 = len(dialog1)
-            if beginningAssassinNum1 < length1:
-                for i in range(beginningAssassinNum1+1):
-                    screen.draw.text(dialog1[i], center = (0.2*WIDTH + i/length1 * 0.33*WIDTH, 0.1 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
-            else:
-                for i in range(length1):
-                    screen.draw.text(dialog1[i], center = (0.2*WIDTH + i/length1 * 0.33*WIDTH, 0.1 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
-        if tabForBeginningAssassinDialog == 1 or tabForBeginningAssassinDialog == 2:
-            dialog2 = 'I miss the sakura in my home...'
-            length2 = len(dialog2)
-            if beginningAssassinNum2 < length2:
-                for i in range(beginningAssassinNum2+1):
-                    screen.draw.text(dialog2[i], center = (0.2*WIDTH + i/length2 * 0.33*WIDTH, 0.15 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
-            else:
-                for i in range(length2):
-                    screen.draw.text(dialog2[i], center = (0.2*WIDTH + i/length2 * 0.33*WIDTH, 0.15 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
-        if tabForBeginningAssassinDialog == 2 or tabForBeginningAssassinDialog == 3 or tabForBeginningAssassinDialog == 4 or tabForBeginningAssassinDialog == 5:
-            npc1 = Actor('monster_1b_01_lt')
-            npc2 = Actor('monster_1b_02_lt')
-            npc3 = Actor('monster_1b_03_lt')
-            npc4 = Actor('monster_1b_02_lt')
-            npc5 = Actor('monster_1b_01_lt')
-            if beginningAssassinNum3 < 15:
-                npc1.topright = 1.2 * WIDTH - 0.4 * WIDTH * beginningAssassinNum3 / 15, 0.85*HEIGHT
-                npc2.topright = 1.1 * WIDTH - 0.3 * WIDTH * beginningAssassinNum3 / 15, 0.65*HEIGHT
-                npc3.topright = WIDTH - 0.2 * WIDTH * beginningAssassinNum3 / 15, 0.43*HEIGHT
-                npc4.topright = 1.1 * WIDTH - 0.3 * WIDTH * beginningAssassinNum3 / 15, 0.25*HEIGHT
-                npc5.topright = 1.2 * WIDTH - 0.4 * WIDTH * beginningAssassinNum3 / 15, 0.05*HEIGHT
-            else:
-                npc1.topright = 0.8 * WIDTH, 0.85*HEIGHT
-                npc2.topright = 0.8 * WIDTH, 0.65*HEIGHT
-                npc3.topright = 0.8 * WIDTH, 0.43*HEIGHT
-                npc4.topright = 0.8 * WIDTH, 0.25*HEIGHT
-                npc5.topright = 0.8 * WIDTH, 0.05*HEIGHT
-            npc1.draw()
-            npc2.draw()
-            npc3.draw()
-            npc4.draw()
-            npc5.draw()
-        if tabForBeginningAssassinDialog == 3 or tabForBeginningAssassinDialog == 4 or tabForBeginningAssassinDialog == 5:
-            player.actor.image = 'assassin_rtwalk'
-            player.actor.draw()
-            dialogBox1.topleft = 0.12*WIDTH, 0.01*HEIGHT
-            dialogBox1.draw()
-            dialog4 = 'I hate this mission...'
-            length4 = len(dialog4)
-            if beginningAssassinNum4 < length4:
-                for i in range(beginningAssassinNum4+1):
-                    screen.draw.text(dialog4[i], center = (0.2*WIDTH + i/length4 * 0.35*WIDTH, 0.1 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
-            else:
-                for i in range(length4):
-                    screen.draw.text(dialog4[i], center = (0.2*WIDTH + i/length4 * 0.35*WIDTH, 0.1 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
-        if tabForBeginningAssassinDialog == 4 or tabForBeginningAssassinDialog == 5:
-            dialog5 = 'I am out of patience...'
-            length5 = len(dialog5)
-            if beginningAssassinNum5 < length5:
-                for i in range(beginningAssassinNum5+1):
-                    screen.draw.text(dialog5[i], center = (0.2*WIDTH + i/length5 * 0.35*WIDTH, 0.15 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
-            else:
-                for i in range(length5):
-                    screen.draw.text(dialog5[i], center = (0.2*WIDTH + i/length5 * 0.35*WIDTH, 0.15 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
-
-#游侠开头：
-def Beginning_paladin():
-    beginningBackground = Actor('background_for_paladin')
-    beginningBackground.topleft = 0, 0
-    beginningBackground.draw()
-    global player, dialogBox1, dialogBox2, tabForBeginningPaladinDialog, beginningPaladinNum1, beginningPaladinNum2, beginningPaladinNum3, beginningPaladinNum4, beginningPaladinNum5, beginningPaladinNum6
-    player.actor.topleft = 0.07*WIDTH, 0.43*HEIGHT
-    if tabForBeginningPaladinDialog != 7:
-        if tabForBeginningPaladinDialog == 0 or tabForBeginningPaladinDialog == 1 or tabForBeginningPaladinDialog == 2:
-            player.actor.draw()
-            dialogBox1.topleft = 0.12*WIDTH, 0.01*HEIGHT
-            dialogBox1.draw()
-            dialog1 = 'Wow, lovely monkeys! Can you lead'
-            length1 = len(dialog1)
-            if beginningPaladinNum1 < length1:
-                for i in range(beginningPaladinNum1+1):
-                    screen.draw.text(dialog1[i], center = (0.2*WIDTH + i/length1 * 0.33*WIDTH, 0.1 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
-            else:
-                for i in range(length1):
-                    screen.draw.text(dialog1[i], center = (0.2*WIDTH + i/length1 * 0.33*WIDTH, 0.1 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
-        if tabForBeginningPaladinDialog == 1 or tabForBeginningPaladinDialog == 2:
-            dialog2 = 'me out of this canyon? I am lost.'
-            length2 = len(dialog2)
-            if beginningPaladinNum2 < length2:
-                for i in range(beginningPaladinNum2+1):
-                    screen.draw.text(dialog2[i], center = (0.2*WIDTH + i/length2 * 0.33*WIDTH, 0.15 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
-            else:
-                for i in range(length2):
-                    screen.draw.text(dialog2[i], center = (0.2*WIDTH + i/length2 * 0.33*WIDTH, 0.15 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
-        if tabForBeginningPaladinDialog == 2 or tabForBeginningPaladinDialog == 3 or tabForBeginningPaladinDialog == 4 or tabForBeginningPaladinDialog == 5 or tabForBeginningPaladinDialog == 6:
-            npc = Actor('monster_1c_04_lt')
-            npc.topleft = 0.78*WIDTH, 0.79*HEIGHT
-            npc.draw()
-            dialogBox2.bottomright = 0.78*WIDTH, 0.79*HEIGHT
-            dialogBox2.draw()
-            dialog3 = 'My kids, kill the invader!'
-            length3 = len(dialog3)
-            if beginningPaladinNum3 < length3:
-                for i in range(beginningPaladinNum3+1):
-                    screen.draw.text(dialog3[i], center = (0.42*WIDTH + i/length3 * 0.32*WIDTH, 0.57 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 35, color = 'red')
-            else:
-                for i in range(length3):
-                    screen.draw.text(dialog3[i], center = (0.42*WIDTH + i/length3 * 0.32*WIDTH, 0.57 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 35, color = 'red')
-        if tabForBeginningPaladinDialog == 3 or tabForBeginningPaladinDialog == 4 or tabForBeginningPaladinDialog == 5:
-            player.actor.image = 'paladin_ltwalk'
-            player.actor.draw()
-            dialogBox1.topleft = 0.12*WIDTH, 0.01*HEIGHT
-            dialogBox1.draw()
-            dialog4 = 'I just want to ask the direction.'
-            length4 = len(dialog4)
-            if beginningPaladinNum4 < length4:
-                for i in range(beginningPaladinNum4+1):
-                    screen.draw.text(dialog4[i], center = (0.2*WIDTH + i/length4 * 0.35*WIDTH, 0.1 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
-            else:
-                for i in range(length4):
-                    screen.draw.text(dialog4[i], center = (0.2*WIDTH + i/length4 * 0.35*WIDTH, 0.1 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
-        if tabForBeginningPaladinDialog == 4 or tabForBeginningPaladinDialog == 5:
-            dialog5 = 'SOMEBODY HELP————!!'
-            length5 = len(dialog5)
-            if beginningPaladinNum5 < length5:
-                for i in range(beginningPaladinNum5+1):
-                    screen.draw.text(dialog5[i], center = (0.2*WIDTH + i/length5 * 0.35*WIDTH, 0.15 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
-            else:
-                for i in range(length5):
-                    screen.draw.text(dialog5[i], center = (0.2*WIDTH + i/length5 * 0.35*WIDTH, 0.15 * HEIGHT), fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
-        if tabForBeginningPaladinDialog == 6:
-            player.actor.image = 'paladin_ltwalk'
-            player.actor.topleft = 0.07*WIDTH - WIDTH * beginningPaladinNum6 / 15, 0.43*HEIGHT
-            dialogBox1.topleft = 0.12*WIDTH - WIDTH * beginningPaladinNum6 / 15, 0.01*HEIGHT
-            player.actor.draw()
-            dialogBox1.draw()
-            dialog6 = 'SOMEBODY HELP————!!'
-            length6 = len(dialog6)
-            for i in range(length6):
-                screen.draw.text(dialog6[i], center = (0.2*WIDTH + i/length6 * 0.35*WIDTH - WIDTH * beginningPaladinNum6 / 15, 0.15 * HEIGHT) , fontname = 'hanyinuomituan', fontsize = 25, color = 'black')
-
 # 死亡界面
 def get_death():
     global roleChoose
@@ -1040,7 +801,6 @@ def slotmachine_award():
     else:
         player.get_damage(slotmachineFlag)
         slotmachineFlag = 5
-# todo 武器奖励部分暂时这样写，以后有拾取武器了再改
 
 # 设置界面产生
 def setting_create():
@@ -1099,10 +859,12 @@ def clear_level_data():
     global floors, walls
     floors = {}
     walls = {}
-    global enemyMoveFlag, enemyMoveCnt, chatchoose
+    global enemyMoveFlag, enemyMoveCnt, chatchoose, settingChoose, plotChoose
     enemyMoveFlag = [0]*12 
     enemyMoveCnt = 0
     chatchoose = 0
+    settingChoose = 0
+    plotChoose[0] = 0
     global playerBulletList, enemyBulletList, enemyList, obstacleList
     obstacleList = []
     playerBulletList = []
@@ -1118,13 +880,19 @@ def clear_level_data():
     moveSpan = MOVESPAN
     battleWave = 0
 
-def next_level():   # 进入下一关
-    #todo 这里可能要加入更复杂的逻辑（如果要错线的话
+def next_level(flag = True):   # 进入下一关, True表示剧情线不变，False表示错线
     if level[2] == 3:
        level[0] += 1
        level[2] = 1
     else:
        level[2] += 1
+    if not flag:
+        if level[1] == 'a':
+            level[1] = 'b'
+        elif level[1] == 'b':
+            level[1] = 'c'
+        elif level[1] == 'c':
+            level[1] = 'a'
 
 # 人物选择特效
 def choice_role(pos):
@@ -1264,8 +1032,6 @@ def draw_bar():
     if settingChoose == 0:
         pauseButton = Button(False, '', '', WIDTH - 1.5 * barHeight, HEIGHT - barHeight, "button_pause")
 
-# todo 这里的字体可以换一个更适合的
-
 # 画按钮
 def draw_button():
     if not curButton:   # 没按钮要画
@@ -1382,10 +1148,12 @@ def reset_game():
     global tabForBeginningKnightDialog, tabForBeginningPaladinDialog, tabForBeginningAssassinDialog
     tabForBeginningKnightDialog = tabForBeginningPaladinDialog = tabForBeginningAssassinDialog = 0
 
-    global initialFlag, settingChoose, roleChoose
+    global initialFlag, settingChoose, roleChoose, chatchoose, plotChoose
     initialFlag = False
     settingChoose = 0
     roleChoose = 0
+    chatchoose = 0
+    plotChoose = [0, True]
 
 def draw():
     global roleChoose, frameCnt, portalFrameCnt, initialFlag, slotmachineCnt
@@ -1423,9 +1191,10 @@ def draw():
         else:
             if not enemyList and not enemyListLazy:  # 敌人打完了
                 if battleWave == 2:
-                    portal_create(*spawnPoint)
-                    # slotmachine_create(0.5 * wallnum * wallSize, 0.2 * wallnum * wallSize)
-                    slotmachine_create(*slotmachinePoint)
+                    if plotChoose[0] == 0:
+                        portal_create(*spawnPoint)
+                        # slotmachine_create(0.5 * wallnum * wallSize, 0.2 * wallnum * wallSize)
+                        slotmachine_create(*slotmachinePoint)
                     if slotmachineFlag == 4:
                         slotmachineCnt += 1
                         slotmachine_choice()
@@ -1466,7 +1235,7 @@ def draw():
                             enemyNum = [0, 0, 0, 1]
                     for enemyMinorType in range(1, 5):
                         for _ in range(enemyNum[enemyMinorType - 1]):
-                            enemyListLazy.append(Enemy(levelEnemyList[(level[0], level[1], enemyMinorType)])) 
+                            enemyListLazy.append(Enemy(levelEnemyList[(level[0], level[1], enemyMinorType)]))
                 battleWave = min(battleWave + 1, 2)
                 if enemyListLazy:   # 这次创建了敌人，则需要定时迁移
                     clock.schedule(show_enemy, 2)
@@ -1495,8 +1264,10 @@ def draw():
         elif settingChoose ==3:
             screen.blit("control_introduction", (0.5 * WIDTH - 0.5 * slotmachineWidth_big, 0.5 * HEIGHT - 0.5 * slotmachineHeight_big))
 
-        draw_button()
         music.set_volume(0.02 * volumeCnt)
+        if not enemyList and not enemyListLazy and plotChoose[0]:
+            show_plot()
+        draw_button()
 
 # 处理武器跟随旋转
 def on_mouse_move(pos):
@@ -1509,8 +1280,8 @@ def on_mouse_move(pos):
 
 def on_mouse_down(pos, button):
     #todo 这里应该加个判断，判断当前是否在战斗中
-    global player, level, volumeCnt
-    global roleChoose, chatchoose, settingChoose, isBeginningAll, beginningAllNum
+    global player, level, volumeCnt, curButton
+    global roleChoose, chatchoose, settingChoose, isBeginningAll, beginningAllNum, plotChoose
     global isBeginningKnight, tabForBeginningKnightDialog, beginningKnightNum1, beginningKnightNum2, beginningKnightNum3, beginningKnightNum4, beginningKnightNum5
     global isBeginningAssassin, tabForBeginningAssassinDialog, beginningAssassinNum1, beginningAssassinNum2, beginningAssassinNum3, beginningAssassinNum4, beginningAssassinNum5
     global isBeginningPaladin, tabForBeginningPaladinDialog, beginningPaladinNum1, beginningPaladinNum2, beginningPaladinNum3, beginningPaladinNum4, beginningPaladinNum5
@@ -1583,7 +1354,7 @@ def on_mouse_down(pos, button):
         if tabForBeginningPaladinDialog == 7:
                 isBeginningPaladin = 1  
     elif settingChoose == 0:
-        if button == mouse.LEFT:
+        if button == mouse.LEFT and plotChoose[0] == 0:
             if pauseButton.detect(pos) == "OK": # 点击暂停
                 settingChoose = 1
             elif chatchoose == 0:
@@ -1595,17 +1366,24 @@ def on_mouse_down(pos, button):
             elif chatchoose == 1:    # 选择传送门
                 response = curButton.detect(pos)
                 if response == "OK":
-                    clear_level_data()
-                    next_level()
+                    curButton = None
+                    if level[2] == 1:
+                        clear_level_data()
+                        next_level()
+                    else:
+                        settingChoose = 999
+                        plotChoose[0] = 2
+
             elif chatchoose == 998:  # 选择老虎机
                 response = curButton.detect(pos)
                 if response == "OK":
+                    curButton = None
                     slotmachine_play()
                     chatchoose = 0
-            elif chatchoose == 2:
-                pass  # todo 这里加上如果点击在某个范围内，就怎样怎样
         elif button == mouse.RIGHT:
             player.swap_weapon()
+    elif button == mouse.LEFT and plotChoose[0]:  # 点击推进剧情
+        next_plot(pos)
     elif settingChoose == 1:
         if button == mouse.LEFT:
             if pauseButton.detect(pos) == "OK": # 点击继续
@@ -1629,6 +1407,7 @@ def on_mouse_down(pos, button):
         if button == mouse.LEFT:
             settingChoose = 1
 
+
 def on_key_down(key):
     global hFlag, vFlag, settingChoose
     if player.hp > 0:
@@ -1646,7 +1425,7 @@ def on_key_down(key):
         if key == key.ESCAPE:
             if settingChoose == 0:
                 settingChoose = 1
-            else:
+            elif settingChoose != 999:
                 settingChoose = 0
 
 def on_key_up(key):
@@ -1661,6 +1440,1151 @@ def on_key_up(key):
             hFlag -= 1
         if key == key.W:
             vFlag += 1
+
+######后面几部分都很长，所以放在后面#####
+
+# 总开头
+def Beginning_all():
+    global beginningAllNum
+    screen.fill((0, 0, 0))
+    Dreamtale = 'Once upon a time, an alien-king attempted to invade the earth. At this crucial moment, three heroes stand out to protect their beautiful motherland. Now, let us experience their epic legend together!'
+    length = len(Dreamtale)
+    screen.draw.text('You can tab mouse left to skip this part.', center=(0.5 * WIDTH, 0.6 * HEIGHT),
+                     fontname="hanyinuomituan", fontsize=50)
+    if beginningAllNum < length:
+        for i in range(beginningAllNum + 1):
+            if i <= 65:
+                screen.draw.text(Dreamtale[i], center=(0.12 * WIDTH + (2 * i / length) * WIDTH, 0.2 * HEIGHT),
+                                 fontname="hanyinuomituan", fontsize=20)
+            elif i <= 136:
+                screen.draw.text(Dreamtale[i], center=(0.09 * WIDTH + (2 * (i - 65) / length) * WIDTH, 0.3 * HEIGHT),
+                                 fontname="hanyinuomituan", fontsize=20)
+            else:
+                screen.draw.text(Dreamtale[i], center=(0.12 * WIDTH + (2 * (i - 136) / length) * WIDTH, 0.4 * HEIGHT),
+                                 fontname="hanyinuomituan", fontsize=20)
+    else:
+        for i in range(length):
+            if i <= 65:
+                screen.draw.text(Dreamtale[i], center=(0.12 * WIDTH + (2 * i / length) * WIDTH, 0.2 * HEIGHT),
+                                 fontname="hanyinuomituan", fontsize=20)
+            elif i <= 136:
+                screen.draw.text(Dreamtale[i], center=(0.09 * WIDTH + (2 * (i - 65) / length) * WIDTH, 0.3 * HEIGHT),
+                                 fontname="hanyinuomituan", fontsize=20)
+            else:
+                screen.draw.text(Dreamtale[i], center=(0.12 * WIDTH + (2 * (i - 136) / length) * WIDTH, 0.4 * HEIGHT),
+                                 fontname="hanyinuomituan", fontsize=20)
+
+# 骑士开头：
+def Beginning_knight():
+    beginningBackground = Actor('background_for_knight')
+    beginningBackground.topleft = 0, 0
+    beginningBackground.draw()
+    global player, dialogBox1, dialogBox2, knightDeathTime, beginningKnightNum1, beginningKnightNum2, beginningKnightNum3, beginningKnightNum4, beginningKnightNum5, tabForBeginningKnightDialog
+    player.actor.topleft = 0.07 * WIDTH, 0.43 * HEIGHT
+    if knightDeathTime != 0:
+        player.actor.image = 'knight_rtdeath'
+        player.actor.draw()
+    else:
+        player.actor.image = 'knight_rt'
+        player.actor.draw()
+        if tabForBeginningKnightDialog == 0 or tabForBeginningKnightDialog == 1 or tabForBeginningKnightDialog == 2:
+            dialogBox1.topleft = 0.12 * WIDTH, 0.01 * HEIGHT
+            dialogBox1.draw()
+            dialog1 = '...Where am I? A forest? I should '
+            length1 = len(dialog1)
+            if beginningKnightNum1 < length1:
+                for i in range(beginningKnightNum1 + 1):
+                    screen.draw.text(dialog1[i], center=(0.2 * WIDTH + i / length1 * 0.33 * WIDTH, 0.1 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=25, color='black')
+            else:
+                for i in range(length1):
+                    screen.draw.text(dialog1[i], center=(0.2 * WIDTH + i / length1 * 0.33 * WIDTH, 0.1 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=25, color='black')
+        if tabForBeginningKnightDialog == 1 or tabForBeginningKnightDialog == 2:
+            dialog2 = 'have been fighting beside the king!'
+            length2 = len(dialog2)
+            if beginningKnightNum2 < length2:
+                for i in range(beginningKnightNum2 + 1):
+                    screen.draw.text(dialog2[i], center=(0.2 * WIDTH + i / length2 * 0.33 * WIDTH, 0.15 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=25, color='black')
+            else:
+                for i in range(length2):
+                    screen.draw.text(dialog2[i], center=(0.2 * WIDTH + i / length2 * 0.33 * WIDTH, 0.15 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=25, color='black')
+        if tabForBeginningKnightDialog == 2 or tabForBeginningKnightDialog == 3 or tabForBeginningKnightDialog == 4 or tabForBeginningKnightDialog == 5:
+            npc = Actor('monster_1a_01_lt')
+            npc.topleft = 0.88 * WIDTH, 0.79 * HEIGHT
+            npc.draw()
+            dialogBox2.bottomright = 0.88 * WIDTH, 0.79 * HEIGHT
+            dialogBox2.draw()
+            dialog3 = 'Wooooooow!!'
+            length3 = len(dialog3)
+            if beginningKnightNum3 < length3:
+                for i in range(beginningKnightNum3 + 1):
+                    screen.draw.text(dialog3[i], center=(0.52 * WIDTH + i / length3 * 0.32 * WIDTH, 0.56 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=60, color='red')
+            else:
+                for i in range(length3):
+                    screen.draw.text(dialog3[i], center=(0.52 * WIDTH + i / length3 * 0.32 * WIDTH, 0.56 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=60, color='red')
+        if tabForBeginningKnightDialog == 3 or tabForBeginningKnightDialog == 4 or tabForBeginningKnightDialog == 5:
+            dialogBox1.topleft = 0.12 * WIDTH, 0.01 * HEIGHT
+            dialogBox1.draw()
+            dialog4 = 'Enemies?! My warriors, '
+            length4 = len(dialog4)
+            if beginningKnightNum4 < length4:
+                for i in range(beginningKnightNum4 + 1):
+                    screen.draw.text(dialog4[i], center=(0.2 * WIDTH + i / length4 * 0.35 * WIDTH, 0.1 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=25, color='black')
+            else:
+                for i in range(length4):
+                    screen.draw.text(dialog4[i], center=(0.2 * WIDTH + i / length4 * 0.35 * WIDTH, 0.1 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=25, color='black')
+        if tabForBeginningKnightDialog == 4 or tabForBeginningKnightDialog == 5:
+
+            dialog5 = 'FIGHT FOR THE KING!'
+            length5 = len(dialog5)
+            if beginningKnightNum5 < length5:
+                for i in range(beginningKnightNum5 + 1):
+                    screen.draw.text(dialog5[i], center=(0.18 * WIDTH + i / length5 * 0.35 * WIDTH, 0.15 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=45, color='black')
+            else:
+                for i in range(length5):
+                    screen.draw.text(dialog5[i], center=(0.18 * WIDTH + i / length5 * 0.35 * WIDTH, 0.15 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=45, color='black')
+
+# 刺客开头：
+def Beginning_assassin():
+    beginningBackground = Actor('background_for_assassin')
+    beginningBackground.topleft = 0, 0
+    beginningBackground.draw()
+    global player, dialogBox1, dialogBox2, tabForBeginningAssassinDialog, beginningAssassinNum1, beginningAssassinNum2, beginningAssassinNum3, beginningAssassinNum4, beginningAssassinNum5
+    player.actor.topleft = 0.07 * WIDTH, 0.43 * HEIGHT
+    if tabForBeginningAssassinDialog != 6:
+        if tabForBeginningAssassinDialog == 0 or tabForBeginningAssassinDialog == 1 or tabForBeginningAssassinDialog == 2:
+            player.actor.draw()
+            dialogBox1.topleft = 0.12 * WIDTH, 0.01 * HEIGHT
+            dialogBox1.draw()
+            dialog1 = 'Goddame it, I am freezing to death!'
+            length1 = len(dialog1)
+            if beginningAssassinNum1 < length1:
+                for i in range(beginningAssassinNum1 + 1):
+                    screen.draw.text(dialog1[i], center=(0.2 * WIDTH + i / length1 * 0.33 * WIDTH, 0.1 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=25, color='black')
+            else:
+                for i in range(length1):
+                    screen.draw.text(dialog1[i], center=(0.2 * WIDTH + i / length1 * 0.33 * WIDTH, 0.1 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=25, color='black')
+        if tabForBeginningAssassinDialog == 1 or tabForBeginningAssassinDialog == 2:
+            dialog2 = 'I miss the sakura in my home...'
+            length2 = len(dialog2)
+            if beginningAssassinNum2 < length2:
+                for i in range(beginningAssassinNum2 + 1):
+                    screen.draw.text(dialog2[i], center=(0.2 * WIDTH + i / length2 * 0.33 * WIDTH, 0.15 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=25, color='black')
+            else:
+                for i in range(length2):
+                    screen.draw.text(dialog2[i], center=(0.2 * WIDTH + i / length2 * 0.33 * WIDTH, 0.15 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=25, color='black')
+        if tabForBeginningAssassinDialog == 2 or tabForBeginningAssassinDialog == 3 or tabForBeginningAssassinDialog == 4 or tabForBeginningAssassinDialog == 5:
+            npc1 = Actor('monster_1b_01_lt')
+            npc2 = Actor('monster_1b_02_lt')
+            npc3 = Actor('monster_1b_03_lt')
+            npc4 = Actor('monster_1b_02_lt')
+            npc5 = Actor('monster_1b_01_lt')
+            if beginningAssassinNum3 < 15:
+                npc1.topright = 1.2 * WIDTH - 0.4 * WIDTH * beginningAssassinNum3 / 15, 0.85 * HEIGHT
+                npc2.topright = 1.1 * WIDTH - 0.3 * WIDTH * beginningAssassinNum3 / 15, 0.65 * HEIGHT
+                npc3.topright = WIDTH - 0.2 * WIDTH * beginningAssassinNum3 / 15, 0.43 * HEIGHT
+                npc4.topright = 1.1 * WIDTH - 0.3 * WIDTH * beginningAssassinNum3 / 15, 0.25 * HEIGHT
+                npc5.topright = 1.2 * WIDTH - 0.4 * WIDTH * beginningAssassinNum3 / 15, 0.05 * HEIGHT
+            else:
+                npc1.topright = 0.8 * WIDTH, 0.85 * HEIGHT
+                npc2.topright = 0.8 * WIDTH, 0.65 * HEIGHT
+                npc3.topright = 0.8 * WIDTH, 0.43 * HEIGHT
+                npc4.topright = 0.8 * WIDTH, 0.25 * HEIGHT
+                npc5.topright = 0.8 * WIDTH, 0.05 * HEIGHT
+            npc1.draw()
+            npc2.draw()
+            npc3.draw()
+            npc4.draw()
+            npc5.draw()
+        if tabForBeginningAssassinDialog == 3 or tabForBeginningAssassinDialog == 4 or tabForBeginningAssassinDialog == 5:
+            player.actor.image = 'assassin_rtwalk'
+            player.actor.draw()
+            dialogBox1.topleft = 0.12 * WIDTH, 0.01 * HEIGHT
+            dialogBox1.draw()
+            dialog4 = 'I hate this mission...'
+            length4 = len(dialog4)
+            if beginningAssassinNum4 < length4:
+                for i in range(beginningAssassinNum4 + 1):
+                    screen.draw.text(dialog4[i], center=(0.2 * WIDTH + i / length4 * 0.35 * WIDTH, 0.1 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=25, color='black')
+            else:
+                for i in range(length4):
+                    screen.draw.text(dialog4[i], center=(0.2 * WIDTH + i / length4 * 0.35 * WIDTH, 0.1 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=25, color='black')
+        if tabForBeginningAssassinDialog == 4 or tabForBeginningAssassinDialog == 5:
+            dialog5 = 'I am out of patience...'
+            length5 = len(dialog5)
+            if beginningAssassinNum5 < length5:
+                for i in range(beginningAssassinNum5 + 1):
+                    screen.draw.text(dialog5[i], center=(0.2 * WIDTH + i / length5 * 0.35 * WIDTH, 0.15 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=25, color='black')
+            else:
+                for i in range(length5):
+                    screen.draw.text(dialog5[i], center=(0.2 * WIDTH + i / length5 * 0.35 * WIDTH, 0.15 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=25, color='black')
+
+# 游侠开头：
+def Beginning_paladin():
+    beginningBackground = Actor('background_for_paladin')
+    beginningBackground.topleft = 0, 0
+    beginningBackground.draw()
+    global player, dialogBox1, dialogBox2, tabForBeginningPaladinDialog, beginningPaladinNum1, beginningPaladinNum2, beginningPaladinNum3, beginningPaladinNum4, beginningPaladinNum5, beginningPaladinNum6
+    player.actor.topleft = 0.07 * WIDTH, 0.43 * HEIGHT
+    if tabForBeginningPaladinDialog != 7:
+        if tabForBeginningPaladinDialog == 0 or tabForBeginningPaladinDialog == 1 or tabForBeginningPaladinDialog == 2:
+            player.actor.draw()
+            dialogBox1.topleft = 0.12 * WIDTH, 0.01 * HEIGHT
+            dialogBox1.draw()
+            dialog1 = 'Wow, lovely monkeys! Can you lead'
+            length1 = len(dialog1)
+            if beginningPaladinNum1 < length1:
+                for i in range(beginningPaladinNum1 + 1):
+                    screen.draw.text(dialog1[i], center=(0.2 * WIDTH + i / length1 * 0.33 * WIDTH, 0.1 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=25, color='black')
+            else:
+                for i in range(length1):
+                    screen.draw.text(dialog1[i], center=(0.2 * WIDTH + i / length1 * 0.33 * WIDTH, 0.1 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=25, color='black')
+        if tabForBeginningPaladinDialog == 1 or tabForBeginningPaladinDialog == 2:
+            dialog2 = 'me out of this canyon? I am lost.'
+            length2 = len(dialog2)
+            if beginningPaladinNum2 < length2:
+                for i in range(beginningPaladinNum2 + 1):
+                    screen.draw.text(dialog2[i], center=(0.2 * WIDTH + i / length2 * 0.33 * WIDTH, 0.15 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=25, color='black')
+            else:
+                for i in range(length2):
+                    screen.draw.text(dialog2[i], center=(0.2 * WIDTH + i / length2 * 0.33 * WIDTH, 0.15 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=25, color='black')
+        if tabForBeginningPaladinDialog == 2 or tabForBeginningPaladinDialog == 3 or tabForBeginningPaladinDialog == 4 or tabForBeginningPaladinDialog == 5 or tabForBeginningPaladinDialog == 6:
+            npc = Actor('monster_1c_04_lt')
+            npc.topleft = 0.78 * WIDTH, 0.79 * HEIGHT
+            npc.draw()
+            dialogBox2.bottomright = 0.78 * WIDTH, 0.79 * HEIGHT
+            dialogBox2.draw()
+            dialog3 = 'My kids, kill the invader!'
+            length3 = len(dialog3)
+            if beginningPaladinNum3 < length3:
+                for i in range(beginningPaladinNum3 + 1):
+                    screen.draw.text(dialog3[i], center=(0.42 * WIDTH + i / length3 * 0.32 * WIDTH, 0.57 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=35, color='red')
+            else:
+                for i in range(length3):
+                    screen.draw.text(dialog3[i], center=(0.42 * WIDTH + i / length3 * 0.32 * WIDTH, 0.57 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=35, color='red')
+        if tabForBeginningPaladinDialog == 3 or tabForBeginningPaladinDialog == 4 or tabForBeginningPaladinDialog == 5:
+            player.actor.image = 'paladin_ltwalk'
+            player.actor.draw()
+            dialogBox1.topleft = 0.12 * WIDTH, 0.01 * HEIGHT
+            dialogBox1.draw()
+            dialog4 = 'I just want to ask the direction.'
+            length4 = len(dialog4)
+            if beginningPaladinNum4 < length4:
+                for i in range(beginningPaladinNum4 + 1):
+                    screen.draw.text(dialog4[i], center=(0.2 * WIDTH + i / length4 * 0.35 * WIDTH, 0.1 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=25, color='black')
+            else:
+                for i in range(length4):
+                    screen.draw.text(dialog4[i], center=(0.2 * WIDTH + i / length4 * 0.35 * WIDTH, 0.1 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=25, color='black')
+        if tabForBeginningPaladinDialog == 4 or tabForBeginningPaladinDialog == 5:
+            dialog5 = 'SOMEBODY HELP————!!'
+            length5 = len(dialog5)
+            if beginningPaladinNum5 < length5:
+                for i in range(beginningPaladinNum5 + 1):
+                    screen.draw.text(dialog5[i], center=(0.2 * WIDTH + i / length5 * 0.35 * WIDTH, 0.15 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=25, color='black')
+            else:
+                for i in range(length5):
+                    screen.draw.text(dialog5[i], center=(0.2 * WIDTH + i / length5 * 0.35 * WIDTH, 0.15 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=25, color='black')
+        if tabForBeginningPaladinDialog == 6:
+            player.actor.image = 'paladin_ltwalk'
+            player.actor.topleft = 0.07 * WIDTH - WIDTH * beginningPaladinNum6 / 15, 0.43 * HEIGHT
+            dialogBox1.topleft = 0.12 * WIDTH - WIDTH * beginningPaladinNum6 / 15, 0.01 * HEIGHT
+            player.actor.draw()
+            dialogBox1.draw()
+            dialog6 = 'SOMEBODY HELP————!!'
+            length6 = len(dialog6)
+            for i in range(length6):
+                screen.draw.text(dialog6[i], center=(
+                0.2 * WIDTH + i / length6 * 0.35 * WIDTH - WIDTH * beginningPaladinNum6 / 15, 0.15 * HEIGHT),
+                                 fontname='hanyinuomituan', fontsize=25, color='black')
+
+
+# 剧情推进
+def next_plot(pos):
+    global plotChoose, curButton
+    # 骑士1a关
+    if level[0] == 1 and level[1] == 'a':
+        if level[2] == 2:
+            if plotChoose[0] <= 4:
+                plotChoose[0] += 1
+            elif plotChoose[0] == 5:
+                plotChoose[0] = 0
+                clear_level_data()
+                next_level()
+        elif level[2] == 3:
+            if plotChoose[0] <= 4:
+                plotChoose[0] += 1
+            elif plotChoose[0] == 5:
+                if curButton.detect(pos) == 'OK':
+                    curButton = None
+                    plotChoose[0] = 10
+                    plotChoose[1] = False
+                elif curButton.detect(pos) == 'NO':
+                    curButton = None
+                    plotChoose[0] = 30
+            elif 10 <= plotChoose[0] < 23:
+                plotChoose[0] += 1
+            elif plotChoose[0] == 23:
+                clear_level_data()
+                next_level(False)
+            elif 30 <= plotChoose[0] < 37:
+                plotChoose[0] += 1
+            elif plotChoose[0] == 37:
+                clear_level_data()
+                next_level()
+
+    # 刺客1b关
+    elif level[0] == 1 and level[1] == 'b':
+        if level[2] == 2:
+            if plotChoose[0] <= 4:
+                plotChoose[0] += 1
+            elif plotChoose[0] == 5:
+                plotChoose[0] = 0
+                clear_level_data()
+                next_level()
+        elif level[2] == 3:
+            if plotChoose[0] <= 4:
+                plotChoose[0] += 1
+            elif plotChoose[0] == 5:
+                if curButton.detect(pos) == 'OK':
+                    curButton = None
+                    plotChoose[0] = 10
+                elif curButton.detect(pos) == 'NO':
+                    curButton = None
+                    plotChoose[0] = 30
+                    plotChoose[1] = False
+            elif 10 <= plotChoose[0] < 14:
+                plotChoose[0] += 1
+            elif plotChoose[0] == 14:
+                clear_level_data()
+                next_level()
+            elif 30 <= plotChoose[0] < 40:
+                plotChoose[0] += 1
+            elif plotChoose[0] == 40:
+                clear_level_data()
+                next_level(False)
+
+    # 游侠1c关
+    elif level[0] == 1 and level[1] == 'c':
+        if level[2] == 2:
+            if plotChoose[0] <= 5:
+                plotChoose[0] += 1
+            elif plotChoose[0] == 6:
+                plotChoose[0] = 0
+                clear_level_data()
+                next_level()
+        elif level[2] == 3:
+            if plotChoose[0] <= 7:
+                plotChoose[0] += 1
+            elif plotChoose[0] == 8:
+                if curButton.detect(pos) == 'OK':
+                    curButton = None
+                    plotChoose[0] = 10
+                elif curButton.detect(pos) == 'NO':
+                    curButton = None
+                    plotChoose[0] = 30
+                    plotChoose[1] = False
+            elif 10 <= plotChoose[0] < 14:
+                plotChoose[0] += 1
+            elif plotChoose[0] == 14:
+                clear_level_data()
+                next_level()
+            elif 30 <= plotChoose[0] < 36:
+                plotChoose[0] += 1
+            elif plotChoose[0] == 36:
+                clear_level_data()
+                next_level(False)
+
+    # 骑士2a关
+    if level[0] == 2 and level[1] == 'a' and plotChoose[1] == True:
+        if level[2] == 2:
+            if plotChoose[0] < 19:
+                plotChoose[0] += 1
+            elif plotChoose == 19:
+                plotChoose[0] = 0
+                clear_level_data()
+                next_level()
+
+    # 骑士2b关
+    if level[0] == 2 and level[1] == 'b' and plotChoose[1] == False:
+        if level[2] == 2:
+            if plotChoose[0] < 10:
+                plotChoose[0] += 1
+            elif plotChoose == 10:
+                plotChoose[0] = 0
+                clear_level_data()
+                next_level()
+
+    # 刺客2b关
+    if level[0] == 2 and level[1] == 'a' and plotChoose[1] == True:
+        if level[2] == 2:
+            if plotChoose[0] < 6:
+                plotChoose[0] += 1
+            elif plotChoose == 6:
+                plotChoose[0] = 0
+                clear_level_data()
+                next_level()
+
+    # 刺客2c关
+    if level[0] == 2 and level[1] == 'c' and plotChoose[1] == False:
+        if level[2] == 2:
+            if plotChoose[0] < 4:
+                plotChoose[0] += 1
+            elif plotChoose == 4:
+                plotChoose[0] = 0
+                clear_level_data()
+                next_level()
+
+    # 游侠2c关
+    if level[0] == 2 and level[1] == 'c' and plotChoose[1] == True:
+        if level[2] == 2:
+            if plotChoose[0] < 4:
+                plotChoose[0] += 1
+            elif plotChoose == 4:
+                plotChoose[0] = 0
+                clear_level_data()
+                next_level()
+
+    # 游侠2a关
+    if level[0] == 2 and level[1] == 'a' and plotChoose[1] == False:
+        if level[2] == 2:
+            if plotChoose[0] < 6:
+                plotChoose[0] += 1
+            elif plotChoose == 6:
+                plotChoose[0] = 0
+                clear_level_data()
+                next_level()
+
+# 剧情展示
+def show_plot():
+    global curButton
+
+    # 骑士1a关
+    if level[0] == 1 and level[1] == 'a':
+        # 与boss开战前的对话
+        if level[2] == 2:
+            screen.blit("background_for_knight", (0, 0))
+            screen.blit("knight_rt", (2 * wallSize, 10 * wallSize))
+            screen.blit("monster_1a_04_lt", (19 * wallSize, 15 * wallSize))
+            if plotChoose[0] >= 2:
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                if plotChoose[0] in (2, 3, 4):
+                    screen.draw.text("Who are you?", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.25 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] in (3, 4):
+                    screen.draw.text("Why do you attack me?", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.45 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] in (4, 5):
+                    screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+                    screen.draw.text("I'm the one to kill you!", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] == 5:
+                    screen.draw.text("Then come on!", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+
+        elif level[2] == 3:
+            # 与濒死的boss对话
+            if 2 <= plotChoose[0] <= 5:
+                screen.blit("background_for_knight", (0, 0))
+                screen.blit("knight_rt", (2 * wallSize, 10 * wallSize))
+                screen.blit("monster_1a_04_death", (19 * wallSize, 15 * wallSize))
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                if plotChoose[0] in (2, 3, 4):
+                    screen.draw.text("Tell me.", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.25 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] in (3, 4):
+                    screen.draw.text("Who appointed you to kill me?", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.45 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] == 4:
+                    screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+                    screen.draw.text("A...ALI...ALIENs...Eh(DIE)", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] == 5:
+                    screen.draw.text("ALIENs? Do they really exist?", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                    screen.draw.text("Please Choose Your Answer at Right", center=(0.5 * WIDTH, 0.5 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=50, color='white')
+                    curButton = Button(True, "YES", "NO")
+            # 外星人关
+            elif plotChoose[0] == 10:
+                screen.fill("black")
+                screen.draw.text(
+                    f"Then, you find a map beside the Shaman.\nFollowing it, you slip into Aliens' Base...\nSuddenly, an Assassin appears here...",
+                    center=(0.5 * WIDTH, 0.5 * HEIGHT),
+                    fontname='hanyinuomituan', fontsize=40, color='white')
+            # 与刺客的对话
+            elif 11 <= plotChoose[0] <= 23:
+                if 11 <= plotChoose[0] <= 13:
+                    screen.blit("background_2b", (0, 0))
+                    screen.blit("knight_rt", (2 * wallSize, 10 * wallSize))
+                    screen.blit("assassin_lt", (19 * wallSize, 15 * wallSize))
+                if plotChoose[0] in (11, 12, 13):
+                    screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+                if plotChoose[0] in (11, 12):
+                    screen.draw.text(f"Unexpectedly\nthere's an accomplice...", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] in (12, 13):
+                    screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                    screen.draw.text("Wa...Wait!I'm not...", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] in (13, 14):
+                    screen.draw.text("Shut Up!Take this!", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] == 14:
+                    screen.fill("black")
+                    screen.draw.text("After a fight......", center=(0.5 * WIDTH, 0.5 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=50, color='white')
+                if 15 <= plotChoose[0] <= 23:
+                    screen.blit("background_2b", (0, 0))
+                    screen.blit("knight_rt", (2 * wallSize, 10 * wallSize))
+                    screen.blit("assassin_ltdeath", (19 * wallSize, 15 * wallSize))
+                if 15 <= plotChoose[0] <= 23:
+                    screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                if plotChoose[0] in (15, 16):
+                    screen.draw.text("Hey,I have said WAIT!", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if 16 <= plotChoose[0] <= 23:
+                    screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+                if plotChoose[0] in (16, 17):
+                    screen.draw.text(f"Oh, my mistake!\nWhy are you here?", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] in (17, 18):
+                    screen.draw.text("Emm...To find ALIENs...", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] in (18, 19):
+                    screen.draw.text("f!!!Aliens???\nDo you know thier scheme...", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] in (19, 20):
+                    screen.draw.text("!!?OK,let me shatter the scheme...", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] in (20, 21):
+                    screen.draw.text("Thanks, but it's my mi...", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] in (21, 22):
+                    screen.draw.text(f"What a shame!\nYou're hurt.", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] in (22, 23):
+                    screen.draw.text("Well...Good Luck!", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] == 23:
+                    screen.draw.text("WAIT FOR ME!", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+            # 城堡关
+            elif plotChoose[0] == 30:
+                screen.fill("black")
+                screen.draw.text(
+                    f"Then, you go back to Knights' Castle.\nHowever...\nYour previous partners begin to attack you...",
+                    center=(0.5 * WIDTH, 0.5 * HEIGHT),
+                    fontname='hanyinuomituan', fontsize=40, color='white')
+            # 与城堡的其他骑士同伴对话
+            elif plotChoose[0] >= 31:
+                screen.blit("background_2a", (0, 0))
+                screen.blit("knight_rt", (2 * wallSize, 10 * wallSize))
+                screen.blit("monster_2a_02_lt", (19 * wallSize, 15 * wallSize))
+                screen.blit("monster_2a_01_lt", (19 * wallSize, 12 * wallSize))
+                screen.blit("monster_2a_01_lt", (19 * wallSize, 18 * wallSize))
+                if 32 <= plotChoose[0] <= 37:
+                    screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                if plotChoose[0] in (32, 33, 34, 35):
+                    screen.draw.text("WHY?HOW?", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.25 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] in (33, 34, 35):
+                    screen.draw.text("What happened to you?", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.45 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if 34 <= plotChoose[0] <= 37:
+                    screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+                if plotChoose[0] in (34, 35, 36, 37):
+                    screen.draw.text("We're ordered...", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.25 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] in (35, 36, 37):
+                    screen.draw.text("You must be killed...", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.45 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] in (36, 37):
+                    screen.draw.text("WELL...", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.25 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] == 37:
+                    screen.draw.text("Forgive Me...", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.45 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+
+    # 刺客1b关
+    if level[0] == 1 and level[1] == 'b':
+        # 与boss开战前的剧情
+        if level[2] == 2:
+            screen.blit("background_for_assassin", (0, 0))
+            screen.blit("assassin_rt", (2 * wallSize, 10 * wallSize))
+            screen.blit("monster_1b_04_lt", (19 * wallSize, 15 * wallSize))
+            if plotChoose[0] >= 2:
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                if plotChoose[0] in (2, 3):
+                    screen.draw.text("Finally find you, Snow King!", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] in (3, 4, 5):
+                    screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+                    screen.draw.text("Did he let you kill me?", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] in (4, 5):
+                    screen.draw.text("Cut the crap!", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.25 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] == 5:
+                    screen.draw.text("Take your life!", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.45 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+
+        elif level[2] == 3:
+            # boss死亡后的剧情
+            if 2 <= plotChoose[0] <= 5:
+                if plotChoose[0] in (2, 3, 4, 5):
+                    screen.blit("background_for_assassin", (0, 0))
+                    screen.blit("assassin_rt", (2 * wallSize, 10 * wallSize))
+                    screen.blit("monster_1b_04_death", (19 * wallSize, 15 * wallSize))
+                    screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                if plotChoose[0] == 2:
+                    screen.draw.text("Mission Accomplished...", center=(
+                        3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] in (3, 4):
+                    screen.draw.text("Yeah? What's this?", center=(
+                        3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.25 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] == 4:
+                    screen.draw.text("An envelope?", center=(
+                        3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.45 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] == 5:
+                    screen.draw.text("Shall I open it?", center=(
+                        3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                    screen.draw.text("Please Choose Your Answer at Right", center=(0.5 * WIDTH, 0.5 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=50, color='white')
+                    curButton = Button(True, "YES", "NO")
+            # 选择外星人线
+            elif 10 <= plotChoose[0] <= 14:
+                if plotChoose[0] == 10:
+                    screen.fill("black")
+                    screen.draw.text(
+                        f"A letter and a map in the envelope...\nALIENS' SCHEME!!!\nYou find their base to prevent it...",
+                        center=(0.5 * WIDTH, 0.5 * HEIGHT),
+                        fontname='hanyinuomituan', fontsize=40, color='white')
+                # 与外星人小兵对话
+                else:
+                    screen.blit("background_2b", (0, 0))
+                    screen.blit("assassin_rt", (2 * wallSize, 10 * wallSize))
+                    screen.blit("monster_2b_03_lt", (19 * wallSize, 15 * wallSize))
+                    screen.blit("monster_2b_01_lt", (19 * wallSize, 12 * wallSize))
+                    screen.blit("monster_2b_02_lt", (19 * wallSize, 20 * wallSize))
+                    if plotChoose[0] >= 12:
+                        screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+                        screen.draw.text("Find An InTruDer...", center=(
+                            8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                         fontname='hanyinuomituan', fontsize=30, color='black')
+                    if plotChoose[0] >= 13:
+                        screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                    if plotChoose[0] in (13, 14):
+                        screen.draw.text("You're the real inturder!", center=(
+                            3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.25 * dialogBoxHeight),
+                                         fontname='hanyinuomituan', fontsize=30, color='black')
+                    if plotChoose[0] == 14:
+                        screen.draw.text("SCRAM!!!", center=(
+                            3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.45 * dialogBoxHeight),
+                                         fontname='hanyinuomituan', fontsize=30, color='black')
+            # 选择火山线
+            elif 30 <= plotChoose[0] :
+                if plotChoose[0] == 30:
+                    screen.fill("black")
+                    screen.draw.text(
+                        f"You leave here but go wrong...\nHOTER and HOTER...\nEn?A man lying on the ground?",
+                        center=(0.5 * WIDTH, 0.5 * HEIGHT),
+                        fontname='hanyinuomituan', fontsize=40, color='white')
+                # 与游侠对话
+                else:
+                    screen.blit("background_2c", (0, 0))
+                    screen.blit("assassin_rt", (2 * wallSize, 10 * wallSize))
+                    screen.blit("paladin_ltdeath", (19 * wallSize, 15 * wallSize))
+                    if plotChoose[0] >= 32:
+                        screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                    if plotChoose[0] in (32, 33, 34):
+                        screen.draw.text("Hey, man! Are you OK?", center=(
+                            3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.25 * dialogBoxHeight),
+                                         fontname='hanyinuomituan', fontsize=30, color='black')
+                    if plotChoose[0] in (33, 34):
+                        screen.draw.text("Suffer heatstroke?", center=(
+                            3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.45 * dialogBoxHeight),
+                                         fontname='hanyinuomituan', fontsize=30, color='black')
+                    if plotChoose[0] >= 34:
+                        screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+                    if plotChoose[0] in (34, 35):
+                        screen.draw.text(f"Yeah...No,\nI've been attacked...", center=(
+                            8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                         fontname='hanyinuomituan', fontsize=30, color='black')
+                    if plotChoose[0] in (35, 36, 37, 38):
+                        screen.draw.text("Attacked?", center=(
+                            3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                         fontname='hanyinuomituan', fontsize=30, color='black')
+                    if plotChoose[0] in (36, 37):
+                        screen.draw.text(f"I've made an investigation...", center=(
+                            8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.25 * dialogBoxHeight),
+                                         fontname='hanyinuomituan', fontsize=30, color='black')
+                    if plotChoose[0] == 37:
+                        screen.draw.text(f"There's a HUGE BUG...", center=(
+                            8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.45 * dialogBoxHeight),
+                                         fontname='hanyinuomituan', fontsize=30, color='black')
+                    if plotChoose[0] in (38, 39):
+                        screen.draw.text(f"It brings calamity...\nInsects are aberrance...", center=(
+                            8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                         fontname='hanyinuomituan', fontsize=30, color='black')
+                    if plotChoose[0] in (39, 40):
+                        screen.draw.text(f"Leave it to me.\nI'll solve it...", center=(
+                            3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                         fontname='hanyinuomituan', fontsize=30, color='black')
+                    if plotChoose[0] == 40:
+                        screen.draw.text(f"You're so NICE...", center=(
+                            8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                         fontname='hanyinuomituan', fontsize=30, color='black')
+
+    # 游侠1c关
+    if level[0] == 1 and level[1] == 'c':
+        # 与boss开战前的对话
+        if level[2] == 2:
+            screen.blit("background_for_paladin", (0, 0))
+            screen.blit("paladin_rt", (2 * wallSize, 10 * wallSize))
+            screen.blit("monster_1c_04_lt", (17 * wallSize, 15 * wallSize))
+            if plotChoose[0] >= 2:
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                if plotChoose[0] in (2, 3, 4):
+                    screen.draw.text("Hey, don't attack me!", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.25 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] in (3, 4):
+                    screen.draw.text("I just wanna ask the way...", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.45 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] in (4, 5, 6):
+                    screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+                if plotChoose[0] in (4, 5):
+                    screen.draw.text("You can't take away my golds!", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] in (5, 6):
+                    screen.draw.text("No...No...I didn't...", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] == 6:
+                    screen.draw.text("Go to hell,invader!", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+
+        if level[2] == 3:
+            # boss死亡后的剧情
+            if 2 <= plotChoose[0] <= 8:
+                if plotChoose[0] in (2, 3, 4, 5):
+                    screen.blit("background_for_paladin", (0, 0))
+                    screen.blit("paladin_rt", (2 * wallSize, 10 * wallSize))
+                    screen.blit("monster_1c_04_death", (19 * wallSize, 15 * wallSize))
+                    screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                if plotChoose[0] in (2, 3, 4):
+                    screen.draw.text("I'm so sorry...", center=(
+                        3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.25 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] in (3, 4):
+                    screen.draw.text("You did it first...", center=(
+                        3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.45 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] == 4:
+                    screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+                    screen.draw.text("Ehhh...(DIE)", center=(
+                        8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] == 5:
+                    screen.draw.text("Let's go ahead...", center=(
+                        3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] == 6:
+                    screen.fill("black")
+                    screen.draw.text(
+                        f"After a walk, you come to a fork...\nH ! O ! T !\nYou stop...",
+                        center=(0.5 * WIDTH, 0.5 * HEIGHT),
+                        fontname='hanyinuomituan', fontsize=40, color='white')
+                if plotChoose[0] in (7, 8):
+                    screen.blit("background_for_paladin", (0, 0))
+                    screen.blit("paladin_rt", (2 * wallSize, 10 * wallSize))
+                    screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                if plotChoose[0] == 7:
+                    screen.draw.text("The road ahead is full of flames...", center=(
+                        3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                if plotChoose[0] == 8:
+                    screen.draw.text("Shall I go straight?", center=(
+                        3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                     fontname='hanyinuomituan', fontsize=30, color='black')
+                    screen.draw.text("Please Choose Your Answer at Right", center=(0.5 * WIDTH, 0.5 * HEIGHT),
+                                     fontname='hanyinuomituan', fontsize=50, color='white')
+                    curButton = Button(True, "YES", "NO")
+            # 选择火山线
+            elif 10 <= plotChoose[0] <= 14:
+                if plotChoose[0] == 10:
+                    screen.fill("black")
+                    screen.draw.text(
+                        f"Go ahead...\nA VOLCANO!??\nHmm, and insects with flames...",
+                        center=(0.5 * WIDTH, 0.5 * HEIGHT),
+                        fontname='hanyinuomituan', fontsize=40, color='white')
+                # 与火山昆虫对话
+                else:
+                    screen.blit("background_2c", (0, 0))
+                    screen.blit("paladin_rt", (2 * wallSize, 10 * wallSize))
+                    screen.blit("monster_2c_03_lt", (19 * wallSize, 15 * wallSize))
+                    screen.blit("monster_2c_01_lt", (19 * wallSize, 12 * wallSize))
+                    screen.blit("monster_2c_02_lt", (19 * wallSize, 20 * wallSize))
+                    if plotChoose[0] >= 12:
+                        screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                    if plotChoose[0] in (12, 13):
+                        screen.draw.text("SH*T! I hate insects...", center=(
+                            3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                         fontname='hanyinuomituan', fontsize=30, color='black')
+                    if plotChoose[0] >= 13:
+                        screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+                    if plotChoose[0] in (13, 14):
+                        screen.draw.text("Buzzzzzzzzz...", center=(
+                            8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                         fontname='hanyinuomituan', fontsize=30, color='black')
+                    if plotChoose[0] == 14:
+                        screen.draw.text("STOMP ON YOU!!!", center=(
+                            3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                         fontname='hanyinuomituan', fontsize=30, color='black')
+            # 选择城堡线
+            elif 30 <= plotChoose[0]:
+                if plotChoose[0] == 30:
+                    screen.fill("black")
+                    screen.draw.text(
+                        f"You choose another way...\nWalk into a Castle...\nThere're some soldiers...",
+                        center=(0.5 * WIDTH, 0.5 * HEIGHT),
+                        fontname='hanyinuomituan', fontsize=40, color='white')
+                # 与城堡的骑士卫兵对话
+                else:
+                    screen.blit("background_2a", (0, 0))
+                    screen.blit("paladin_rt", (2 * wallSize, 10 * wallSize))
+                    screen.blit("monster_2a_02_lt", (19 * wallSize, 15 * wallSize))
+                    screen.blit("monster_2a_01_lt", (19 * wallSize, 12 * wallSize))
+                    screen.blit("monster_2a_01_lt", (19 * wallSize, 18 * wallSize))
+                    if plotChoose[0] >= 32:
+                        screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                    if plotChoose[0] in (32, 33, 34):
+                        screen.draw.text("Hello?", center=(
+                            3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.25 * dialogBoxHeight),
+                                         fontname='hanyinuomituan', fontsize=30, color='black')
+                    if plotChoose[0] in (33, 34):
+                        screen.draw.text("Excuse me. I wanna...", center=(
+                            3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.45 * dialogBoxHeight),
+                                         fontname='hanyinuomituan', fontsize=30, color='black')
+                    if plotChoose[0] >= 34:
+                        screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+                        screen.draw.text(f"An intruder!\nCatch him...", center=(
+                            8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                         fontname='hanyinuomituan', fontsize=30, color='black')
+                    if plotChoose[0] == 35:
+                        screen.draw.text("WTF? AGAIN???", center=(
+                            3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                         fontname='hanyinuomituan', fontsize=30, color='black')
+                    if plotChoose[0] == 36:
+                        screen.draw.text("I've had enough...", center=(
+                            3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                         fontname='hanyinuomituan', fontsize=30, color='black')
+
+    # 骑士2a关
+    if level[0] == 2 and level[1] == 'a' and plotChoose[1] == True:
+        if level[2] == 2:
+            screen.blit("background_2a", (0, 0))
+            screen.blit("knight_rt", (2 * wallSize, 10 * wallSize))
+            screen.blit("monster_2a_04_lt", (19 * wallSize, 15 * wallSize))
+            if plotChoose[0] >= 2:
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+            if plotChoose[0] == 2:
+                screen.draw.text(f"My Father, WHY?\nTell me WHY?", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (3, 4, 5, 6):
+                screen.draw.text("Why are they ordered to kill me?", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] >= 4:
+                screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+            if plotChoose[0] == 4:
+                screen.draw.text(f"Oh, my dear son.\nDon't you understand?", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 5:
+                screen.draw.text("We only have two choice...", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (6, 7):
+                screen.draw.text(f"Either to cooperate with Aliens...\nEither to die...", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (7, 8, 9):
+                screen.draw.text(f"A L I E N S ?\nThey don't exist!", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 8:
+                screen.draw.text(f"You're wrong.\nMy dear son...", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (9, 10):
+                screen.draw.text(f"ALIENS exist.\nAnd they are this planet's SAVIOUR...", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (10, 11, 12, 13, 14):
+                screen.draw.text(f"S A V I O U R ?\nWhat's meaning?", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 11:
+                screen.draw.text(f"This planet is so ROLLING.\nEvery SOUL is ROLLING...", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 12:
+                screen.draw.text(f"They must be redemptive\nOnly ALIENS can do it...", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 13:
+                screen.draw.text(f"So, my dear son.\nWould you like to help them with me?", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (14, 15, 16):
+                screen.draw.text(f"To help them...\nCONTROL the ROLLING PLANET!", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 15:
+                screen.draw.text(f"Sorry, my father.\nI can't promise you.", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (16, 17):
+                screen.draw.text(f"This planet belongs to lives on it.\nWhy can we give it to ALIENS?", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (17, 18):
+                screen.draw.text(f"Anyone who's against ALIENS will be killed.\nIncluding you, my son...", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (18, 19):
+                screen.draw.text(f"You Changed, my father.\nYou are the GREAT KNIGHT!!!", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 19:
+                screen.draw.text(f"KNIGHT? Let you, a little knight\nSee ALIENS' ANGER!!!", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+
+    # 骑士2b关
+    if level[0] == 2 and level[1] == 'b' and plotChoose[1] == False:
+        if level[2] == 2:
+            screen.blit("background_2b", (0, 0))
+            screen.blit("knight_rt", (2 * wallSize, 10 * wallSize))
+            screen.blit("monster_2b_04_lt", (19 * wallSize, 15 * wallSize))
+            if plotChoose[0] >= 2:
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+            if plotChoose[0] in (2, 3, 4):
+                screen.draw.text(f"Why do you want to kill me?\nA-L-I-E-N-!", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] >= 3:
+                screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+            if plotChoose[0] == 3:
+                screen.draw.text(f"Are you the GREAT KNIGHT's baby son?\nI thought you were dead...", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (4, 5):
+                screen.draw.text(f"GOBLIN SHAMAN is so unreliable...", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (5, 6):
+                screen.draw.text(f"You know my father?\nWhat did you do to him?", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (6, 7):
+                screen.draw.text(f"The GREAT KNIGHT...Your father...\nIs not your father anymore...", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (7, 8, 9):
+                screen.draw.text(f"What...What do you mean?", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 8:
+                screen.draw.text(f"Ha-Ha-Ha-Ha...\nHe becomes a ROBOT...", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (9, 10):
+                screen.draw.text(f"We killed him, A ROLLING SOUL.\nThen make his body a ROBOT...", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 10:
+                screen.draw.text(f"You bastard!\nI'll fight it out with you!", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+
+    # 刺客2b关
+    if level[0] == 2 and level[1] == 'b' and plotChoose[1] == True:
+        if level[2] == 2:
+            screen.blit("background_2b", (0, 0))
+            screen.blit("assassin_rt", (2 * wallSize, 10 * wallSize))
+            screen.blit("monster_2b_04_lt", (19 * wallSize, 15 * wallSize))
+            if plotChoose[0] >= 2:
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+            if plotChoose[0] in (2, 3):
+                screen.draw.text(f"I find you.\nA-L-I-E-N-!", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] >= 3:
+                screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+            if plotChoose[0] in (3, 4):
+                screen.draw.text(f"So what?\nThis planet is in our bag...", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (4, 5):
+                screen.draw.text(f"Your scheme will be tear up...\nB Y    M E !", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (5, 6):
+                screen.draw.text(f"Let's see what you can do...\nYOU ROLLING SOUL!", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 6:
+                screen.draw.text(f"Your Death is at hand!", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+
+    # 刺客2c关
+    if level[0] == 2 and level[1] == 'c' and plotChoose[1] == False:
+        if level[2] == 2:
+            screen.blit("background_2c", (0, 0))
+            screen.blit("assassin_rt", (2 * wallSize, 10 * wallSize))
+            screen.blit("monster_2c_04_lt", (19 * wallSize, 15 * wallSize))
+            if plotChoose[0] >= 2:
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+            if plotChoose[0] in (2, 3):
+                screen.draw.text(f"Is that what you did?\nLittle BUG?", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] >= 3:
+                screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+            if plotChoose[0] in (3, 4):
+                screen.draw.text(f"Hooooooooh...", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 4:
+                screen.draw.text(f"You are really a lousy BUG.\nLet me clean you!", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+
+    # 游侠2c关
+    if level[0] == 2 and level[1] == 'c' and plotChoose[1] == True:
+        if level[2] == 2:
+            screen.blit("background_2c", (0, 0))
+            screen.blit("paladin_rt", (2 * wallSize, 10 * wallSize))
+            screen.blit("monster_2c_04_lt", (19 * wallSize, 15 * wallSize))
+            if plotChoose[0] >= 2:
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+            if plotChoose[0] in (2, 3):
+                screen.draw.text(f"Ahhhhhhhhhh...\nA HUGE BUG!!!", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] >= 3:
+                screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+            if plotChoose[0] in (3, 4):
+                screen.draw.text(f"Hooooooooh...", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 4:
+                screen.draw.text(f"Attack me?\nJust my luck...", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+
+    # 游侠2a关
+    if level[0] == 2 and level[1] == 'a' and plotChoose[1] == False:
+        if level[2] == 2:
+            screen.blit("background_2a", (0, 0))
+            screen.blit("paladin_rt", (2 * wallSize, 10 * wallSize))
+            screen.blit("monster_2a_04_lt", (19 * wallSize, 15 * wallSize))
+            if plotChoose[0] >= 2:
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+            if plotChoose[0] == 2:
+                screen.draw.text(f"Hey!Hey!\nAre you the leader here?", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (3, 4, 5):
+                screen.draw.text(f"Please ask your soldiers not attack me anymore.\nI'm just a passer-by!", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] >= 4:
+                screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+            if plotChoose[0] == 4:
+                screen.draw.text(f"You burst into my castle and kill my soldiers.\nThat means you're ALIENS' enemy...", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (5, 6):
+                screen.draw.text(f"You should be resolved...\nPitiful ROLLING SOUL!",
+                                 center=(8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 6:
+                screen.draw.text(f"AGAIN?AGAIN??AGAIN???\nS ! K ! O ! D ! A !", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+
+
+
+
 
 # 画障碍物地图，这个太长了，直接放在最后面
 def obstacle_map():
