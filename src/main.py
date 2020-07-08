@@ -227,13 +227,23 @@ class Obstacle:
 
 class Bullet:
 
-    def __init__(self, type, shootPoint, dirt, bulletSpeed, weaponATK):
-        self.actor = Actor(f'bullet_{type}')
+    def __init__(self, _type, shootPoint, dirt, bulletSpeed, weaponATK):
+        self.bulletType = _type
+        self.fromPos = shootPoint
+        self.actor = Actor(f'bullet_{_type}')
         self.actor.topright = shootPoint
         self.actor.angle = self.actor.angle_to(dirt)
         self.speed = bulletSpeed    # 子弹速度，应该还需要改
         self.atk = weaponATK
         self.effectLastTime = 10    # 特效显示的时间
+
+    def reset_target(self, target):
+        self.actor.angle = self.actor.angle_to(target)
+
+    def rotate_degree(self, _angle):    # 返回一个旋转了_angle度的该子弹
+        _tmpBullet = Bullet(self.bulletType, self.fromPos, (0, 0), self.speed, self.atk)
+        _tmpBullet.actor.angle = self.actor.angle + _angle
+        return _tmpBullet
 
     def move_on(self, friendly):
         if 'effect' in self.actor.image:
@@ -344,8 +354,8 @@ class Player:   # 基类，用于写一些共同点
         self.armor = armorMax
         self.mp_MAX = 200
         self.mp = 200
-        self.armorCD_MAX = 600
-        self.armorCD = 600
+        self.armorCD_MAX = 400
+        self.armorCD = 400
         self.immuneTime = 0 # 无敌时间
         self.skillCD_MAX = skillCDMax
         self.skillCD = 0
@@ -622,8 +632,10 @@ class Enemy:
         while self.collide_obstacles():
             self.actor.center = (randint(wallSize, WIDTH - wallSize - barWidth), randint(wallSize, HEIGHT - wallSize))
         self.moveCD = randint(0, self.moveCD_MAX)
+        self.shootCD_MAX = enemyData[self.enemyType][1] * WEAPON_CD_STD
         self.shootCD = randint(0, self.shootCD_MAX)
-        self.hp = enemyData[self.enemyType][0]  # 这个是会变化的，所以就不用@property了
+        self.hp = enemyData[self.enemyType][0]  # 这个是会变化的，所以就不用@property了\
+        self.sp = 120    # 初始120
 
     @property
     def speed(self):
@@ -632,10 +644,6 @@ class Enemy:
     @property
     def moveCD_MAX(self):   # 移动CD
         return 5
-
-    @property
-    def shootCD_MAX(self):
-        return enemyData[self.enemyType][1] * WEAPON_CD_STD
 
     def random_bullet(self):
         _prob = randint(0, 100)
@@ -703,9 +711,36 @@ class Enemy:
         else:
             self.moveCD -= 1
 
-    def shoot(self):
+    def shoot(self):    # 敌人攻击
+        # 先更新技能的值（sp值
+        self.sp += 1
+        self.sp = min(self.sp, 786554453)   # 为了防止溢出，设置一个INF（
         if not self.shootCD:
-            enemyBulletList.append(self.random_bullet())
+            _bullet = self.random_bullet()
+            if '1a_04' in self.enemyType or '1b_04' in self.enemyType:    # 酋长和雪猿开AOE
+                for _ in range(6):
+                    enemyBulletList.append(_bullet)
+                    _bullet = _bullet.rotate_degree(360 / 6)
+            elif '2b_04' in self.enemyType: # 外星人，每30s召唤两个2b_01
+                if self.sp == 30 * 60: 
+                    enemyList.append(Enemy('1b_04'))
+                    enemyList.append(Enemy('1b_04'))
+                    self.sp = 0 # 使用完sp技能之后sp值归零
+                else:
+                    # 每个120~239，加快射速
+                    if self.sp % 240 == 120:
+                        self.shootCD_MAX *= 3
+                    elif self.sp % 240 == 0:
+                        self.shootCD_MAX /= 3
+                    # 每个0~119，八方射击
+                    if self.sp % 240 < 120:
+                        for _ in range(8):
+                            enemyBulletList.append(_bullet)
+                            _bullet = _bullet.rotate_degree(360 / 8)
+                    else:
+                        enemyBulletList.append(_bullet)
+            else:
+                enemyBulletList.append(_bullet)
             self.shootCD = self.shootCD_MAX
         else:
             self.shootCD -= 1
@@ -1109,7 +1144,7 @@ def generate_map_cells():
 def clear_level_data():
     global vFlag, hFlag, frameCnt, initialFlag, curButton
     curButton = None
-    vFlag = hFlag = frameCnt = 0
+    frameCnt = 0
     initialFlag = False
     global floors, walls
     floors = {}
@@ -1421,6 +1456,9 @@ def reset_game():
     initialFlag = False
     settingChoose = 0
     roleChoose = 0
+
+    global vFlag, hFlag
+    vFlag = hFlag = 0
 
 def draw():
     global roleChoose, frameCnt, portalFrameCnt, initialFlag, slotmachineCnt
