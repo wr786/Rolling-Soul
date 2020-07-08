@@ -359,8 +359,8 @@ class Player:   # 基类，用于写一些共同点
         self.armor = armorMax
         self.mp_MAX = 200
         self.mp = 200
-        self.armorCD_MAX = 400
-        self.armorCD = 400
+        self.armorCD_MAX = 120
+        self.armorCD = 120
         self.immuneTime = 0 # 无敌时间
         self.skillCD_MAX = skillCDMax
         self.skillCD = 0
@@ -447,7 +447,7 @@ class Player:   # 基类，用于写一些共同点
         if self.armorCD == self.armorCD_MAX:
             self.armor += 1
             self.armor = min(self.armor, self.armor_MAX)
-            self.armorCD -= 100 # 脱离战斗后快速回复护甲
+            self.armorCD -= 60 # 脱离战斗后快速回复护甲
         else:
             self.armorCD += 1
         if self.immuneTime:
