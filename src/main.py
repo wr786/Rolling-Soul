@@ -279,7 +279,7 @@ class Bullet:
         # 判断命中
         if friendly:    # 是玩家射出的命中了敌人
             for _enemy in enemyList:
-                if self.actor.colliderect(_enemy.actor):
+                if self.actor.colliderect(_enemy.actor) and not _enemy.immune:
                     _enemy.hp -= self.atk
                     if _enemy.hp <= 0:
                         enemyList.remove(_enemy)
@@ -645,6 +645,7 @@ class Enemy:
         self.shootCD = randint(0, self.shootCD_MAX)
         self.hp = enemyData[self.enemyType][0]  # 这个是会变化的，所以就不用@property了\
         self.sp = 120    # 初始120
+        self.immune = False
 
     @property
     def speed(self):
@@ -733,6 +734,13 @@ class Enemy:
             self.enemyType = '2a_05'
             self.actor.image = f'monster_2a_05' + self.actor.image[-3:] # 朝向保持不变
             self.shootCD_MAX = enemyData[self.enemyType][1] * WEAPON_CD_STD
+        elif '2c_04' in self.enemyType:
+            if self.sp % 1200 == 720:
+                self.actor.image = 'monster_2c_04_hide' + self.actor.image[-3:]  # 不得不加一个_rt，为了保持一致性
+                self.immune = True
+            elif self.sp % 1200 == 0:
+                self.actor.image = 'monster_2c_04' + self.actor.image[-3:]
+                self.immune = False
         # 发射弹幕
         if not self.shootCD:
             _bullet = self.random_bullet()
@@ -777,6 +785,17 @@ class Enemy:
                     _bullet = _bullet.rotate_degree(30)
                     enemyBulletList.append(_bullet)
                     _bullet = _bullet.rotate_degree(75)
+            elif '2c_04' in self.enemyType: # 火山沙虫
+                # 对玩家方向发射五发子弹
+                enemyBulletList.append(_bullet)
+                _bullet = _bullet.rotate_degree(-15)
+                enemyBulletList.append(_bullet)
+                _bullet = _bullet.rotate_degree(-15)
+                enemyBulletList.append(_bullet)
+                _bullet = _bullet.rotate_degree(45)
+                enemyBulletList.append(_bullet)
+                _bullet = _bullet.rotate_degree(15)
+                enemyBulletList.append(_bullet)
             else:
                 enemyBulletList.append(_bullet)
             self.shootCD = self.shootCD_MAX
@@ -1759,13 +1778,6 @@ def on_key_down(key):
                 settingChoose = 1
             else:
                 settingChoose = 0
-        # 仅供DEBUG用！！！记得删除！！！
-        if key == key.F:
-            player.immuneTime += 300000  
-            player.weapon = Weapon('orange_unicorn')
-            clear_level_data()
-            next_level()
-        # 仅供DEBUG用！！！记得删除！！！
 
 def on_key_up(key):
     global hFlag
