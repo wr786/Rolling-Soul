@@ -1966,7 +1966,7 @@ def next_plot(pos):
                 next_level()
 
     # 刺客2b关
-    if level[0] == 2 and level[1] == 'a' and plotChoose[1] == True:
+    if level[0] == 2 and level[1] == 'b' and plotChoose[1] == True:
         if level[2] == 2:
             if plotChoose[0] < 6:
                 plotChoose[0] += 1
