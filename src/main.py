@@ -2655,7 +2655,7 @@ def show_plot():
                                  fontname='hanyinuomituan', fontsize=30, color='black')
                 if plotChoose[0] == 13:
                     screen.fill((255, 255, 255))
-                    screen.draw.text(f"Knight took his father's honor and his disappointment \nto the country, left, without saying a world. \nNobody knew where did he go, he disappear, forever, \nbecame a legend only can be found in some historical records.", center=(
+                    screen.draw.text(f"Knight took his father's honor and his disappointment \nto the country, left, without saying a word. \nNobody knew where he went, he disappeared, forever, \nbecame a legend only can be found in some historical records.", center=(
                     0.5 * WIDTH, 0.5 * HEIGHT),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
                     
