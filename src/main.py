@@ -624,13 +624,15 @@ class Enemy:
                 return True
         return False
 
-    def __init__(self, enemyType):
+    def __init__(self, enemyType, pos=None):
         self.enemyType = enemyType
         self.actor = Actor(f'monster_{enemyType}_rt')
-        # 如果加了障碍物的话，这里就得复杂一些
-        self.actor.center = (randint(wallSize, WIDTH - wallSize - barWidth), randint(wallSize, HEIGHT - wallSize))
-        while self.collide_obstacles():
+        if pos:
+            self.actor.center = pos
+        else:   # 随机产生落点
             self.actor.center = (randint(wallSize, WIDTH - wallSize - barWidth), randint(wallSize, HEIGHT - wallSize))
+            while self.collide_obstacles():
+                self.actor.center = (randint(wallSize, WIDTH - wallSize - barWidth), randint(wallSize, HEIGHT - wallSize))
         self.moveCD = randint(0, self.moveCD_MAX)
         self.shootCD_MAX = enemyData[self.enemyType][1] * WEAPON_CD_STD
         self.shootCD = randint(0, self.shootCD_MAX)
@@ -645,6 +647,10 @@ class Enemy:
     def moveCD_MAX(self):   # 移动CD
         return 5
 
+    @property
+    def hp_MAX(self):
+        return enemyData[self.enemyType][0]
+    
     def random_bullet(self):
         _prob = randint(0, 100)
         selectedBullet = None
@@ -654,7 +660,7 @@ class Enemy:
                 break
             else:
                 _prob -= _bullet[3]
-        return Bullet(f'monster_{selectedBullet[0]}', self.actor.topright, (player.actor.pos[0] + randint(-50, 50), player.actor.pos[1] + randint(-50, 50)), selectedBullet[2] * WEAPON_BULLET_SPEED_STD, selectedBullet[1])
+        return Bullet(f'monster_{selectedBullet[0]}', self.actor.center, (player.actor.pos[0] + randint(-50, 50), player.actor.pos[1] + randint(-50, 50)), selectedBullet[2] * WEAPON_BULLET_SPEED_STD, selectedBullet[1])
 
     def face_right(self):
         self.actor.image = self.actor.image[:-3] + '_rt'
@@ -715,6 +721,12 @@ class Enemy:
         # 先更新技能的值（sp值
         self.sp += 1
         self.sp = min(self.sp, 786554453)   # 为了防止溢出，设置一个INF（
+        # 再特殊判断大骑士和沙虫的形态变换
+        if '2a_04' in self.enemyType and self.hp <= self.hp_MAX / 2:
+            self.enemyType = '2a_05'
+            self.actor.image = f'monster_2a_05' + self.actor.image[-3:] # 朝向保持不变
+            self.shootCD_MAX = enemyData[self.enemyType][1] * WEAPON_CD_STD
+        # 发射弹幕
         if not self.shootCD:
             _bullet = self.random_bullet()
             if '1a_04' in self.enemyType or '1b_04' in self.enemyType:    # 酋长和雪猿开AOE
@@ -739,6 +751,25 @@ class Enemy:
                             _bullet = _bullet.rotate_degree(360 / 8)
                     else:
                         enemyBulletList.append(_bullet)
+            elif '2a_04' in self.enemyType: # 大骑士
+                # 12方向子弹，但是较为四方
+                for _ in range(4):
+                    enemyBulletList.append(_bullet)
+                    _bullet = _bullet.rotate_degree(-15)
+                    enemyBulletList.append(_bullet)
+                    _bullet = _bullet.rotate_degree(30)
+                    enemyBulletList.append(_bullet)
+                    _bullet = _bullet.rotate_degree(75)
+            elif '2a_05' in self.enemyType: # 黑暗大骑士
+                # 12方向子弹，但是较为四方，不再只以玩家为目标(有点旋转了)
+                _bullet = _bullet.rotate_degree(randint(10, 80))
+                for _ in range(4):
+                    enemyBulletList.append(_bullet)
+                    _bullet = _bullet.rotate_degree(-15)
+                    enemyBulletList.append(_bullet)
+                    _bullet = _bullet.rotate_degree(30)
+                    enemyBulletList.append(_bullet)
+                    _bullet = _bullet.rotate_degree(75)
             else:
                 enemyBulletList.append(_bullet)
             self.shootCD = self.shootCD_MAX
@@ -1721,6 +1752,13 @@ def on_key_down(key):
                 settingChoose = 1
             else:
                 settingChoose = 0
+        # 仅供DEBUG用！！！记得删除！！！
+        if key == key.F:
+            player.immuneTime += 300000  
+            player.weapon = Weapon('orange_unicorn')
+            clear_level_data()
+            next_level()
+        # 仅供DEBUG用！！！记得删除！！！
 
 def on_key_up(key):
     global hFlag
