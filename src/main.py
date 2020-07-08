@@ -1950,7 +1950,7 @@ def next_plot(pos):
         if level[2] == 2:
             if plotChoose[0] < 19:
                 plotChoose[0] += 1
-            elif plotChoose == 19:
+            elif plotChoose[0] == 19:
                 plotChoose[0] = 0
                 clear_level_data()
                 next_level()
@@ -1960,7 +1960,7 @@ def next_plot(pos):
         if level[2] == 2:
             if plotChoose[0] < 10:
                 plotChoose[0] += 1
-            elif plotChoose == 10:
+            elif plotChoose[0] == 10:
                 plotChoose[0] = 0
                 clear_level_data()
                 next_level()
@@ -1970,7 +1970,7 @@ def next_plot(pos):
         if level[2] == 2:
             if plotChoose[0] < 6:
                 plotChoose[0] += 1
-            elif plotChoose == 6:
+            elif plotChoose[0] == 6:
                 plotChoose[0] = 0
                 clear_level_data()
                 next_level()
@@ -1980,7 +1980,7 @@ def next_plot(pos):
         if level[2] == 2:
             if plotChoose[0] < 4:
                 plotChoose[0] += 1
-            elif plotChoose == 4:
+            elif plotChoose[0] == 4:
                 plotChoose[0] = 0
                 clear_level_data()
                 next_level()
@@ -1990,7 +1990,7 @@ def next_plot(pos):
         if level[2] == 2:
             if plotChoose[0] < 4:
                 plotChoose[0] += 1
-            elif plotChoose == 4:
+            elif plotChoose[0] == 4:
                 plotChoose[0] = 0
                 clear_level_data()
                 next_level()
@@ -2000,7 +2000,7 @@ def next_plot(pos):
         if level[2] == 2:
             if plotChoose[0] < 6:
                 plotChoose[0] += 1
-            elif plotChoose == 6:
+            elif plotChoose[0] == 6:
                 plotChoose[0] = 0
                 clear_level_data()
                 next_level()
