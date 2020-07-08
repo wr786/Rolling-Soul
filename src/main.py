@@ -475,6 +475,7 @@ class Player:   # 基类，用于写一些共同点
         self.immuneTime = 60    # 受伤后1s的无敌时间
         if self.hp <= 0:
             self.hp = 0
+        sounds.get_damage.play()
 
 class Knight(Player):
 
@@ -516,11 +517,13 @@ class Knight(Player):
 
     def skill_recover(self):    # 取消技能所给状态
         self.weaponCD_recoverSpeed = 1
+        sounds.skill_over.play()
 
     def skill_emit(self):
         self.skillCD = self.skillCD_MAX
         self.weaponCD_recoverSpeed = 2
         self.skillLastTime = 6 * 60
+        sounds.skill_on.play()
 
 class Assassin(Player):
 
@@ -563,12 +566,14 @@ class Assassin(Player):
     def skill_recover(self):    # 取消技能所给状态
         global moveSpan
         moveSpan = MOVESPAN
+        sounds.skill_over.play()
 
     def skill_emit(self):
         global moveSpan
         self.skillCD = self.skillCD_MAX
         moveSpan = 2 * MOVESPAN
         self.skillLastTime = 6 * 60
+        sounds.skill_on.play()
 
 class Paladin(Player):
 
@@ -609,12 +614,14 @@ class Paladin(Player):
                 self.actor.image = "paladin_ltwalk"
 
     def skill_recover(self):    # 取消技能所给状态
+        sounds.skill_over.play()
         pass    # 无敌时间自然会update没
 
     def skill_emit(self):
         self.skillCD = self.skillCD_MAX
         self.skillLastTime = 180
         self.immuneTime += 180
+        sounds.skill_on.play()
 
 class Enemy:
 
@@ -1302,7 +1309,7 @@ def update():
         player.turn()
         player.update()
         # 技能
-        if not player.is_skill_on():
+        if player.skillLastTime == 1: # 即将结束
             player.skill_recover()
         # 显示敌人
         if enemyPredictFlag:
