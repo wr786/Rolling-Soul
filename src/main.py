@@ -15,10 +15,6 @@ storyLine = 'a'
 # 角色高度
 heroHeight = 68
 
-# 状态栏相关
-barWidth = 174
-barHeight = 85
-
 #开头相关
 isBeginningAll = 0
 beginningAllNum = 0
@@ -51,6 +47,10 @@ beginningPaladinNum4 = 0
 beginningPaladinNum5 = 0
 beginningPaladinNum6 = 0
 tabForBeginningPaladinDialog = 0
+
+# 状态栏相关
+barWidth = 174
+barHeight = 85
 
 # 地图设置
 floornum = 21 # 一行地砖的数量
@@ -133,9 +133,15 @@ awardWeapon = None
 playerBulletList = []
 enemyBulletList = []
 enemyList = []
-enemyListLazy = []  # 用来给怪物的出现打好标记，lazyTag (x
 levelEnemyList = {}
 battleWave = 0
+
+# 显示敌人出现位置
+enemyListLazy = []  # 用来给怪物的出现打好标记，lazyTag (x
+enemyPredictImage = 'effect_monster_15'
+enemyPredictCountdown = 0
+enemyPredictFlag = False
+
 # 战斗数值
 weaponData = {} # key为武器名<rarity>_<name>, value为(atkRange, cost, cd, bulletSpeed)
 WEAPON_CD_STD = 50
@@ -226,13 +232,23 @@ class Obstacle:
 
 class Bullet:
 
-    def __init__(self, type, shootPoint, dirt, bulletSpeed, weaponATK):
-        self.actor = Actor(f'bullet_{type}')
+    def __init__(self, _type, shootPoint, dirt, bulletSpeed, weaponATK):
+        self.bulletType = _type
+        self.fromPos = shootPoint
+        self.actor = Actor(f'bullet_{_type}')
         self.actor.topright = shootPoint
         self.actor.angle = self.actor.angle_to(dirt)
         self.speed = bulletSpeed    # 子弹速度，应该还需要改
         self.atk = weaponATK
         self.effectLastTime = 10    # 特效显示的时间
+
+    def reset_target(self, target):
+        self.actor.angle = self.actor.angle_to(target)
+
+    def rotate_degree(self, _angle):    # 返回一个旋转了_angle度的该子弹
+        _tmpBullet = Bullet(self.bulletType, self.fromPos, (0, 0), self.speed, self.atk)
+        _tmpBullet.actor.angle = self.actor.angle + _angle
+        return _tmpBullet
 
     def move_on(self, friendly):
         if 'effect' in self.actor.image:
@@ -268,7 +284,7 @@ class Bullet:
         # 判断命中
         if friendly:    # 是玩家射出的命中了敌人
             for _enemy in enemyList:
-                if self.actor.colliderect(_enemy.actor):
+                if self.actor.colliderect(_enemy.actor) and not _enemy.immune:
                     _enemy.hp -= self.atk
                     if _enemy.hp <= 0:
                         enemyList.remove(_enemy)
@@ -343,8 +359,8 @@ class Player:   # 基类，用于写一些共同点
         self.armor = armorMax
         self.mp_MAX = 200
         self.mp = 200
-        self.armorCD_MAX = 600
-        self.armorCD = 600
+        self.armorCD_MAX = 400
+        self.armorCD = 400
         self.immuneTime = 0 # 无敌时间
         self.skillCD_MAX = skillCDMax
         self.skillCD = 0
@@ -464,6 +480,7 @@ class Player:   # 基类，用于写一些共同点
         self.immuneTime = 60    # 受伤后1s的无敌时间
         if self.hp <= 0:
             self.hp = 0
+        sounds.get_damage.play()
 
 class Knight(Player):
 
@@ -505,12 +522,13 @@ class Knight(Player):
 
     def skill_recover(self):    # 取消技能所给状态
         self.weaponCD_recoverSpeed = 1
+        sounds.skill_over.play()
 
     def skill_emit(self):
         self.skillCD = self.skillCD_MAX
         self.weaponCD_recoverSpeed = 2
         self.skillLastTime = 6 * 60
-        clock.schedule(self.skill_recover, 6)
+        sounds.skill_on.play()
 
 class Assassin(Player):
 
@@ -553,13 +571,14 @@ class Assassin(Player):
     def skill_recover(self):    # 取消技能所给状态
         global moveSpan
         moveSpan = MOVESPAN
+        sounds.skill_over.play()
 
     def skill_emit(self):
         global moveSpan
         self.skillCD = self.skillCD_MAX
         moveSpan = 2 * MOVESPAN
         self.skillLastTime = 6 * 60
-        clock.schedule(self.skill_recover, 6)
+        sounds.skill_on.play()
 
 class Paladin(Player):
 
@@ -599,10 +618,15 @@ class Paladin(Player):
             else:
                 self.actor.image = "paladin_ltwalk"
 
+    def skill_recover(self):    # 取消技能所给状态
+        sounds.skill_over.play()
+        pass    # 无敌时间自然会update没
+
     def skill_emit(self):
         self.skillCD = self.skillCD_MAX
         self.skillLastTime = 180
         self.immuneTime += 180
+        sounds.skill_on.play()
 
 class Enemy:
 
@@ -612,16 +636,21 @@ class Enemy:
                 return True
         return False
 
-    def __init__(self, enemyType):
+    def __init__(self, enemyType, pos=None):
         self.enemyType = enemyType
         self.actor = Actor(f'monster_{enemyType}_rt')
-        # 如果加了障碍物的话，这里就得复杂一些
-        self.actor.center = (randint(wallSize, WIDTH - wallSize - barWidth), randint(wallSize, HEIGHT - wallSize))
-        while self.collide_obstacles():
+        if pos:
+            self.actor.center = pos
+        else:   # 随机产生落点
             self.actor.center = (randint(wallSize, WIDTH - wallSize - barWidth), randint(wallSize, HEIGHT - wallSize))
+            while self.collide_obstacles():
+                self.actor.center = (randint(wallSize, WIDTH - wallSize - barWidth), randint(wallSize, HEIGHT - wallSize))
         self.moveCD = randint(0, self.moveCD_MAX)
+        self.shootCD_MAX = enemyData[self.enemyType][1] * WEAPON_CD_STD
         self.shootCD = randint(0, self.shootCD_MAX)
-        self.hp = enemyData[self.enemyType][0]  # 这个是会变化的，所以就不用@property了
+        self.hp = enemyData[self.enemyType][0]  # 这个是会变化的，所以就不用@property了\
+        self.sp = 120    # 初始120
+        self.immune = False
 
     @property
     def speed(self):
@@ -632,9 +661,9 @@ class Enemy:
         return 5
 
     @property
-    def shootCD_MAX(self):
-        return enemyData[self.enemyType][1] * WEAPON_CD_STD
-
+    def hp_MAX(self):
+        return enemyData[self.enemyType][0]
+    
     def random_bullet(self):
         _prob = randint(0, 100)
         selectedBullet = None
@@ -644,7 +673,7 @@ class Enemy:
                 break
             else:
                 _prob -= _bullet[3]
-        return Bullet(f'monster_{selectedBullet[0]}', self.actor.topright, (player.actor.pos[0] + randint(-50, 50), player.actor.pos[1] + randint(-50, 50)), selectedBullet[2] * WEAPON_BULLET_SPEED_STD, selectedBullet[1])
+        return Bullet(f'monster_{selectedBullet[0]}', self.actor.center, (player.actor.pos[0] + randint(-50, 50), player.actor.pos[1] + randint(-50, 50)), selectedBullet[2] * WEAPON_BULLET_SPEED_STD, selectedBullet[1])
 
     def face_right(self):
         self.actor.image = self.actor.image[:-3] + '_rt'
@@ -701,12 +730,83 @@ class Enemy:
         else:
             self.moveCD -= 1
 
-    def shoot(self):
+    def shoot(self):    # 敌人攻击
+        # 先更新技能的值（sp值
+        self.sp += 1
+        self.sp = min(self.sp, 786554453)   # 为了防止溢出，设置一个INF（
+        # 再特殊判断大骑士和沙虫的形态变换
+        if '2a_04' in self.enemyType and self.hp <= self.hp_MAX / 2:
+            self.enemyType = '2a_05'
+            self.actor.image = f'monster_2a_05' + self.actor.image[-3:] # 朝向保持不变
+            self.shootCD_MAX = enemyData[self.enemyType][1] * WEAPON_CD_STD
+        elif '2c_04' in self.enemyType:
+            if self.sp % 1200 == 720:
+                self.actor.image = 'monster_2c_04_hide' + self.actor.image[-3:]  # 不得不加一个_rt，为了保持一致性
+                self.immune = True
+            elif self.sp % 1200 == 0:
+                self.actor.image = 'monster_2c_04' + self.actor.image[-3:]
+                self.immune = False
+        # 发射弹幕
         if not self.shootCD:
-            enemyBulletList.append(self.random_bullet())
+            _bullet = self.random_bullet()
+            if '1a_04' in self.enemyType or '1b_04' in self.enemyType:    # 酋长和雪猿开AOE
+                for _ in range(6):
+                    enemyBulletList.append(_bullet)
+                    _bullet = _bullet.rotate_degree(360 / 6)
+            elif '2b_04' in self.enemyType: # 外星人，每30s召唤两个2b_01
+                if self.sp == 30 * 60: 
+                    enemyList.append(Enemy('1b_04'))
+                    enemyList.append(Enemy('1b_04'))
+                    self.sp = 0 # 使用完sp技能之后sp值归零
+                else:
+                    # 每个120~239，加快射速
+                    if self.sp % 240 == 120:
+                        self.shootCD_MAX *= 3
+                    elif self.sp % 240 == 0:
+                        self.shootCD_MAX /= 3
+                    # 每个0~119，八方射击
+                    if self.sp % 240 < 120:
+                        for _ in range(8):
+                            enemyBulletList.append(_bullet)
+                            _bullet = _bullet.rotate_degree(360 / 8)
+                    else:
+                        enemyBulletList.append(_bullet)
+            elif '2a_04' in self.enemyType: # 大骑士
+                # 12方向子弹，但是较为四方
+                for _ in range(4):
+                    enemyBulletList.append(_bullet)
+                    _bullet = _bullet.rotate_degree(-15)
+                    enemyBulletList.append(_bullet)
+                    _bullet = _bullet.rotate_degree(30)
+                    enemyBulletList.append(_bullet)
+                    _bullet = _bullet.rotate_degree(75)
+            elif '2a_05' in self.enemyType: # 黑暗大骑士
+                # 12方向子弹，但是较为四方，不再只以玩家为目标(有点旋转了)
+                _bullet = _bullet.rotate_degree(randint(10, 80))
+                for _ in range(4):
+                    enemyBulletList.append(_bullet)
+                    _bullet = _bullet.rotate_degree(-15)
+                    enemyBulletList.append(_bullet)
+                    _bullet = _bullet.rotate_degree(30)
+                    enemyBulletList.append(_bullet)
+                    _bullet = _bullet.rotate_degree(75)
+            elif '2c_04' in self.enemyType: # 火山沙虫
+                # 对玩家方向发射五发子弹
+                enemyBulletList.append(_bullet)
+                _bullet = _bullet.rotate_degree(-15)
+                enemyBulletList.append(_bullet)
+                _bullet = _bullet.rotate_degree(-15)
+                enemyBulletList.append(_bullet)
+                _bullet = _bullet.rotate_degree(45)
+                enemyBulletList.append(_bullet)
+                _bullet = _bullet.rotate_degree(15)
+                enemyBulletList.append(_bullet)
+            else:
+                enemyBulletList.append(_bullet)
             self.shootCD = self.shootCD_MAX
         else:
             self.shootCD -= 1
+
 
 # 死亡界面
 def get_death():
@@ -854,7 +954,7 @@ def generate_map_cells():
 def clear_level_data():
     global vFlag, hFlag, frameCnt, initialFlag, curButton
     curButton = None
-    vFlag = hFlag = frameCnt = 0
+    frameCnt = 0
     initialFlag = False
     global floors, walls
     floors = {}
@@ -879,6 +979,8 @@ def clear_level_data():
     global moveSpan, battleWave
     moveSpan = MOVESPAN
     battleWave = 0
+    player.mp = player.mp_MAX
+    player.armor = player.armor_MAX
 
 def next_level(flag = True):   # 进入下一关, True表示剧情线不变，False表示错线
     if level[2] == 3:
@@ -960,16 +1062,41 @@ def generate_skillCD_png():
 def is_begun():
     return isBeginningAll and (isBeginningKnight == 1 or isBeginningAssassin == 1 or isBeginningPaladin == 1)
 
+# 敌人出场特效
+def show_enemy_pos():
+    for _enemy in enemyListLazy:
+        _enemyPred = Image.open(f'./images/{enemyPredictImage}.png')
+        effectWidth = _enemyPred.size[0]
+        screen.blit(enemyPredictImage, (_enemy.actor.center[0] - effectWidth / 2, _enemy.actor.center[1] - effectWidth / 2))
+
+# 显现敌人
+def show_enemy():
+    global enemyListLazy, enemyList
+    enemyList = enemyListLazy
+    enemyListLazy = []
+
+
 def update():
-    global hFlag
-    global vFlag
-    global enemyMoveCnt
+    global hFlag, vFlag
+    global enemyMoveCnt, enemyPredictFlag, enemyPredictCountdown
+    global frameCnt, portalFrameCnt
+
     enemyMoveCnt = 0
     # 移动处理
     if player.hp > 0 and settingChoose == 0 and is_begun():
         player.walk()
         player.turn()
         player.update()
+        # 技能
+        if player.skillLastTime == 1: # 即将结束
+            player.skill_recover()
+        # 显示敌人
+        if enemyPredictFlag:
+            enemyPredictCountdown -= 1
+            if enemyPredictCountdown == 0:
+                enemyPredictFlag = False
+                show_enemy()
+        # 战斗常规
         for _enemy in enemyList:
             _enemy.move()
             _enemy.shoot()
@@ -980,6 +1107,10 @@ def update():
         for _bullet in enemyBulletList:
             if not _bullet.move_on(False):
                 enemyBulletList.remove(_bullet)
+
+        # 这两个计数器移入update，方便暂停
+        frameCnt = frameCnt % 60 + 1
+        portalFrameCnt = portalFrameCnt % 60 + 1
 
 # 画状态栏
 def draw_bar():
@@ -1122,18 +1253,6 @@ def show_beginning():
                 beginningPaladinNum6 += 1
     return True
 
-# 敌人出场特效
-def show_enemy_pos():
-    for _enemy in enemyListLazy:
-        effectWidth = 56
-        screen.blit('effect_monster_15', (_enemy.actor.center[0] - effectWidth / 2, _enemy.actor.center[1] - effectWidth / 2))
-
-# 显现敌人
-def show_enemy():
-    global enemyListLazy, enemyList
-    enemyList = enemyListLazy
-    enemyListLazy = []
-
 def reset_game():
     global level, isBeginningAll, beginningAllNum, knightDeathTime
     global isBeginningKnight, isBeginningAssassin, isBeginningPaladin
@@ -1155,11 +1274,14 @@ def reset_game():
     chatchoose = 0
     plotChoose = [0, True]
 
+    global vFlag, hFlag
+    vFlag = hFlag = 0
+
 def draw():
     global roleChoose, frameCnt, portalFrameCnt, initialFlag, slotmachineCnt
     global isBeginningKnight, isBeginningAssassin, isBeginningPaladin, knightDeathTime 
     global awardFlag, awardWeapon
-    global battleWave
+    global battleWave, enemyPredictImage, enemyPredictCountdown, enemyPredictFlag
     screen.clear()
 
     if is_begun():
@@ -1176,6 +1298,7 @@ def draw():
         for _bullet in enemyBulletList:
             _bullet.actor.draw()
         if enemyListLazy:
+            enemyPredictImage = f'effect_monster_{(frameCnt % 20 + 10) // 5 * 5}'
             show_enemy_pos()
 
     # 关卡信息初始化
@@ -1238,7 +1361,8 @@ def draw():
                             enemyListLazy.append(Enemy(levelEnemyList[(level[0], level[1], enemyMinorType)]))
                 battleWave = min(battleWave + 1, 2)
                 if enemyListLazy:   # 这次创建了敌人，则需要定时迁移
-                    clock.schedule(show_enemy, 2)
+                    enemyPredictCountdown = 120
+                    enemyPredictFlag = True
 
         if awardFlag != '':
             awardWeapon = Weapon(awardFlag, *slotmachinePoint)    # 这个位置随老虎机一起改
@@ -1254,8 +1378,6 @@ def draw():
 
         if player.hp <= 0:
             get_death()
-        frameCnt = frameCnt % 60 + 1
-        portalFrameCnt = portalFrameCnt % 60 + 1
 
         if settingChoose == 1:
             setting_create()
@@ -2822,7 +2944,7 @@ def obstacle_map():
         obstacleList.append(Obstacle(10 * wallSize, 13 * wallSize))
         obstacleList.append(Obstacle(19 * wallSize, 8 * wallSize))
         
-        spawnPoint = (14 * wallSize, 10 * wallSize)
+        spawnPoint = (14 * wallSize, 13 * wallSize)
         slotmachinePoint = (9 * wallSize, 15 * wallSize)
         
     elif level == [2, 'a', 2]:
