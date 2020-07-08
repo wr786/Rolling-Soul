@@ -344,11 +344,8 @@ class Weapon:
     def cost(self):
         return weaponData[self.gunType][1]
     
-    def show_anime(self):
-        pass    #todo 对当前所对的方向释放"特效"，待写
 
     def rotate_to(self, pos):
-        #self.actor.anchor = ()#todo 处理枪械的旋转中心，如果是_rt的话，应该偏向左边，如果是_lt的话，应该偏向右边（即靠枪把子
         if pos[0] < self.actor.pos[0]:  # 要翻转
             self.actor.image = self.actor.image[:-3] + '_lt'
             self.actor.angle = -1 * self.actor.angle_to((2*self.actor.pos[0] - pos[0], pos[1])) # 反转后角度也要相应地变换
@@ -998,6 +995,8 @@ def clear_level_data():
     battleWave = 0
     player.mp = player.mp_MAX
     player.armor = player.armor_MAX
+    global enemyListLazy
+    enemyListLazy = []
 
 def next_level(flag = True):   # 进入下一关, True表示剧情线不变，False表示错线
     if level[2] == 3:
@@ -1285,14 +1284,23 @@ def reset_game():
     tabForBeginningKnightDialog = tabForBeginningPaladinDialog = tabForBeginningAssassinDialog = 0
 
     global initialFlag, settingChoose, roleChoose, chatchoose, plotChoose
+    global vFlag, hFlag
+    if roleChoose != 4: # 修复死亡时造成的移动bug
+        vFlag = hFlag = 0
+
     initialFlag = False
     settingChoose = 0
     roleChoose = 0
     chatchoose = 0
     plotChoose = [0, True]
 
-    global vFlag, hFlag
-    vFlag = hFlag = 0
+    global enemyListLazy, enemyList
+    enemyListLazy = []
+    enemyList = []
+
+    global enemyPredictFlag, enemyPredictCountdown
+    enemyPredictCountdown = 120
+    enemyPredictFlag = False
 
 def draw():
     global roleChoose, frameCnt, portalFrameCnt, initialFlag, slotmachineCnt
@@ -1418,7 +1426,6 @@ def on_mouse_move(pos):
             player.weapon2.rotate_to(pos)
 
 def on_mouse_down(pos, button):
-    #todo 这里应该加个判断，判断当前是否在战斗中
     global player, level, volumeCnt, curButton
     global roleChoose, chatchoose, settingChoose, isBeginningAll, beginningAllNum, plotChoose
     global isBeginningKnight, tabForBeginningKnightDialog, beginningKnightNum1, beginningKnightNum2, beginningKnightNum3, beginningKnightNum4, beginningKnightNum5
@@ -1445,8 +1452,8 @@ def on_mouse_down(pos, button):
                 level = [1, storyLine, 1]
     elif roleChoose == 4:  # 死亡后点击回到开始界面
         if button == mouse.LEFT:
-            roleChoose = 0
             clear_level_data()
+            reset_game()
     elif roleChoose == 1 and isBeginningKnight == 0:
         if tabForBeginningKnightDialog != 6:
             tabForBeginningKnightDialog += 1
@@ -1549,15 +1556,15 @@ def on_mouse_down(pos, button):
 
 def on_key_down(key):
     global hFlag, vFlag, settingChoose
+    if key == key.A:
+        hFlag -= 1
+    if key == key.S:
+        vFlag += 1
+    if key == key.D:
+        hFlag += 1
+    if key == key.W:
+        vFlag -= 1
     if player.hp > 0:
-        if key == key.A:
-            hFlag -= 1
-        if key == key.S:
-            vFlag += 1
-        if key == key.D:
-            hFlag += 1
-        if key == key.W:
-            vFlag -= 1
         if key == key.SPACE:
             if player.is_skill_ready() and not settingChoose:
                 player.skill_emit()
@@ -1570,15 +1577,14 @@ def on_key_down(key):
 def on_key_up(key):
     global hFlag
     global vFlag
-    if player.hp > 0:
-        if key == key.A:
-            hFlag += 1
-        if key == key.S:
-            vFlag -= 1
-        if key == key.D:
-            hFlag -= 1
-        if key == key.W:
-            vFlag += 1
+    if key == key.A:
+        hFlag += 1
+    if key == key.S:
+        vFlag -= 1
+    if key == key.D:
+        hFlag -= 1
+    if key == key.W:
+        vFlag += 1
 
 ######后面几部分都很长，所以放在后面#####
 
