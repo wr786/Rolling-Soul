@@ -1267,14 +1267,15 @@ def reset_game():
     tabForBeginningKnightDialog = tabForBeginningPaladinDialog = tabForBeginningAssassinDialog = 0
 
     global initialFlag, settingChoose, roleChoose, chatchoose, plotChoose
+    global vFlag, hFlag
+    if roleChoose != 4: # 修复死亡时造成的移动bug
+        vFlag = hFlag = 0
+
     initialFlag = False
     settingChoose = 0
     roleChoose = 0
     chatchoose = 0
     plotChoose = [0, True]
-
-    global vFlag, hFlag
-    vFlag = hFlag = 0
 
     global enemyListLazy, enemyList
     enemyListLazy = []
@@ -1434,7 +1435,6 @@ def on_mouse_down(pos, button):
                 level = [1, storyLine, 1]
     elif roleChoose == 4:  # 死亡后点击回到开始界面
         if button == mouse.LEFT:
-            roleChoose = 0
             clear_level_data()
             reset_game()
     elif roleChoose == 1 and isBeginningKnight == 0:
@@ -1539,15 +1539,15 @@ def on_mouse_down(pos, button):
 
 def on_key_down(key):
     global hFlag, vFlag, settingChoose
+    if key == key.A:
+        hFlag -= 1
+    if key == key.S:
+        vFlag += 1
+    if key == key.D:
+        hFlag += 1
+    if key == key.W:
+        vFlag -= 1
     if player.hp > 0:
-        if key == key.A:
-            hFlag -= 1
-        if key == key.S:
-            vFlag += 1
-        if key == key.D:
-            hFlag += 1
-        if key == key.W:
-            vFlag -= 1
         if key == key.SPACE:
             if player.is_skill_ready() and not settingChoose:
                 player.skill_emit()
@@ -1560,15 +1560,14 @@ def on_key_down(key):
 def on_key_up(key):
     global hFlag
     global vFlag
-    if player.hp > 0:
-        if key == key.A:
-            hFlag += 1
-        if key == key.S:
-            vFlag -= 1
-        if key == key.D:
-            hFlag -= 1
-        if key == key.W:
-            vFlag += 1
+    if key == key.A:
+        hFlag += 1
+    if key == key.S:
+        vFlag -= 1
+    if key == key.D:
+        hFlag -= 1
+    if key == key.W:
+        vFlag += 1
 
 ######后面几部分都很长，所以放在后面#####
 
