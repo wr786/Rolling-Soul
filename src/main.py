@@ -181,7 +181,7 @@ def read_data():
         for line in f.readlines()[1:]:
             datas = line.split(',')
             for minor in datas[1].split('|'):   # 用'|'分隔开怪物
-                _monster = (int(datas[0][0]), datas[0][1], int(minor))  # 这个minor表示该关卡(如'1a')内怪物id
+                _monster = (int(datas[0][0]), datas[0][1:datas[0].find('_')], int(minor))  # 这个minor表示该关卡(如'1a')内怪物id
                 # 在关卡怪物列表中添加这种怪物
                 levelEnemyList.update({_monster: datas[0]})
             # 类型，atk，bulletSpeed，概率
@@ -1078,7 +1078,7 @@ def choose_role(pos):
         roleChoose = 2
     elif 0.75 * WIDTH - 25 < pos[0] < 0.75 * WIDTH + 45 and 0.5 * HEIGHT < pos[1] <0.5 * HEIGHT + 70:
         roleChoose = 3
-    elif WIDTH - 80 < pos[0] < WIDTH - 10 and 0 < pos[1] < 10:
+    elif WIDTH - 80 < pos[0] < WIDTH - 10 and 10 < pos[1] < 80:
         roleChoose = 6
 
 # 开始界面
@@ -1124,7 +1124,8 @@ def generate_skillCD_png():
 
 # 判断当前人物的剧情是否已经播放
 def is_begun():
-    return isBeginningAll and (isBeginningKnight == 1 or isBeginningAssassin == 1 or isBeginningPaladin == 1)
+    # 彩蛋关无需剧情
+    return (isBeginningAll and (isBeginningKnight == 1 or isBeginningAssassin == 1 or isBeginningPaladin == 1)) or storyLine == 'cb'
 
 # 敌人出场特效
 def show_enemy_pos():
@@ -1386,20 +1387,17 @@ def draw():
             initialFlag = True
             player.actor.center = spawnPoint
         else:
-            # todo 这里某些地方还需要改改
-            if roleChoose == 6 and not enemyList and not enemyListLazy: # 彩蛋关
-                if battleWave == 1:
-                    if plotChoose[0] == 0:
-                        portal_create(*spawnPoint)
-                elif battleWave == 0:
-                    enemyNum = [1, 0, 0, 0]
-                    for enemyMinorType in range(1, 5):
-                        for _ in range(enemyNum[enemyMinorType - 1]):
-                            enemyListLazy.append(Enemy(levelEnemyList[(level[0], level[1], enemyMinorType)]))
-                battleWave = min(battleWave + 1, 2)
-                if enemyListLazy:  # 这次创建了敌人，则需要定时迁移
-                    enemyPredictCountdown = 120
-                    enemyPredictFlag = True
+            if roleChoose == 6: # 彩蛋关
+                if not enemyList and not enemyListLazy: # 彩蛋关每关只有boss
+                    if battleWave == 1:
+                        if plotChoose[0] == 0:
+                            portal_create(*spawnPoint)
+                    elif battleWave == 0:
+                        enemyListLazy.append(Enemy(levelEnemyList[(level[0], level[1], 1)]))    # 只加入boss
+                    battleWave = min(battleWave + 1, 1)
+                    if enemyListLazy:  # 这次创建了敌人，则需要定时迁移
+                        enemyPredictCountdown = 120
+                        enemyPredictFlag = True
             elif not enemyList and not enemyListLazy:  # 敌人打完了
                 if battleWave == 2:
                     if plotChoose[0] == 0:
@@ -1489,7 +1487,7 @@ def on_mouse_move(pos):
             player.weapon2.rotate_to(pos)
 
 def on_mouse_down(pos, button):
-    global player, level, volumeCnt, curButton
+    global player, level, volumeCnt, curButton, storyLine
     global roleChoose, chatchoose, settingChoose, isBeginningAll, beginningAllNum, plotChoose
     global isBeginningKnight, tabForBeginningKnightDialog, beginningKnightNum1, beginningKnightNum2, beginningKnightNum3, beginningKnightNum4, beginningKnightNum5
     global isBeginningAssassin, tabForBeginningAssassinDialog, beginningAssassinNum1, beginningAssassinNum2, beginningAssassinNum3, beginningAssassinNum4, beginningAssassinNum5
@@ -1516,6 +1514,8 @@ def on_mouse_down(pos, button):
                 storyLine = 'cb'
             if roleChoose:
                 level = [1, storyLine, 1]
+            if roleChoose == 6: #todo 删去这个，这里只是为了方便测试（因为wxh的相关还没有上传
+                level[0] = 2   
     elif roleChoose == 4:  # 死亡后点击回到开始界面
         if button == mouse.LEFT:
             clear_level_data()
@@ -2052,9 +2052,9 @@ def next_plot(pos):
         if level[2] == 3:
             if plotChoose[0] < 14:
               plotChoose[0] += 1
-#todo:  
-#           elif plotChoose[0] == 14:
-#               end
+    #todo:  
+    #           elif plotChoose[0] == 14:
+    #               end
 
     # 骑士2b关
     if level[0] == 2 and level[1] == 'b' and plotChoose[1] == False:
@@ -4323,7 +4323,7 @@ def obstacle_map():
         spawnPoint = (12 * wallSize, 4 * wallSize)
         slotmachinePoint = (12 * wallSize, 19 * wallSize)
         
-    elif level == [0, 'cb', 12340]:
+    elif level == [1, 'cb', 1]:
         
         obstacle_x = 4 * wallSize
         obstacle_y = 3 * wallSize
@@ -4429,7 +4429,7 @@ def obstacle_map():
         spawnPoint = (12 * wallSize, 4 * wallSize)
         slotmachinePoint = (12 * wallSize, 19 * wallSize)
         
-    elif level == [3, 'x', 0]:
+    elif level == [2, 'cb', 1]:
         
         obstacle_x = 4 * wallSize
         obstacle_y = 7 * wallSize
