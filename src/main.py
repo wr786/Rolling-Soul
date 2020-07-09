@@ -643,6 +643,57 @@ class Paladin(Player):
         self.immuneTime += 180
         sounds.skill_on.play()
 
+class ChenbinSama(Player):
+
+    def __init__(self):
+        self.actor = Actor('chenbinsama_rt')
+        Player.__init__(self, 'red_pytree', 6, 6, 9*60, 180)
+
+    # 移动部分
+
+    def face_right(self):
+        self.actor.image = "chenbinsama_rt"
+
+    def walk_right(self):
+        self.actor.image = "chenbinsama_rtwalk"
+
+    def face_left(self):
+        self.actor.image = "chenbinsama_lt"
+
+    def walk_left(self):
+        self.actor.image = "chenbinsama_ltwalk"
+
+    def stop(self):
+        if self.actor.image == "chenbinsama_rt" or self.actor.image == "chenbinsama_rtwalk":
+            self.actor.image = "chenbinsama_rt"
+        elif self.actor.image == "chenbinsama_lt" or self.actor.image == "chenbinsama_ltwalk":
+            self.actor.image = "chenbinsama_lt"
+
+    def up_down(self):
+        if self.actor.image == "chenbinsama_rt" or self.actor.image == "chenbinsama_rtwalk":
+            if frameCnt <= 7.5 or 22.5< frameCnt <= 37.5 or frameCnt > 52.5:
+                self.actor.image = "chenbinsama_rt"
+            else:
+                self.actor.image = "chenbinsama_rtwalk"
+        else:
+            if frameCnt <= 7.5 or 22.5< frameCnt <= 37.5 or frameCnt > 52.5:
+                self.actor.image = "chenbinsama_lt"
+            else:
+                self.actor.image = "chenbinsama_ltwalk"
+
+    def skill_recover(self):    # 取消技能所给状态
+        sounds.skill_over.play()
+        pass    # 无敌时间自然会update没
+
+    def skill_emit(self):
+        global moveSpan
+        self.skillCD = self.skillCD_MAX
+        self.skillLastTime = 180
+        self.immuneTime += 180
+        moveSpan = 2 * MOVESPAN
+        self.weaponCD_recoverSpeed = 2
+        sounds.skill_on.play()
+
 class Enemy:
 
     def collide_obstacles(self):
@@ -1000,18 +1051,21 @@ def clear_level_data():
     enemyListLazy = []
 
 def next_level(flag = True):   # 进入下一关, True表示剧情线不变，False表示错线
-    if level[2] == 3:
-       level[0] += 1
-       level[2] = 1
+    if level[1] == 'cb':
+        level[0] += 1
     else:
-       level[2] += 1
-    if not flag:
-        if level[1] == 'a':
-            level[1] = 'b'
-        elif level[1] == 'b':
-            level[1] = 'c'
-        elif level[1] == 'c':
-            level[1] = 'a'
+        if level[2] == 3:
+            level[0] += 1
+            level[2] = 1
+        else:
+            level[2] += 1
+        if not flag:
+            if level[1] == 'a':
+                level[1] = 'b'
+            elif level[1] == 'b':
+                level[1] = 'c'
+            elif level[1] == 'c':
+                level[1] = 'a'
 
 # 人物选择特效
 def choice_role(pos):
@@ -1034,12 +1088,14 @@ def choose_role(pos):
         roleChoose = 2
     elif 0.75 * WIDTH - 25 < pos[0] < 0.75 * WIDTH + 45 and 0.5 * HEIGHT < pos[1] <0.5 * HEIGHT + 70:
         roleChoose = 3
+    elif WIDTH - 80 < pos[0] < WIDTH - 10 and 0 < pos[1] < 10:
+        roleChoose = 6
 
 # 开始界面
 def start_view():
     screen.fill("white")
     screen.blit("start_back", (0, 0))
-    screen.draw.text("Please Choose Your Hero", center = (0.5 * WIDTH, 0.2 * HEIGHT), fontname = "hanyinuomituan", fontsize = 90)
+    screen.draw.text(f"Welcome to ROLLING SOUL\nPlease Choose Your Hero", center = (0.5 * WIDTH, 0.25 * HEIGHT), fontname = "hanyinuomituan", fontsize = 80)
     screen.blit("knight_rt", (0.25 * WIDTH - 25, 0.5 * HEIGHT))
     screen.draw.text("Knight", center = (0.25 * WIDTH, 0.5 * HEIGHT + 1.3 * heroHeight), fontname = "hanyinuomituan", fontsize = 40, color = "orange")
     screen.draw.text("Max Life:4", center=(0.25 * WIDTH, 0.5 * HEIGHT + 1.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="red")
@@ -1055,6 +1111,7 @@ def start_view():
     screen.draw.text("Max Life:7", center=(0.75 * WIDTH, 0.5 * HEIGHT + 1.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="red")
     screen.draw.text("Max Armor:4", center=(0.75 * WIDTH, 0.5 * HEIGHT + 2.3 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="grey40")
     screen.draw.text("Max Power:200", center=(0.75 * WIDTH, 0.5 * HEIGHT + 2.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="blue")
+    screen.blit("egg_enter", (WIDTH - 80, 10))
     if roleChoice == 1:
         screen.blit("knight_choose", (0.25 * WIDTH - 25, 0.5 * HEIGHT))
     elif roleChoice == 2:
@@ -1339,7 +1396,21 @@ def draw():
             initialFlag = True
             player.actor.center = spawnPoint
         else:
-            if not enemyList and not enemyListLazy:  # 敌人打完了
+            # todo 这里某些地方还需要改改
+            if roleChoose == 6 and not enemyList and not enemyListLazy: # 彩蛋关
+                if battleWave == 1:
+                    if plotChoose[0] == 0:
+                        portal_create(*spawnPoint)
+                elif battleWave == 0:
+                    enemyNum = [1, 0, 0, 0]
+                    for enemyMinorType in range(1, 5):
+                        for _ in range(enemyNum[enemyMinorType - 1]):
+                            enemyListLazy.append(Enemy(levelEnemyList[(level[0], level[1], enemyMinorType)]))
+                battleWave = min(battleWave + 1, 2)
+                if enemyListLazy:  # 这次创建了敌人，则需要定时迁移
+                    enemyPredictCountdown = 120
+                    enemyPredictFlag = True
+            elif not enemyList and not enemyListLazy:  # 敌人打完了
                 if battleWave == 2:
                     if plotChoose[0] == 0:
                         portal_create(*spawnPoint)
@@ -1418,7 +1489,7 @@ def draw():
             show_plot()
         draw_button()
 
-# 处理武器跟随旋转
+# 处理武器跟随旋转和人物选择特效
 def on_mouse_move(pos):
     if isBeginningAll == 1 and roleChoose == 0:
         choice_role(pos)
@@ -1450,6 +1521,9 @@ def on_mouse_down(pos, button):
             elif roleChoose == 3:
                 player = Paladin()
                 storyLine = 'c'
+            elif roleChoose == 6:
+                player = ChenbinSama()
+                storyLine = 'cb'
             if roleChoose:
                 level = [1, storyLine, 1]
     elif roleChoose == 4:  # 死亡后点击回到开始界面
