@@ -2588,11 +2588,11 @@ def show_plot():
                     8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
         elif level[2] == 3:
-            if plotChoose[0] >= 2:
-                screen.blit("background_2a", (0, 0))
+            screen.blit("background_2a", (0, 0))
+            if plotChoose[0] <= 2:
+                screen.blit("knight_rt", (2 * wallSize, 10 * wallSize))
+                screen.blit("monster_2a_05_death", (19 * wallSize, 15 * wallSize))
                 if plotChoose[0] == 2:
-                    screen.blit("knight_rt", (2 * wallSize, 10 * wallSize))
-                    screen.blit("monster_2a_05_death", (19 * wallSize, 15 * wallSize))
                     screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
                     screen.draw.text(f"I...I do not believe my father\nreally want to kill me...Wait.\nWhat's that?", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
@@ -2718,12 +2718,12 @@ def show_plot():
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
         elif level[2] == 3:
-            if plotChoose[0] >= 2:
-                screen.blit("background_2b", (0, 0))
-            if plotChoose[0] in (2, 3, 4):
+            screen.blit("background_2b", (0, 0))
+            if plotChoose[0] <= 4:
                 screen.blit("knight_rt", (2 * wallSize, 10 * wallSize))
-                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
                 screen.blit("monster_2b_04_lt", (19 * wallSize, 15 * wallSize))
+            if plotChoose[0] in (2, 3, 4):
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
             if plotChoose[0]  in (2, 3):
                 screen.draw.text(f"Ehhhh...You are stronger than I thought. ", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
@@ -2805,11 +2805,11 @@ def show_plot():
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
         if level[2] == 3:
-            if plotChoose[0] >= 2:
-                screen.blit("background_2b", (0, 0))
-            if plotChoose[0] in (2, 3):
+            screen.blit("background_2b", (0, 0))
+            if plotChoose[0] <= 3:
                 screen.blit("assassin_rt", (2 * wallSize, 10 * wallSize))
                 screen.blit("monster_2b_04_lt", (19 * wallSize, 15 * wallSize))
+            if plotChoose[0] in (2, 3):
                 screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
                 screen.draw.text(f"You are a respectable rival. \nI will give you an honoring death.", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
@@ -2897,6 +2897,9 @@ def show_plot():
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
 
+
+
+
     # 游侠2c关
     if level[0] == 2 and level[1] == 'c' and plotChoose[1] == True:
         if level[2] == 2:
@@ -2918,7 +2921,7 @@ def show_plot():
             if plotChoose[0] == 4:
                 screen.draw.text(f"Attack me?\nJust my luck...", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
-                                 fontname='hanyinuomituan', fontsize=30, color='black')
+                                 fontname='hanyinuomituan', fontsize=30, color='black')            
 
     # 游侠2a关
     if level[0] == 2 and level[1] == 'a' and plotChoose[1] == False:
