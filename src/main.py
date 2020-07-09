@@ -8,9 +8,9 @@ import os
 ###########################################################################################
 
 # 选角色相关
-roleChoose = 0
-roleChoice = 0
-storyLine = 'a'
+roleChoose = 0 # 人物选择状态变量
+roleChoice = 0 # 人物选择特效变量
+storyLine = 'a' # 故事线
 
 # 角色高度
 heroHeight = 68
@@ -74,10 +74,10 @@ barHeight = 85
 floornum = 21 # 一行地砖的数量
 wallnum = 23 # 一行墙砖的数量
 wallSize = 37   # 一个方块的大小
-WIDTH = wallnum * wallSize + barWidth
-HEIGHT = wallnum * wallSize
-floors = {}
-walls = {}
+WIDTH = wallnum * wallSize + barWidth # 画面宽度
+HEIGHT = wallnum * wallSize # 画面高度
+floors = {} # 地图地板方块容器，用于生成地板
+walls = {} # 地图墙壁方块容器，用于生成墙壁
 spawnPoint = (314.5 , 314.5)
 slotmachinePoint = (314.5 , 314.5)
 
@@ -88,15 +88,15 @@ obstacleList = []   # 关卡障碍物列表
 
 # 剧情相关
 plotChoose = [0, True] # True表示是否错线，0是对话相关变量
-dialogBoxWitdh = 470
-dialogBoxHeight = 290
+dialogBoxWitdh = 470 # 对话框宽度
+dialogBoxHeight = 290 # 对话框长度
 
 #怪物数量
 enemyNum = [0] * 4
 
 # 背景相关
-floorcnt = 0
-wallcnt = 0
+floorcnt = 0 # 生成背景地板相关计数变量
+wallcnt = 0 # 生成背景墙壁相关计数变量
 
 # 移动相关
 vFlag = 0
@@ -124,27 +124,27 @@ keyintroButton = None # 键位说明按钮
 homeButton = None # 返回开始界面按钮
 settingChoose = 0 # 设置状态标记
 volumeCnt = 5 # 音量大小
-unitWidth = 10
-unitHeight = 49
+unitWidth = 10 # 音量显示方块的宽度
+unitHeight = 49 # 音量显示方块的高度
 
 # 传送门相关
-portalFrameCnt = 0
-portalWidth = 122
-portalHeight = 142
+portalFrameCnt = 0 # 传送门频率变量
+portalWidth = 122 # 传送门宽度
+portalHeight = 142 # 传送门高度
 
 # 老虎机相关
-slotmachineWidth_small = 74
-slotmachineHeight_small = 142
-slotmachineWidth_big = 546
-slotmachineHeight_big = 346
-slotmachineCnt = 0
-slotmachineFlag = 0
-awardFlag = ''
-slotItem1 = 'slotmachine_item1'
-slotItem2 = 'slotmachine_item1'
-slotItem3 = 'slotmachine_item1'
-itemSize = 99
-awardWeapon = None
+slotmachineWidth_small = 74 # 地图上小老虎机的宽度
+slotmachineHeight_small = 142 # 地图上小老虎机的高度
+slotmachineWidth_big = 546 # 抽奖界面大老虎机的宽度
+slotmachineHeight_big = 346 # 抽奖界面大老虎机的宽度
+slotmachineCnt = 0 # 老虎机抽奖频率变量
+slotmachineFlag = 0 # 老虎机奖励标志
+awardFlag = '' # 老虎机奖励
+slotItem1 = 'slotmachine_item1' # 老虎机第一个抽奖栏
+slotItem2 = 'slotmachine_item1' # 老虎机第二个抽奖栏
+slotItem3 = 'slotmachine_item1' # 老虎机第三个抽奖栏
+itemSize = 99 # 抽奖栏物品大小
+awardWeapon = None # 奖励的武器对象
 
 # 战斗相关
 # 屏幕中的子弹列表，每次画都需要更新，然后用不同的列表来区分伤害判定
@@ -826,20 +826,20 @@ class Enemy:
 # 死亡界面
 def get_death():
     global roleChoose
-    if player.actor.image[-1] == 't':
+    if player.actor.image[-1] == 't': # 判断死亡时朝左还是朝右
         screen.blit(f"{player.actor.image}death", (player.actor.left, player.actor.top))
     elif player.actor.image[-1] == 'k':
         screen.blit(f"{player.actor.image[0: -4]}death", (player.actor.left, player.actor.top))
     screen.draw.text(f"YOU LOST!\nClick to Restart", center=(WIDTH - 0.5 * barWidth, 4.5 * barHeight),
                          fontname="hanyinuomituan", color="red")
-    roleChoose = 4
+    roleChoose = 4 # 改变状态变量
 # todo 这里还要加上死亡的音效和bgm          
 
 # 生成传送门
 def portal_create(x, y):
     global curButton
     global chatchoose
-    if 0 <= portalFrameCnt < 20:
+    if 0 <= portalFrameCnt < 20: # 通过频率的变化来实现传送门的动态变化
        screen.blit("portal_01", (x - 0.5 * portalWidth, y - 0.5 * portalHeight))
     elif 20 <= portalFrameCnt < 40:
        screen.blit("portal_02", (x - 0.5 * portalWidth, y - 0.5 * portalHeight))
@@ -873,7 +873,7 @@ def slotmachine_create(x, y):
 
 
 # 老虎机加载
-def slotmachine_play():
+def slotmachine_play(): # 改变中间变量函数
     global slotmachineFlag, curButton
     slotmachineFlag = 4
     curButton = None
@@ -882,7 +882,7 @@ def slotmachine_play():
 def slotmachine_choice():
     screen.blit("slotmachine", (0.5 * HEIGHT - 0.5 * slotmachineWidth_big, 0.5 * HEIGHT - 0.5 * slotmachineHeight_big))
     global slotItem1, slotItem2, slotItem3, slotmachineCnt, slotmachineFlag
-    if slotmachineCnt <= 180:
+    if slotmachineCnt <= 180: # 通过频率变化实现老虎机的动态摇奖效果，并设置时间差使之更真实
         slotItem1 = f"slotmachine_item{random.randint(1,6)}"
     if slotmachineCnt <= 240:
         slotItem2 = f"slotmachine_item{random.randint(1,6)}"
@@ -891,7 +891,7 @@ def slotmachine_choice():
     screen.blit(slotItem1, (0.5 * HEIGHT - 0.25 * slotmachineWidth_big - 0.5 * itemSize, 0.5 * HEIGHT - 0.25 * itemSize))
     screen.blit(slotItem2, (0.5 * HEIGHT - 0.5 * itemSize, 0.5 * HEIGHT - 0.25 * itemSize))
     screen.blit(slotItem3, (0.5 * HEIGHT + 0.25 * slotmachineWidth_big - 0.5 * itemSize, 0.5 * HEIGHT - 0.25 * itemSize))
-    if slotmachineCnt >360:
+    if slotmachineCnt >360: # 摇奖结束产生随机结果
         if slotItem1 == slotItem2 == slotItem3:
             slotmachineFlag = 3
         elif slotItem1 == slotItem2 or slotItem1 == slotItem3 or slotItem3 == slotItem2:
@@ -903,7 +903,7 @@ def slotmachine_choice():
 # 老虎机奖励
 def slotmachine_award():
     global awardFlag, roleChoose, slotmachineFlag
-    if slotmachineFlag == 3:
+    if slotmachineFlag == 3: # 根据不同的结果生成不同的奖励或惩罚
         awardFlag = random.choice(["orange_unicorn", "blue_ice", "blue_sakura"])
     elif slotmachineFlag == 2:
         awardFlag = random.choice(["green_snowfox", "green_firegun", "green_rattlesnake"])
@@ -920,19 +920,19 @@ def slotmachine_award():
 # 设置界面产生
 def setting_create():
     global settingChoose, pauseButton, volumeButton, keyintroButton, homeButton
-    pauseButton = Button(False, '', '', 0.5 * WIDTH - 1.5 * barHeight, 0.5 * HEIGHT - barHeight, "button_continue")
-    volumeButton = Button(False, '', '', 0.5 * WIDTH - 1.5 * barHeight, 0.5 * HEIGHT, "button_volume")
-    keyintroButton = Button(False, '', '', 0.5 * WIDTH + 0.5 * barHeight, 0.5 * HEIGHT, "button_key")
-    homeButton = Button(False, '', '', 0.5 * WIDTH - 0.5 * barHeight, 0.5 * HEIGHT, "button_home")
+    pauseButton = Button(False, '', '', 0.5 * WIDTH - 1.5 * barHeight, 0.5 * HEIGHT - barHeight, "button_continue") #继续游戏按钮
+    volumeButton = Button(False, '', '', 0.5 * WIDTH - 1.5 * barHeight, 0.5 * HEIGHT, "button_volume") # 音量调节按钮
+    keyintroButton = Button(False, '', '', 0.5 * WIDTH + 0.5 * barHeight, 0.5 * HEIGHT, "button_key") # 键位说明按钮
+    homeButton = Button(False, '', '', 0.5 * WIDTH - 0.5 * barHeight, 0.5 * HEIGHT, "button_home") # 返回开始界面按钮
 
 # 音量调节界面
 def volume_control():
     global volumeCnt, volumeButtonUp, volumeButtonDown
     screen.blit("volume_bar", (0.5 * WIDTH - barHeight - 5 * unitWidth, 0.5 * HEIGHT - 0.5 * barHeight))
-    volumeButtonDown = Button(False, '', '', 0.5 * WIDTH - barHeight - 5 * unitWidth, 0.5 * HEIGHT - 0.5 * barHeight, "button_volumedown")
-    volumeButtonUp = Button(False, '', '', 0.5 * WIDTH + 5 * unitWidth, 0.5 * HEIGHT - 0.5 * barHeight, "button_volumeup")
+    volumeButtonDown = Button(False, '', '', 0.5 * WIDTH - barHeight - 5 * unitWidth, 0.5 * HEIGHT - 0.5 * barHeight, "button_volumedown") # 音量调小按钮
+    volumeButtonUp = Button(False, '', '', 0.5 * WIDTH + 5 * unitWidth, 0.5 * HEIGHT - 0.5 * barHeight, "button_volumeup") # 音量调大按钮
     if volumeCnt > 0:
-        for i in range(1, volumeCnt + 1):
+        for i in range(1, volumeCnt + 1): # 根据音量来控制方块的个数从而直观显示音量大小
             screen.blit("button_volumeunit", (0.5 * WIDTH - 6 * unitWidth + i * unitWidth, 0.5 * HEIGHT - 0.5 * unitHeight))
 
 
@@ -1270,6 +1270,7 @@ def show_beginning():
                 beginningPaladinNum6 += 1
     return True
 
+# 重新开始游戏函数
 def reset_game():
     global level, isBeginningAll, beginningAllNum, knightDeathTime
     global isBeginningKnight, isBeginningAssassin, isBeginningPaladin
@@ -1434,11 +1435,11 @@ def on_mouse_down(pos, button):
     global isBeginningPaladin, tabForBeginningPaladinDialog, beginningPaladinNum1, beginningPaladinNum2, beginningPaladinNum3, beginningPaladinNum4, beginningPaladinNum5
     global awardWeapon
 
-    if isBeginningAll == 0 and button == mouse.LEFT and beginningAllNum <= 99999:
+    if isBeginningAll == 0 and button == mouse.LEFT and beginningAllNum <= 99999: # 进入游戏
         beginningAllNum = 999999
     elif isBeginningAll == 0 and button == mouse.LEFT:
         isBeginningAll = 1
-    elif roleChoose == 0 and button == mouse.LEFT:        
+    elif roleChoose == 0 and button == mouse.LEFT: # 选择人物
             choose_role(pos)
             if roleChoose == 1:
                 player = Knight()
@@ -1455,7 +1456,7 @@ def on_mouse_down(pos, button):
         if button == mouse.LEFT:
             clear_level_data()
             reset_game()
-    elif roleChoose == 1 and isBeginningKnight == 0:
+    elif roleChoose == 1 and isBeginningKnight == 0: # 骑士开始剧情
         if tabForBeginningKnightDialog != 6:
             tabForBeginningKnightDialog += 1
             if tabForBeginningKnightDialog == 1:
@@ -1470,7 +1471,7 @@ def on_mouse_down(pos, button):
                 beginningKnightNum5 = 999999
         if tabForBeginningKnightDialog == 6:
                 isBeginningKnight = 1
-    elif roleChoose == 2 and isBeginningAssassin == 0:
+    elif roleChoose == 2 and isBeginningAssassin == 0: # 刺客开始剧情
         if tabForBeginningAssassinDialog != 6:
             tabForBeginningAssassinDialog += 1
             if tabForBeginningAssassinDialog == 1:
@@ -1485,7 +1486,7 @@ def on_mouse_down(pos, button):
                 beginningAssassinNum5 = 999999
         if tabForBeginningAssassinDialog == 6:
                 isBeginningAssassin = 1
-    elif roleChoose == 3 and isBeginningPaladin == 0:
+    elif roleChoose == 3 and isBeginningPaladin == 0: # 游侠开始剧情
         if tabForBeginningPaladinDialog != 7:
             tabForBeginningPaladinDialog += 1
             if tabForBeginningPaladinDialog == 1:
@@ -1527,7 +1528,7 @@ def on_mouse_down(pos, button):
                     curButton = None
                     slotmachine_play()
                     chatchoose = 0
-        elif button == mouse.RIGHT:
+        elif button == mouse.RIGHT: # 换枪
             player.swap_weapon()
     elif button == mouse.LEFT and plotChoose[0]:  # 点击推进剧情
         next_plot(pos)
@@ -1543,14 +1544,14 @@ def on_mouse_down(pos, button):
                 clear_level_data()
                 reset_game()
     elif settingChoose == 2:
-        if button == mouse.LEFT:
+        if button == mouse.LEFT: # 音量调节
             if volumeButtonDown.detect(pos) == "OK" and volumeCnt > 0:
                 volumeCnt -= 1
             elif volumeButtonUp.detect(pos) == "OK" and volumeCnt < 10:
                 volumeCnt += 1
             elif pos[0] < 0.5 * WIDTH - barHeight - 5 * unitWidth or pos[0] > 0.5 * WIDTH + barHeight + 5 * unitWidth or pos[1] < 0.5 * HEIGHT - 0.5 * barHeight or pos[1] > 0.5 * HEIGHT + 0.5 * barHeight:
                 settingChoose = 1
-    elif settingChoose == 3:
+    elif settingChoose == 3: # 退出键位说明
         if button == mouse.LEFT:
             settingChoose = 1
 
@@ -1569,7 +1570,7 @@ def on_key_down(key):
         if key == key.SPACE:
             if player.is_skill_ready() and not settingChoose:
                 player.skill_emit()
-        if key == key.ESCAPE:
+        if key == key.ESCAPE: # 按Esc开启或关闭设置
             if settingChoose == 0:
                 settingChoose = 1
             elif settingChoose != 999:
@@ -1877,6 +1878,7 @@ def next_plot(pos):
     global plotChoose, curButton
     # 骑士1a关
     if level[0] == 1 and level[1] == 'a':
+        # 与boss开战前的对话
         if level[2] == 2:
             if plotChoose[0] <= 4:
                 plotChoose[0] += 1
@@ -1884,6 +1886,7 @@ def next_plot(pos):
                 plotChoose[0] = 0
                 clear_level_data()
                 next_level()
+        # 打败boss后的剧情以及故事性选择
         elif level[2] == 3:
             if plotChoose[0] <= 4:
                 plotChoose[0] += 1
@@ -1908,6 +1911,7 @@ def next_plot(pos):
 
     # 刺客1b关
     elif level[0] == 1 and level[1] == 'b':
+        # 与boss开战前的对话
         if level[2] == 2:
             if plotChoose[0] <= 4:
                 plotChoose[0] += 1
@@ -1915,6 +1919,7 @@ def next_plot(pos):
                 plotChoose[0] = 0
                 clear_level_data()
                 next_level()
+        # 打败boss后的剧情以及故事性选择
         elif level[2] == 3:
             if plotChoose[0] <= 4:
                 plotChoose[0] += 1
@@ -1939,6 +1944,7 @@ def next_plot(pos):
 
     # 游侠1c关
     elif level[0] == 1 and level[1] == 'c':
+        # 与boss开战前的对话
         if level[2] == 2:
             if plotChoose[0] <= 5:
                 plotChoose[0] += 1
@@ -1946,6 +1952,7 @@ def next_plot(pos):
                 plotChoose[0] = 0
                 clear_level_data()
                 next_level()
+        # 打败boss后的剧情以及故事性选择
         elif level[2] == 3:
             if plotChoose[0] <= 7:
                 plotChoose[0] += 1
@@ -1970,6 +1977,7 @@ def next_plot(pos):
 
     # 骑士2a关
     if level[0] == 2 and level[1] == 'a' and plotChoose[1] == True:
+        # 与boss开战前的对话
         if level[2] == 2:
             if plotChoose[0] < 19:
                 plotChoose[0] += 1
@@ -1986,6 +1994,7 @@ def next_plot(pos):
 
     # 骑士2b关
     if level[0] == 2 and level[1] == 'b' and plotChoose[1] == False:
+        # 与boss开战前的对话
         if level[2] == 2:
             if plotChoose[0] < 10:
                 plotChoose[0] += 1
@@ -1999,6 +2008,7 @@ def next_plot(pos):
 
     # 刺客2b关
     if level[0] == 2 and level[1] == 'b' and plotChoose[1] == True:
+        # 与boss开战前的对话
         if level[2] == 2:
             if plotChoose[0] < 6:
                 plotChoose[0] += 1
@@ -2009,6 +2019,7 @@ def next_plot(pos):
 
     # 刺客2c关
     if level[0] == 2 and level[1] == 'c' and plotChoose[1] == False:
+        # 与boss开战前的对话
         if level[2] == 2:
             if plotChoose[0] < 4:
                 plotChoose[0] += 1
@@ -2019,6 +2030,7 @@ def next_plot(pos):
 
     # 游侠2c关
     if level[0] == 2 and level[1] == 'c' and plotChoose[1] == True:
+        # 与boss开战前的对话
         if level[2] == 2:
             if plotChoose[0] < 4:
                 plotChoose[0] += 1
