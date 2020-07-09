@@ -48,9 +48,10 @@ beginningPaladinNum5 = 0
 beginningPaladinNum6 = 0
 tabForBeginningPaladinDialog = 0
 
-#骑士结尾-打大骑士
+#骑士结尾
 moveonKnight = 0 #实现骑士走路动态图
 moveonAssassin = 0
+moveonBullet = 0 #实现子弹移动动态图
 # isEndingKnightFather = 0
 # endingKnightNumFather1 = 0
 # endingKnightNumFather2 = 0
@@ -1976,9 +1977,10 @@ def next_plot(pos):
                 plotChoose[0] = 0
                 clear_level_data()
                 next_level()
-#todo:  if if level[2] == 3:
-#           if plotChoose[0] < 14:
-#               plotChoose[0] += 1
+        if level[2] == 3:
+            if plotChoose[0] < 14:
+              plotChoose[0] += 1
+#todo:  
 #           elif plotChoose[0] == 14:
 #               end
 
@@ -1991,6 +1993,9 @@ def next_plot(pos):
                 plotChoose[0] = 0
                 clear_level_data()
                 next_level()
+        if level[2] == 3:
+            if plotChoose[0] < 10:
+                plotChoose[0] += 1
 
     # 刺客2b关
     if level[0] == 2 and level[1] == 'b' and plotChoose[1] == True:
@@ -2598,7 +2603,7 @@ def show_plot():
                     screen.blit("broken_robot", (19 * wallSize, 15 * wallSize))
                 if plotChoose[0] == 5:
                     global moveonAssassin
-                    screen.blit("assassin_rtwalk", (0 * wallSize + 2 * wallSize * moveonKnight / 15, 10 * wallSize))
+                    screen.blit("assassin_rtwalk", (0 * wallSize + 2 * wallSize * moveonAssassin / 15, 10 * wallSize))
                     if moveonAssassin < 15:
                         moveonAssassin += 1
                 if plotChoose[0] in (6, 7):
@@ -2707,6 +2712,87 @@ def show_plot():
                 screen.draw.text(f"You bastard!\nI'll fight it out with you!", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
+        elif level[2] == 3:
+            if plotChoose[0] >= 2:
+                screen.blit("background_2b", (0, 0))
+            if plotChoose[0] in (2, 3, 4):
+                screen.blit("knight_rt", (2 * wallSize, 10 * wallSize))
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                screen.blit("monster_2b_04_lt", (19 * wallSize, 15 * wallSize))
+            if plotChoose[0]  in (2, 3):
+                screen.draw.text(f"Ehhhh...You are stronger than I thought. ", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (3, 4):
+                screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+                screen.draw.text(f"Ahahahahaha, You fool! Do you really \nthink you can defeat me? You are as weak as \nyour father. I am unbeatable!", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 4:
+                screen.draw.text(f"I can not lose... My ancestors, \nmy father, please,  give me your power!", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (5, 6):
+                screen.blit("monster_2a_04_rt", (2 * wallSize, 10 * wallSize))
+                screen.blit("monster_2b_04_lt", (19 * wallSize, 15 * wallSize))
+                screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+                screen.draw.text(f"Wh...What? HOW COULD YOU?! \nIt is impossible!", center=(
+                8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 6:
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                screen.draw.text(f"Your end is coming, demon. Taste my flame!", center=(
+                3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+
+            if plotChoose[0] == 7:
+                global moveonBullet
+                screen.blit("monster_2a_04_rt_attack", (2 * wallSize, 10 * wallSize))
+                screen.blit("monster_2b_04_lt", (19 * wallSize, 15 * wallSize))
+                screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+                screen.draw.text(f"Noooooooooooo!!", center=(
+                8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+                screen.blit('effect_hit_big', (2*wallSize + 17 * wallSize * moveonBullet/ 15, 10 * wallSize + 5 * wallSize * moveon / 15))
+                if moveon < 15:
+                    moveon += 1
+            if plotChoose[0] == 8:
+                screen.blit("knight_rt", (2 * wallSize, 10 * wallSize))
+                screen.blit("monster_2b_04_death", (19 * wallSize, 15 * wallSize))
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                screen.draw.text(f"Father, you can rest in peace forever. \nJustice shall be done, wish god with you. ", center=(
+                3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 9:
+                screen.fill((0, 0, 0))
+                screen.draw.text(f"Later, knight found a letter from his dad and \nlearned the king had betrayed them. He was disappointed \nand lost himself, so he disappeared. But a hero will \nalways be remembered. Although hundreds of years has gone, \nwe can still recognize his renown through preachers' songs. ", center=(
+                    0.5 * WIDTH, 0.5 * HEIGHT),
+                                 fontname='hanyinuomituan', fontsize=30, color='white')
+                    
+
+
+            
+
+
+
+
+                
+                    
+                
+
+
+
+
+
+
+
+                
+                
+
+
+
+                
+            
 
     # 刺客2b关
     if level[0] == 2 and level[1] == 'b' and plotChoose[1] == True:
