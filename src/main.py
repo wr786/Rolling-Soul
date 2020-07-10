@@ -57,6 +57,9 @@ moveonBullet = 0 #实现子弹移动动态图
 moveAssassin = 0
 moveTwoBullet = 0
 
+#游侠结尾：
+movePaladinBullet = 0
+
 # 状态栏相关
 barWidth = 174
 barHeight = 85
@@ -2149,6 +2152,9 @@ def next_plot(pos):
                 plotChoose[0] = 0
                 clear_level_data()
                 next_level()
+        if level[2] == 3:
+            if plotChoose[0] < 17:
+                plotChoose[0] += 1
 
 # 剧情展示
 def show_plot():
@@ -3011,6 +3017,8 @@ def show_plot():
                 screen.blit("assassin_rt", (2 * wallSize, 10 * wallSize))
                 screen.blit("monster_2c_04_death", (19 * wallSize, 15 * wallSize))
             if plotChoose[0] in (2, 3):
+                if plotChoose[0] == 3:    
+                    screen.blit("assassin_rt", (2 * wallSize, 10 * wallSize))
                 screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
                 screen.draw.text(f"Disgusting creature. But who create this monster?", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
@@ -3097,7 +3105,7 @@ def show_plot():
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] in (3, 4, 5):
-                screen.draw.text(f"Please ask your soldiers not attack me anymore.\nI'm just a passer-by!", center=(
+                screen.draw.text(f"Please ask your soldiers not to attack me anymore.\nI'm just a passer-by!", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] >= 4:
@@ -3114,7 +3122,100 @@ def show_plot():
                 screen.draw.text(f"AGAIN?AGAIN??AGAIN???\nS ! K ! O ! D ! A !", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
+        if level[2] == 3:
+            screen.blit("background_2a", (0, 0))
+            if plotChoose[0] <= 2:
+                screen.blit("paladin_rt", (2 * wallSize, 10 * wallSize))
+                screen.blit("monster_2a_05_death", (19 * wallSize, 15 * wallSize))
+            if plotChoose[0] == 2:
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                screen.draw.text(f"Why all of you are so rude? \nCan\'t you just wait a moment when I am talking?", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (3, 4):
+                screen.blit("paladin_rt", (2 * wallSize, 10 * wallSize))
+                screen.blit("cage", (19 * wallSize, 15 * wallSize))
+                screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+                screen.draw.text(f"Hey! Is anyone there? Please help me out!", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 4:
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                screen.draw.text(f"Wow? Who is that unfortunate man? Wait a moment! \nYOUR HERO IS HERE TO RESCUE YOU!", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 5:
+                global movePaladinBullet
+                screen.blit("paladin_rt", (2 * wallSize, 10 * wallSize))
+                screen.blit("cage", (19 * wallSize, 15 * wallSize))
+                screen.bilt('bullet_ice', (2 * wallSize + 17 * wallSize * movePaladinBullet / 15, 10 * wallSize + 5 * wallSize * movePaladinBullet / 15))
+                if movePaladinBullet < 15:
+                    movePaladinBullet += 1
+            if plotChoose[0] in(6, 7, 8, 9, 10, 11):
+                screen.blit("paladin_rt", (2 * wallSize, 10 * wallSize))
+                screen.blit("knight_lt", (19 * wallSize, 15 * wallSize))
+            if plotChoose[0] in (6, 7):
+                screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+                screen.draw.text(f"Thank you for rescuing me, my friend.", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (7, 8):
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                screen.draw.text(f"Well, big deal. But why he cought you \nand locked you in the cage?", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (8, 9):
+                screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+                screen.draw.text(f"He... is my father. ", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (9, 10):
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                screen.draw.text(f"Ops...Sorry to kill your fa... I have to say before that he punched me first! ", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 10:
+                screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+                screen.draw.text(f"Fine... He has changed, becoming a demon. \nI do not know why.", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (11, 12):
+                screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+                screen.draw.text(f"Thanks anyway. I have to go. \nI need to find out why he became like this. \nHe used to be my pride...", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (12, 13):
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                screen.draw.text(f"Sorry to here that... Well, \ndo you mind having a accompanier?", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (13, 14):
+                screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+                screen.draw.text(f"You mean...?", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (14, 15):
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                screen.draw.text(f"I am an explorer, and I have a couple of days free, \nso maybe I can help you finding the truth. ", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 15:
+                screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+                screen.draw.text(f"It could not be better. Let us go!", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 16:
+                screen.fill(0, 0, 0)
+                screen.draw.text(f"From then on, knight and paladin became best friends during their journey to truth. \nWe do not know whether knight found why his father corrupted, but all he experienced \nand he gained made him a soider better than his father. For paladin? \nHaha, he was still a child that may never grow up. To some degree, it is a good thing for him. ", center=(
+                    0.5 * WIDTH, 0.5 * HEIGHT),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
 
+
+
+
+
+                
+                
 
 
 
