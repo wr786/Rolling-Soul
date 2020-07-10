@@ -1696,6 +1696,8 @@ def on_key_down(key):
                 settingChoose = 0
     if key == key.F:
         player.weapon = Weapon('orange_unicorn')
+        clear_level_data()
+        next_level()
 
 def on_key_up(key):
     global hFlag
