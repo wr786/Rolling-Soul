@@ -2888,7 +2888,7 @@ def show_plot():
 
             if plotChoose[0] == 7:
                 global moveonBullet
-                screen.blit("monster_2a_04_rt_attack", (2 * wallSize, 10 * wallSize))
+                screen.blit("monster_2a_04_rtattack", (2 * wallSize, 10 * wallSize))
                 screen.blit("monster_2b_04_lt", (19 * wallSize, 15 * wallSize))
                 screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
                 screen.draw.text(f"Noooooooooooo!!", center=(
