@@ -2734,82 +2734,82 @@ def show_plot():
             if plotChoose[0] <= 2:
                 screen.blit("knight_rt", (2 * wallSize, 10 * wallSize))
                 screen.blit("monster_2a_05_death", (19 * wallSize, 15 * wallSize))
-                if plotChoose[0] == 2:
-                    screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
-                    screen.draw.text(f"I...I do not believe my father\nreally want to kill me...Wait.\nWhat's that?", center=(
+            if plotChoose[0] == 2:
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                screen.draw.text(f"I...I do not believe my father\nreally want to kill me...Wait.\nWhat's that?", center=(
+                3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 3:
+                global moveonKnight
+                screen.blit("knight_rtwalk", (2 * wallSize + 16 * wallSize * moveonKnight / 15, 10 * wallSize + 4 * wallSize * moveonKnight / 15))
+                if moveon < 15:
+                    moveon += 1
+                screen.blit("monster_2a_05_death", (19 * wallSize, 15 * wallSize))
+            if plotChoose[0] in (4, 5, 6):                    
+                screen.blit("knight_rt", (18 * wallSize, 14 * wallSize))
+                screen.blit("broken_robot", (19 * wallSize, 15 * wallSize))
+            if plotChoose[0] == 5:
+                global moveonAssassin
+                screen.blit("assassin_rtwalk", (0 * wallSize + 2 * wallSize * moveonAssassin / 15, 10 * wallSize))
+                if moveonAssassin < 15:
+                    moveonAssassin += 1
+            if plotChoose[0] in (6, 7):
+                screen.blit("assassin_rt", (2 * wallSize , 10 * wallSize))
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                screen.draw.text(f"It is not your father, knight. ", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                             fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (7, 8, 9):
+                screen.blit("knight_lt", (18 * wallSize, 14 * wallSize))
+                screen.blit("broken_robot", (19 * wallSize, 15 * wallSize))
+                screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+                screen.draw.text(f"Assassin? What do you mean?", center=(
+                8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                             fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 8:
+                screen.blit("assassin_rt", (2 * wallSize , 10 * wallSize))
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                screen.draw.text(f"Your father is dead. He was killed \nby the alien-king. I tried to rescue him, but \n it was too late.", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
-                if plotChoose[0] == 3:
-                    global moveonKnight
-                    screen.blit("knight_rtwalk", (2 * wallSize + 16 * wallSize * moveonKnight / 15, 10 * wallSize + 4 * wallSize * moveonKnight / 15))
-                    if moveon < 15:
-                        moveon += 1
-                    screen.blit("monster_2a_05_death", (19 * wallSize, 15 * wallSize))
-                if plotChoose[0] in (4, 5, 6):                    
-                    screen.blit("knight_rt", (18 * wallSize, 14 * wallSize))
-                    screen.blit("broken_robot", (19 * wallSize, 15 * wallSize))
-                if plotChoose[0] == 5:
-                    global moveonAssassin
-                    screen.blit("assassin_rtwalk", (0 * wallSize + 2 * wallSize * moveonAssassin / 15, 10 * wallSize))
-                    if moveonAssassin < 15:
-                        moveonAssassin += 1
-                if plotChoose[0] in (6, 7):
-                    screen.blit("assassin_rt", (2 * wallSize , 10 * wallSize))
-                    screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
-                    screen.draw.text(f"It is not your father, knight. ", center=(
-                        3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
-                                 fontname='hanyinuomituan', fontsize=30, color='black')
-                if plotChoose[0] in (7, 8, 9):
-                    screen.blit("knight_lt", (18 * wallSize, 14 * wallSize))
-                    screen.blit("broken_robot", (19 * wallSize, 15 * wallSize))
-                    screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
-                    screen.draw.text(f"Assassin? What do you mean?", center=(
-                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
-                                 fontname='hanyinuomituan', fontsize=30, color='black')
-                if plotChoose[0] == 8:
-                    screen.blit("assassin_rt", (2 * wallSize , 10 * wallSize))
-                    screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
-                    screen.draw.text(f"Your father is dead. He was killed \nby the alien-king. I tried to rescue him, but \n it was too late.", center=(
-                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
-                                 fontname='hanyinuomituan', fontsize=30, color='black')
-                if plotChoose[0] == 9:
-                    screen.blit("assassin_rt", (2 * wallSize , 10 * wallSize))
-                    screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
-                    screen.draw.text(f"He gave me a letter before gone. \nHe said it is for you.", center=(
-                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
-                                 fontname='hanyinuomituan', fontsize=30, color='black')
-                if plotChoose[0] == 10:
-                    screen.fill((0, 0, 0))
-                    screen.draw.text(f"Dear my son:", center=(
-                    3 * wallSize, 2 * wallSize),
-                                 fontname='hanyinuomituan', fontsize=30, color='white')
-                    screen.draw.text(f"I am going to die... The alien-king \ninvaded the kingdom, but I failed to stop \nhim, our king betrayed us! The alien-king \nis too strong, I do not want you to come to \nrescue me because it is suiside. Go back \nto home, our family have done enough for \nthe king and the kingdom.My son, \nremember that I love you, and I am \nalways proud of you.", center=(
-                    0.5 * WIDTH, 0.5 * HEIGHT),
-                                 fontname='hanyinuomituan', fontsize=30, color='white')
-                    screen.draw.text(f"Father", center=(
-                    20 * wallSize, 21 * wallSize),
-                                 fontname='hanyinuomituan', fontsize=30, color='white')
-                if plotChoose[0] == 11:
-                    screen.blit("assassin_rt", (2 * wallSize , 10 * wallSize))
-                    screen.blit("knight_lt", (18 * wallSize, 14 * wallSize))
-                    screen.blit("broken_robot", (19 * wallSize, 15 * wallSize))
-                    screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
-                    screen.draw.text(f"Father...", center=(
-                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
-                                 fontname='hanyinuomituan', fontsize=30, color='black')
-                if plotChoose[0] == 12:
-                    screen.blit("assassin_rt", (2 * wallSize , 10 * wallSize))
-                    screen.blit("knight_lt", (18 * wallSize, 14 * wallSize))
-                    screen.blit("broken_robot", (19 * wallSize, 15 * wallSize))
-                    screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
-                    screen.draw.text(f"Your father is a true hero.\nHe will be remembered forever. ", center=(
-                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
-                                 fontname='hanyinuomituan', fontsize=30, color='black')
-                if plotChoose[0] == 13:
-                    screen.fill((255, 255, 255))
-                    screen.draw.text(f"Knight took his father's honor and his disappointment \nto the country, left, without saying a word. \nNobody knew where he went, he disappeared, forever, \nbecame a legend only can be found in some historical records.", center=(
-                    0.5 * WIDTH, 0.5 * HEIGHT),
-                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 9:
+                screen.blit("assassin_rt", (2 * wallSize , 10 * wallSize))
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                screen.draw.text(f"He gave me a letter before gone. \nHe said it is for you.", center=(
+                3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                             fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 10:
+                screen.fill((0, 0, 0))
+                screen.draw.text(f"Dear my son:", center=(
+                3 * wallSize, 2 * wallSize),
+                             fontname='hanyinuomituan', fontsize=30, color='white')
+                screen.draw.text(f"I am going to die... The alien-king \ninvaded the kingdom, but I failed to stop \nhim, our king betrayed us! The alien-king \nis too strong, I do not want you to come to \nrescue me because it is suiside. Go back \nto home, our family have done enough for \nthe king and the kingdom.My son, \nremember that I love you, and I am \nalways proud of you.", center=(
+                0.5 * WIDTH, 0.5 * HEIGHT),
+                             fontname='hanyinuomituan', fontsize=30, color='white')
+                screen.draw.text(f"Father", center=(
+                20 * wallSize, 21 * wallSize),
+                             fontname='hanyinuomituan', fontsize=30, color='white')
+            if plotChoose[0] == 11:
+                screen.blit("assassin_rt", (2 * wallSize , 10 * wallSize))
+                screen.blit("knight_lt", (18 * wallSize, 14 * wallSize))
+                screen.blit("broken_robot", (19 * wallSize, 15 * wallSize))
+                screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+                screen.draw.text(f"Father...", center=(
+                8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                             fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 12:
+                screen.blit("assassin_rt", (2 * wallSize , 10 * wallSize))
+                screen.blit("knight_lt", (18 * wallSize, 14 * wallSize))
+                screen.blit("broken_robot", (19 * wallSize, 15 * wallSize))
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                screen.draw.text(f"Your father is a true hero.\nHe will be remembered forever. ", center=(
+                3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                             fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 13:
+                screen.fill((255, 255, 255))
+                screen.draw.text(f"Knight took his father's honor and his disappointment \nto the country, left, without saying a word. \nNobody knew where he went, he disappeared, forever, \nbecame a legend only can be found in some historical records.", center=(
+                0.5 * WIDTH, 0.5 * HEIGHT),
+                             fontname='hanyinuomituan', fontsize=30, color='black')
                     
 
 
@@ -2970,7 +2970,7 @@ def show_plot():
                 screen.blit("assassin_rt", (2 * wallSize, 10 * wallSize + 6 * wallSize * moveAssassin / 15))
                 screen.blit("assassin_rt", (2 * wallSize, 10 * wallSize + 3 * wallSize * moveAssassin / 15))
                 screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
-                screen.draw.text(f"死の刻印（しのこくにん）", center=(
+                screen.draw.text(f"DEATH MARK", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
                 screen.blit("monster_2b_04_lt", (19 * wallSize, 15 * wallSize))
@@ -4751,3 +4751,5 @@ player.weapon.actor.topright = (314.5, 314.5)
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "50, 20"   # 设置窗口初始位置
 pgzrun.go()
+
+
