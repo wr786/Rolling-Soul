@@ -1696,6 +1696,8 @@ def on_key_down(key):
                 settingChoose = 0
     if key == key.F:
         player.weapon = Weapon('orange_unicorn')
+        clear_level_data()
+        next_level()
 
 def on_key_up(key):
     global hFlag
@@ -2892,7 +2894,7 @@ def show_plot():
 
             if plotChoose[0] == 7:
                 global moveonBullet
-                screen.blit("monster_2a_04_rt_attack", (2 * wallSize, 10 * wallSize))
+                screen.blit("monster_2a_04_rtattack", (2 * wallSize, 10 * wallSize))
                 screen.blit("monster_2b_04_lt", (19 * wallSize, 15 * wallSize))
                 screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
                 screen.draw.text(f"Noooooooooooo!!", center=(
@@ -2975,7 +2977,7 @@ def show_plot():
                 if moveAssassin < 15:
                     moveAssassin += 1
             if plotChoose[0] == 5:
-                screen.fill(255, 255, 255)
+                screen.fill((255, 255, 255))
             if plotChoose[0] == 6:
                 screen.blit("assassin_rt", (2 * wallSize, 10 * wallSize))
                 screen.blit("monster_2b_04_death", (19 * wallSize, 15 * wallSize))
@@ -3010,7 +3012,7 @@ def show_plot():
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] == 11:
-                screen.fill(0, 0, 0)
+                screen.fill((0, 0, 0))
                 screen.draw.text(f"Assassin sent the letter to knight. After all was over, \n he continued his journey. He did not care people, country or the world, \nhe just did what he thought was right. He earned much, also lost much, \nHe was strong enough to be a monarch or a general, but he enjoyed his life like this: \nsaunting to the end, and rewarded as a lone ranger.", center=(
                     0.5 * WIDTH, 0.5 * HEIGHT),
                                  fontname='hanyinuomituan', fontsize=30, color='white')
@@ -3088,9 +3090,9 @@ def show_plot():
                 if moveTwoBullet < 15:
                     moveTwoBullet += 1
                 else:
-                    screen.fill(255, 255, 255)
+                    screen.fill((255, 255, 255))
             if plotChoose[0] == 9:
-                screen.fill(255, 255, 255)
+                screen.fill((255, 255, 255))
                 screen.draw.text(f"Assassin and the alien-king fought till midnight. Assassin knew he may die, \nbecause the enemy was stronger than he could imagine. But he enjoyed every fighting momoent, \nappreciating his wonderful fighting skills and rival's, reflecting himself while fighting, \nlike it was not a life-and-death struggle， but a show that was performed by two masters. \n\'I can fight like this all day.\' Assassin smiled, and kept punching...", center=(
                     0.5 * WIDTH, 0.5 * HEIGHT),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
@@ -3134,7 +3136,7 @@ def show_plot():
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] in (4, 5, 6):
                 screen.blit("paladin_rt", (2 * wallSize, 10 * wallSize))
-                screen.blit("assassin_left", (19 * wallSize, 15 * wallSize))
+                screen.blit("assassin_lt", (19 * wallSize, 15 * wallSize))
             if plotChoose[0] in (4, 5):
                 screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
                 screen.draw.text(f"Wow! Who are you? How could you show up in a flash?\nIt seems amazing!", center=(
@@ -3157,7 +3159,7 @@ def show_plot():
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] == 8:
-                screen.fill(255, 255, 255)
+                screen.fill((255, 255, 255))
                 screen.draw.text(f"Paladin continued his journey to the lost continent. In his mind the world was innocent and holy, \nalthough he had experienced too much darkness. He kept searching for a place where no attack exists, \nand that made him more and more disappointed to the realistic world. He still treated everything \naround him optimistically, but we have no idea how much pain was hiding behind his smile. ", center=(
                     0.5 * WIDTH, 0.5 * HEIGHT),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
@@ -3275,7 +3277,7 @@ def show_plot():
                     8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] == 16:
-                screen.fill(0, 0, 0)
+                screen.fill((0, 0, 0))
                 screen.draw.text(f"From then on, knight and paladin became best friends during their journey to truth. \nWe do not know whether knight found why his father corrupted, but all he experienced \nand he gained made him a soider better than his father. For paladin? \nHaha, he was still a child that may never grow up. To some degree, it is a good thing for him. ", center=(
                     0.5 * WIDTH, 0.5 * HEIGHT),
                                  fontname='hanyinuomituan', fontsize=30, color = 'white')
