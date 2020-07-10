@@ -1415,7 +1415,7 @@ def draw():
     if show_beginning() and is_begun():           
         if not music.is_playing(f'bgm_{level[0]}{level[1]}'):   # 用bgm有没有播放就可以判断是否初始化过关卡了
             music.play(f'bgm_{level[0]}{level[1]}')
-            music.set_volume(0.02 * volumeCnt)
+            music.set_volume(0.05 * volumeCnt)
             generate_map_cells()
             obstacle_map()
             initialFlag = True
@@ -1506,7 +1506,7 @@ def draw():
         elif settingChoose ==3:
             screen.blit("control_introduction", (0.5 * WIDTH - 0.5 * slotmachineWidth_big, 0.5 * HEIGHT - 0.5 * slotmachineHeight_big))
 
-        music.set_volume(0.02 * volumeCnt)
+        music.set_volume(0.05 * volumeCnt)
         if not enemyList and not enemyListLazy and plotChoose[0]:
             show_plot()
         draw_button()
