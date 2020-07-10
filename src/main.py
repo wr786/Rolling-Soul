@@ -688,6 +688,9 @@ class ChenbinSama(Player):
                 self.actor.image = "chenbinsama_ltwalk"
 
     def skill_recover(self):    # 取消技能所给状态
+        global moveSpan
+        moveSpan = MOVESPAN
+        self.weaponCD_recoverSpeed = 1
         sounds.skill_over.play()
         pass    # 无敌时间自然会update没
 
