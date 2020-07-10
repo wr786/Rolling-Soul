@@ -1037,20 +1037,24 @@ def volume_control():
 def draw_map():
     global floorcnt
     global wallcnt
-    for i in range(floornum):
-        for j in range(floornum):
-            screen.blit(floors[floorcnt], (wallSize + wallSize * i, wallSize + wallSize * j))
-            floorcnt = (floorcnt + 1) % (floornum ** 2)
-    for i in range(wallnum):
-        screen.blit(walls[wallcnt], (wallSize * i, 0))
-        wallcnt = (wallcnt + 1) % wallnum
-        screen.blit(walls[wallcnt], (wallSize * i, HEIGHT - wallSize))
-        wallcnt = (wallcnt + 1) % wallnum
-    for i in range(wallnum):
-        screen.blit(walls[wallcnt], (0, wallSize + wallSize * i))
-        wallcnt = (wallcnt + 1) % wallnum
-        screen.blit(walls[wallcnt], (WIDTH - wallSize - barWidth, wallSize + wallSize * i))
-        wallcnt = (wallcnt + 1) % wallnum
+    if level[1] == 'cb':
+        screen.blit(f"map_{level[0]}cb", (0, 0))
+    else:
+        for i in range(floornum):
+            for j in range(floornum):
+                screen.blit(floors[floorcnt], (wallSize + wallSize * i, wallSize + wallSize * j))
+                floorcnt = (floorcnt + 1) % (floornum ** 2)
+        for i in range(wallnum):
+            screen.blit(walls[wallcnt], (wallSize * i, 0))
+            wallcnt = (wallcnt + 1) % wallnum
+            screen.blit(walls[wallcnt], (wallSize * i, HEIGHT - wallSize))
+            wallcnt = (wallcnt + 1) % wallnum
+        for i in range(wallnum):
+            screen.blit(walls[wallcnt], (0, wallSize + wallSize * i))
+            wallcnt = (wallcnt + 1) % wallnum
+            screen.blit(walls[wallcnt], (WIDTH - wallSize - barWidth, wallSize + wallSize * i))
+            wallcnt = (wallcnt + 1) % wallnum
+
 
 # 生成背景图块
 def generate_map_cells():
