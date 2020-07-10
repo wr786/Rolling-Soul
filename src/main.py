@@ -2765,24 +2765,6 @@ def show_plot():
                 screen.blit("monster_2a_05_death", (19 * wallSize, 15 * wallSize))
             if plotChoose[0] == 2:
                 screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
-                screen.draw.text(f"I...I do not believe my father\nreally want to kill me...Wait.\nWhat's that?", center=(
-                3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
-                                 fontname='hanyinuomituan', fontsize=30, color='black')
-            if plotChoose[0] == 3:
-                global moveonKnight
-                screen.blit("knight_rtwalk", (2 * wallSize + 16 * wallSize * moveonKnight / 15, 10 * wallSize + 4 * wallSize * moveonKnight / 15))
-                if moveon < 15:
-                    moveon += 1
-                screen.blit("monster_2a_05_death", (19 * wallSize, 15 * wallSize))
-            if plotChoose[0] in (4, 5, 6):                    
-                screen.blit("knight_rt", (18 * wallSize, 14 * wallSize))
-                screen.blit("broken_robot", (19 * wallSize, 15 * wallSize))
-            if plotChoose[0] == 5:
-                global moveonAssassin
-                screen.blit("assassin_rtwalk", (0 * wallSize + 2 * wallSize * moveonAssassin / 15, 10 * wallSize))
-                if moveonAssassin < 15:
-                    moveonAssassin += 1
-            if plotChoose[0] in (6, 7):
                 screen.blit("assassin_rt", (2 * wallSize , 10 * wallSize))
                 screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
                 screen.draw.text(f"It is not your father, knight. ", center=(
