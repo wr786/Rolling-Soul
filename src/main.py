@@ -2142,6 +2142,9 @@ def next_plot(pos):
                 plotChoose[0] = 0
                 clear_level_data()
                 next_level()
+        if level[2] == 3:
+            if plotChoose[0] < 9:
+                plotChoose[0] += 1
 
     # 游侠2a关
     if level[0] == 2 and level[1] == 'a' and plotChoose[1] == False:
@@ -3090,7 +3093,51 @@ def show_plot():
             if plotChoose[0] == 4:
                 screen.draw.text(f"Attack me?\nJust my luck...", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
-                                 fontname='hanyinuomituan', fontsize=30, color='black')            
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+        if level[2] == 3:
+            screen.blit("background_2c", (0, 0))
+            if plotChoose[0] <= 3:
+                screen.blit("paladin_rt", (2 * wallSize, 10 * wallSize))
+                screen.blit("monster_2c_04_death", (19 * wallSize, 15 * wallSize))
+            if plotChoose[0] == 2:
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                screen.draw.text(f"Finally dead, HUGE BUG!", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 3:
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                screen.draw.text(f"Hey? It seems that the heat is cooling down. \nSo the bug is the chief criminal!", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (4, 5, 6):
+                screen.blit("paladin_rt", (2 * wallSize, 10 * wallSize))
+                screen.blit("assassin_left", (19 * wallSize, 15 * wallSize))
+            if plotChoose[0] in (4, 5):
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                screen.draw.text(f"Wow! Who are you? How could you show up in a flash?\nIt seems amazing!", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (5, 6):
+                screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+                screen.draw.text(f"You do not need to know who I am. But thank you for \nkilling the bug. It should be my work. ", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 6:
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                screen.draw.text(f"Haha, never mind. By the way, \ncould you teach me how to show up like a flash? \nI re---eally want to learn!", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 7:
+                screen.blit("paladin_rt", (2 * wallSize, 10 * wallSize))
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                screen.draw.text(f"Hey! Where are YOU??? Please, I am very clever, \nit will not take you too much time......", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 8:
+                screen.fill(255, 255, 255)
+                screen.draw.text(f"Paladin continued his journey to the lost continent. In his mind the world was innocent and holy, \nalthough he had experienced too much darkness. He kept searching for a place where no attack exists, \nand that made him more and more disappointed to the realistic world. He still treated everything \naround him optimistically, but we have no idea how much pain was hiding behind his smile. ", center=(
+                    0.5 * WIDTH, 0.5 * HEIGHT),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
 
     # 游侠2a关
     if level[0] == 2 and level[1] == 'a' and plotChoose[1] == False:
@@ -3208,7 +3255,7 @@ def show_plot():
                 screen.fill(0, 0, 0)
                 screen.draw.text(f"From then on, knight and paladin became best friends during their journey to truth. \nWe do not know whether knight found why his father corrupted, but all he experienced \nand he gained made him a soider better than his father. For paladin? \nHaha, he was still a child that may never grow up. To some degree, it is a good thing for him. ", center=(
                     0.5 * WIDTH, 0.5 * HEIGHT),
-                                 fontname='hanyinuomituan', fontsize=30, color='black')
+                                 fontname='hanyinuomituan', fontsize=30, color = 'white')
 
 
 
