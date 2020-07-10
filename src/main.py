@@ -55,6 +55,7 @@ moveonBullet = 0 #实现子弹移动动态图
 
 #刺客结尾
 moveAssassin = 0
+moveTwoBullet = 0
 
 # 状态栏相关
 barWidth = 174
@@ -2121,6 +2122,9 @@ def next_plot(pos):
                 plotChoose[0] = 0
                 clear_level_data()
                 next_level()
+        if level[2] == 3:
+            if plotChoose[0] < 10:
+                plotChoose[0] += 1
 
     # 游侠2c关
     if level[0] == 2 and level[1] == 'c' and plotChoose[1] == True:
@@ -2875,6 +2879,7 @@ def show_plot():
                     0.5 * WIDTH, 0.5 * HEIGHT),
                                  fontname='hanyinuomituan', fontsize=30, color='white')
 
+
     # 刺客2b关
     if level[0] == 2 and level[1] == 'b' and plotChoose[1] == True:
         if level[2] == 2:
@@ -2970,7 +2975,7 @@ def show_plot():
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] == 11:
-                screen.fill(255, 255, 255)
+                screen.fill(0, 0, 0)
                 screen.draw.text(f"Assassin sent the letter to knight. After all was over, \n he continued his journey. He did not care people, country or the world, \nhe just did what he thought was right. He earned much, also lost much, \nHe was strong enough to be a monarch or a general, but he enjoyed his life like this: \nsaunting to the end, and rewarded as a lone ranger.", center=(
                     0.5 * WIDTH, 0.5 * HEIGHT),
                                  fontname='hanyinuomituan', fontsize=30, color='white')
@@ -2997,9 +3002,61 @@ def show_plot():
                 screen.draw.text(f"You are really a lousy BUG.\nLet me clean you!", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
-
-
-
+        if level[2] == 3:
+            screen.blit("background_2c", (0, 0))
+            if plotChoose[0] <= 2:
+                screen.blit("assassin_rt", (2 * wallSize, 10 * wallSize))
+                screen.blit("monster_2c_04_death", (19 * wallSize, 15 * wallSize))
+            if plotChoose[0] in (2, 3):
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                screen.draw.text(f"Disgusting creature. But who create this monster?", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (3, 4):
+                screen.blit("monster_2b_04_lt", (19 * wallSize, 15 * wallSize))
+                screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+                screen.draw.text(f"Who killed my pet?!", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (4, 5):
+                screen.blit("assassin_rt", (2 * wallSize, 10 * wallSize))
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                screen.draw.text(f"You are... the alien-king?", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (5, 6):
+                screen.blit("monster_2b_04_lt", (19 * wallSize, 15 * wallSize))
+                screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+                screen.draw.text(f"So you killed my pet, right? \nHOW DARE YOU!!!", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] in (6, 7):
+                screen.blit("assassin_rt", (2 * wallSize, 10 * wallSize))
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                screen.draw.text(f"Too much talking... Your death is coming, demon.", center=(
+                    3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 7:
+                screen.blit("monster_2b_04_lt", (19 * wallSize, 15 * wallSize))
+                screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
+                screen.draw.text(f"Mortal, tremble before the anger of god!", center=(
+                    8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plorChoose[0] == 8:
+                global moveTwoBullet
+                screen.blit("assassin_rt", (2 * wallSize, 10 * wallSize))
+                screen.blit("monster_2b_04_lt", (19 * wallSize, 15 * wallSize))
+                screen.bilt('bullet_m4', (2 * wallSize + 8.5 * wallSize * moveTwoBullet / 15, 10 * wallSize + 2.5 * wallSize * moveTwoBullet / 15))
+                screen.bilt('bullet_monster_07', (19 * wallSize - 8.5 * wallSize * moveTwoBullet / 15, 15 * wallSize - 2.5 * wallSize * moveTwoBullet / 15))
+                if moveTwoBullet < 15:
+                    moveTwoBullet += 1
+                else:
+                    screen.fill(255, 255, 255)
+            if plotChoose[0] == 9:
+                screen.fill(255, 255, 255)
+                screen.draw.text(f"Assassin and the alien-king fought till midnight. Assassin knew he may die, \nbecause the enemy was stronger than he could imagine. But he enjoyed every fighting momoent, \nappreciating his wonderful fighting skills and rival's, reflecting himself while fighting, \nlike it was not a life-and-death struggle， but a show that was performed by two masters. \n\'I can fight like this all day.\' Assassin smiled, and kept punching...", center=(
+                    0.5 * WIDTH, 0.5 * HEIGHT),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
 
     # 游侠2c关
     if level[0] == 2 and level[1] == 'c' and plotChoose[1] == True:
