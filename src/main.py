@@ -825,6 +825,15 @@ class Enemy:
             elif self.sp % 1200 == 0:
                 self.actor.image = 'monster_2c_04' + self.actor.image[-3:]
                 self.immune = False
+        elif '4cb_01' in self.enemyType and self.hp <= self.hp_MAX / 2: # 彩蛋cqr变身
+            self.hp = 600   # 不足半血回到半血
+            self.enemyType = '4cb_02'
+            self.actor.image = f'monster_4cb_02' + self.actor.image[-3:] # 朝向保持不变
+            self.shootCD_MAX = enemyData[self.enemyType][1] * WEAPON_CD_STD
+        elif '5cb_01' in self.enemyType and self.hp <= self.hp_MAX / 2: # 彩蛋cb
+            self.enemyType = '5cb_02'
+            self.actor.image = f'monster_5cb_02' + self.actor.image[-3:] # 朝向保持不变
+            self.shootCD_MAX = enemyData[self.enemyType][1] * WEAPON_CD_STD
         # 发射弹幕
         if not self.shootCD:
             _bullet = self.random_bullet()
@@ -910,6 +919,26 @@ class Enemy:
                 for _ in range(8): # 八方弹幕
                     enemyBulletList.append(_bullet)
                     _bullet = _bullet.rotate_degree(360 / 8)
+            elif '4cb_01' in self.enemyType:    # 彩蛋cqr
+                for _ in range(4):
+                    enemyBulletList.append(_bullet)
+                    _bullet = _bullet.rotate_degree(360 / 4)
+            elif '4cb_02' in self.enemyType:    # 变身cqr
+                if '3333' in _bullet.bulletType:    # 3333号追踪
+                    _bullet.trackFlag = True
+                    enemyBulletList.append(_bullet)
+                else:
+                    for _ in range(12):
+                        enemyBulletList.append(_bullet)
+                        _bullet = _bullet.rotate_degree(360 / 12)
+            elif '5cb_01' in self.enemyType:
+                for _ in range(6):
+                    enemyBulletList.append(_bullet)
+                    _bullet = _bullet.rotate_degree(360 / 6)
+            elif '5cb_02' in self.enemyType:
+                for _ in range(12):
+                    enemyBulletList.append(_bullet)
+                    _bullet = _bullet.rotate_degree(360 / 12)
             else:
                 enemyBulletList.append(_bullet)
             self.shootCD = self.shootCD_MAX
