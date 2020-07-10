@@ -901,9 +901,9 @@ class Enemy:
                         enemyBulletList.append(_bullet)
                         _bullet = _bullet.rotate_degree(360 / 7)
                 elif '7862' in _bullet.bulletType:  # 绿键，连续发射
-                    for _ in range(4):  # 4连射
+                    for _ in range(7):  # 7连射
                         enemyBulletList.append(_bullet)
-                        _bullet = _bullet.move_on_and_get_copy(False, 2)
+                        _bullet = _bullet.move_on_and_get_copy(False, 4)
                 elif '7863' in _bullet.bulletType:  # 粉键，跟踪
                     _bullet.trackFlag = True
                     enemyBulletList.append(_bullet)
