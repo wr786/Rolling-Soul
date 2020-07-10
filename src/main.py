@@ -2900,7 +2900,7 @@ def show_plot():
                 screen.draw.text(f"Noooooooooooo!!", center=(
                 8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
-                screen.blit('effect_hit_big', (2*wallSize + 17 * wallSize * moveonBullet/ 15, 10 * wallSize + 5 * wallSize * moveon / 15))
+                screen.blit('effect_hit_big', (2*wallSize + 17 * wallSize * moveonBullet/ 15, 10 * wallSize + 5 * wallSize * moveonBullet / 15))
                 if moveon < 15:
                     moveon += 1
             if plotChoose[0] == 8:
@@ -3013,7 +3013,7 @@ def show_plot():
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] == 11:
                 screen.fill((0, 0, 0))
-                screen.draw.text(f"Assassin sent the letter to knight. After all was over, \n he continued his journey. He did not care people, country or the world, \nhe just did what he thought was right. He earned much, also lost much, \nHe was strong enough to be a monarch or a general, but he enjoyed his life like this: \nsaunting to the end, and rewarded as a lone ranger.", center=(
+                screen.draw.text(f"Assassin sent the letter to knight. After all was over, \n he continued his journey. He did not care people, country or the world, \nhe just did what he thought was right. He earned much, also lost much, \nHe was strong enough to be a monarch or a general, but he \nenjoyed his life like this: saunting to the end, and rewarded as a lone ranger.", center=(
                     0.5 * WIDTH, 0.5 * HEIGHT),
                                  fontname='hanyinuomituan', fontsize=30, color='white')
 
