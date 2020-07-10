@@ -702,6 +702,8 @@ class ChenbinSama(Player):
         self.skillCD = self.skillCD_MAX
         self.skillLastTime = 180
         self.immuneTime += 180
+        self.mp += 100
+        self.mp = max(self.mp, self.mp_MAX)
         moveSpan = 2 * MOVESPAN
         self.weaponCD_recoverSpeed = 2
         sounds.skill_on.play()
@@ -879,6 +881,20 @@ class Enemy:
                 enemyBulletList.append(_bullet)
                 _bullet = _bullet.rotate_degree(15)
                 enemyBulletList.append(_bullet)
+            elif '1cb_01' in self.enemyType: # 彩蛋wxh
+                enemyBulletList.append(_bullet)
+                _bullet1 = _bullet.rotate_degree(-15)
+                enemyBulletList.append(_bullet1)
+                _bullet2 = _bullet1.rotate_degree(-15)
+                enemyBulletList.append(_bullet2)
+                _bullet3 = _bullet2.rotate_degree(45)
+                enemyBulletList.append(_bullet3)
+                _bullet4 = _bullet3.rotate_degree(15)
+                enemyBulletList.append(_bullet4)
+                _bullet.move_on(False)
+                _bullet.move_on(False)
+                _bullet1.move_on(False)
+                _bullet2.move_on(False)
             elif '2cb_01' in self.enemyType: # 彩蛋wr
                 if '7861' in _bullet.bulletType:    # 蓝键，七向发射
                     for _ in range(7):
@@ -891,6 +907,10 @@ class Enemy:
                 elif '7863' in _bullet.bulletType:  # 粉键，跟踪
                     _bullet.trackFlag = True
                     enemyBulletList.append(_bullet)
+            elif '3cb_01' in self.enemyType: # 彩蛋dsz
+                for _ in range(8): # 八方弹幕
+                    enemyBulletList.append(_bullet)
+                    _bullet = _bullet.rotate_degree(360 / 8)
             else:
                 enemyBulletList.append(_bullet)
             self.shootCD = self.shootCD_MAX
@@ -1548,8 +1568,6 @@ def on_mouse_down(pos, button):
                 storyLine = 'cb'
             if roleChoose:
                 level = [1, storyLine, 1]
-            if roleChoose == 6: #todo 删去这个，这里只是为了方便测试（因为wxh的相关还没有上传
-                level[0] = 2   
     elif roleChoose == 4:  # 死亡后点击回到开始界面
         if button == mouse.LEFT:
             clear_level_data()
