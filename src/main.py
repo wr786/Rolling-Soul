@@ -1637,7 +1637,6 @@ def on_mouse_down(pos, button):
                     else:
                         settingChoose = 999
                         plotChoose[0] = 2
-
             elif chatchoose == 998:  # 选择老虎机
                 response = curButton.detect(pos)
                 if response == "OK":
@@ -1691,6 +1690,8 @@ def on_key_down(key):
                 settingChoose = 1
             elif settingChoose != 999:
                 settingChoose = 0
+    if key == key.F:
+        player.weapon = Weapon('orange_unicorn')
 
 def on_key_up(key):
     global hFlag
@@ -2101,7 +2102,7 @@ def next_plot(pos):
                 plotChoose[0] = 0
                 clear_level_data()
                 next_level()
-        if level[2] == 3:
+        elif level[2] == 3:
             if plotChoose[0] < 14:
               plotChoose[0] += 1
     #todo:  
@@ -2118,7 +2119,7 @@ def next_plot(pos):
                 plotChoose[0] = 0
                 clear_level_data()
                 next_level()
-        if level[2] == 3:
+        elif level[2] == 3:
             if plotChoose[0] < 10:
                 plotChoose[0] += 1
 
@@ -2132,7 +2133,7 @@ def next_plot(pos):
                 plotChoose[0] = 0
                 clear_level_data()
                 next_level()
-        if level[2] == 3:
+        elif level[2] == 3:
             if plotChoose[0] < 12:
                 plotChoose[0] += 1
 
@@ -2146,7 +2147,7 @@ def next_plot(pos):
                 plotChoose[0] = 0
                 clear_level_data()
                 next_level()
-        if level[2] == 3:
+        elif level[2] == 3:
             if plotChoose[0] < 10:
                 plotChoose[0] += 1
 
@@ -2160,7 +2161,7 @@ def next_plot(pos):
                 plotChoose[0] = 0
                 clear_level_data()
                 next_level()
-        if level[2] == 3:
+        elif level[2] == 3:
             if plotChoose[0] < 9:
                 plotChoose[0] += 1
 
@@ -2173,7 +2174,7 @@ def next_plot(pos):
                 plotChoose[0] = 0
                 clear_level_data()
                 next_level()
-        if level[2] == 3:
+        elif level[2] == 3:
             if plotChoose[0] < 17:
                 plotChoose[0] += 1
 
