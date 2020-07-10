@@ -3081,12 +3081,12 @@ def show_plot():
                 screen.draw.text(f"Mortal, tremble before the anger of god!", center=(
                     8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
-            if plorChoose[0] == 8:
+            if plotChoose[0] == 8:
                 global moveTwoBullet
                 screen.blit("assassin_rt", (2 * wallSize, 10 * wallSize))
                 screen.blit("monster_2b_04_lt", (19 * wallSize, 15 * wallSize))
-                screen.bilt('bullet_m4', (2 * wallSize + 8.5 * wallSize * moveTwoBullet / 15, 10 * wallSize + 2.5 * wallSize * moveTwoBullet / 15))
-                screen.bilt('bullet_monster_07', (19 * wallSize - 8.5 * wallSize * moveTwoBullet / 15, 15 * wallSize - 2.5 * wallSize * moveTwoBullet / 15))
+                screen.blit('bullet_m4', (2 * wallSize + 8.5 * wallSize * moveTwoBullet / 15, 10 * wallSize + 2.5 * wallSize * moveTwoBullet / 15))
+                screen.blit('bullet_monster_07', (19 * wallSize - 8.5 * wallSize * moveTwoBullet / 15, 15 * wallSize - 2.5 * wallSize * moveTwoBullet / 15))
                 if moveTwoBullet < 15:
                     moveTwoBullet += 1
                 else:
@@ -3220,7 +3220,7 @@ def show_plot():
                 global movePaladinBullet
                 screen.blit("paladin_rt", (2 * wallSize, 10 * wallSize))
                 screen.blit("cage", (19 * wallSize, 15 * wallSize))
-                screen.bilt('bullet_ice', (2 * wallSize + 17 * wallSize * movePaladinBullet / 15, 10 * wallSize + 5 * wallSize * movePaladinBullet / 15))
+                screen.blit('bullet_ice', (2 * wallSize + 17 * wallSize * movePaladinBullet / 15, 10 * wallSize + 5 * wallSize * movePaladinBullet / 15))
                 if movePaladinBullet < 15:
                     movePaladinBullet += 1
             if plotChoose[0] in(6, 7, 8, 9, 10, 11):
