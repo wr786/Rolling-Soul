@@ -65,7 +65,8 @@ moveonBullet = 0 #实现子弹移动动态图
 # endingKnightFatherNum10 = 0
 # endingKnightFatherNum11 = 0
 # tabForEndingKnightFatherDialog = 0
-
+#刺客结尾
+moveAssassin = 0
 # 状态栏相关
 barWidth = 174
 barHeight = 85
@@ -2669,11 +2670,11 @@ def show_plot():
                     8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
         elif level[2] == 3:
-            if plotChoose[0] >= 2:
-                screen.blit("background_2a", (0, 0))
+            screen.blit("background_2a", (0, 0))
+            if plotChoose[0] <= 2:
+                screen.blit("knight_rt", (2 * wallSize, 10 * wallSize))
+                screen.blit("monster_2a_05_death", (19 * wallSize, 15 * wallSize))
                 if plotChoose[0] == 2:
-                    screen.blit("knight_rt", (2 * wallSize, 10 * wallSize))
-                    screen.blit("monster_2a_05_death", (19 * wallSize, 15 * wallSize))
                     screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
                     screen.draw.text(f"I...I do not believe my father\nreally want to kill me...Wait.\nWhat's that?", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
@@ -2799,12 +2800,12 @@ def show_plot():
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
         elif level[2] == 3:
-            if plotChoose[0] >= 2:
-                screen.blit("background_2b", (0, 0))
-            if plotChoose[0] in (2, 3, 4):
+            screen.blit("background_2b", (0, 0))
+            if plotChoose[0] <= 4:
                 screen.blit("knight_rt", (2 * wallSize, 10 * wallSize))
-                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
                 screen.blit("monster_2b_04_lt", (19 * wallSize, 15 * wallSize))
+            if plotChoose[0] in (2, 3, 4):
+                screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
             if plotChoose[0]  in (2, 3):
                 screen.draw.text(f"Ehhhh...You are stronger than I thought. ", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
@@ -2854,31 +2855,7 @@ def show_plot():
                 screen.draw.text(f"Later, knight found a letter from his dad and \nlearned the king had betrayed them. He was disappointed \nand lost himself, so he disappeared. But a hero will \nalways be remembered. Although hundreds of years has gone, \nwe can still recognize his renown through preachers' songs. ", center=(
                     0.5 * WIDTH, 0.5 * HEIGHT),
                                  fontname='hanyinuomituan', fontsize=30, color='white')
-                    
 
-
-            
-
-
-
-
-                
-                    
-                
-
-
-
-
-
-
-
-                
-                
-
-
-
-                
-            
 
     # 刺客2b关
     if level[0] == 2 and level[1] == 'b' and plotChoose[1] == True:
