@@ -10,8 +10,7 @@ import os
 # 选角色相关
 roleChoose = 0 # 人物选择状态变量
 roleChoice = 0 # 人物选择特效变量
-storyLine = 'a' # 故事线
-
+storyLine = 'a' # 故事线 
 # 角色高度
 heroHeight = 68
 
@@ -826,15 +825,6 @@ class Enemy:
             elif self.sp % 1200 == 0:
                 self.actor.image = 'monster_2c_04' + self.actor.image[-3:]
                 self.immune = False
-        elif '4cb_01' in self.enemyType and self.hp <= self.hp_MAX / 2: # 彩蛋cqr变身
-            self.hp = 600   # 不足半血回到半血
-            self.enemyType = '4cb_02'
-            self.actor.image = f'monster_4cb_02' + self.actor.image[-3:] # 朝向保持不变
-            self.shootCD_MAX = enemyData[self.enemyType][1] * WEAPON_CD_STD
-        elif '5cb_01' in self.enemyType and self.hp <= self.hp_MAX / 2: # 彩蛋cb
-            self.enemyType = '5cb_02'
-            self.actor.image = f'monster_5cb_02' + self.actor.image[-3:] # 朝向保持不变
-            self.shootCD_MAX = enemyData[self.enemyType][1] * WEAPON_CD_STD
         # 发射弹幕
         if not self.shootCD:
             _bullet = self.random_bullet()
@@ -920,26 +910,6 @@ class Enemy:
                 for _ in range(8): # 八方弹幕
                     enemyBulletList.append(_bullet)
                     _bullet = _bullet.rotate_degree(360 / 8)
-            elif '4cb_01' in self.enemyType:    # 彩蛋cqr
-                for _ in range(4):
-                    enemyBulletList.append(_bullet)
-                    _bullet = _bullet.rotate_degree(360 / 4)
-            elif '4cb_02' in self.enemyType:    # 变身cqr
-                if '3333' in _bullet.bulletType:    # 3333号追踪
-                    _bullet.trackFlag = True
-                    enemyBulletList.append(_bullet)
-                else:
-                    for _ in range(12):
-                        enemyBulletList.append(_bullet)
-                        _bullet = _bullet.rotate_degree(360 / 12)
-            elif '5cb_01' in self.enemyType:
-                for _ in range(6):
-                    enemyBulletList.append(_bullet)
-                    _bullet = _bullet.rotate_degree(360 / 6)
-            elif '5cb_02' in self.enemyType:
-                for _ in range(12):
-                    enemyBulletList.append(_bullet)
-                    _bullet = _bullet.rotate_degree(360 / 12)
             else:
                 enemyBulletList.append(_bullet)
             self.shootCD = self.shootCD_MAX
@@ -1477,7 +1447,7 @@ def draw():
             if roleChoose == 6: # 彩蛋关
                 if not enemyList and not enemyListLazy: # 彩蛋关每关只有boss
                     if battleWave == 1:
-                        if plotChoose[0] == 0 and level[0] != 5:    # 最后一关就不用继续下一关了
+                        if plotChoose[0] == 0:
                             portal_create(*spawnPoint)
                     elif battleWave == 0:
                         enemyListLazy.append(Enemy(levelEnemyList[(level[0], level[1], 1)]))    # 只加入boss
@@ -2215,7 +2185,7 @@ def next_plot(pos):
 
 # 剧情展示
 def show_plot():
-    global curButton
+    global curButton, moveon
 
     # 骑士1a关
     if level[0] == 1 and level[1] == 'a':
@@ -2765,6 +2735,24 @@ def show_plot():
                 screen.blit("monster_2a_05_death", (19 * wallSize, 15 * wallSize))
             if plotChoose[0] == 2:
                 screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
+                screen.draw.text(f"I...I do not believe my father\nreally want to kill me...Wait.\nWhat's that?", center=(
+                3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
+                                 fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 3:
+                global moveonKnight
+                screen.blit("knight_rtwalk", (2 * wallSize + 16 * wallSize * moveonKnight / 15, 10 * wallSize + 4 * wallSize * moveonKnight / 15))
+                if moveonKnight < 15:
+                    moveonKnight += 1
+                screen.blit("monster_2a_05_death", (19 * wallSize, 15 * wallSize))
+            if plotChoose[0] in (4, 5, 6):                    
+                screen.blit("knight_rt", (18 * wallSize, 14 * wallSize))
+                screen.blit("broken_robot", (19 * wallSize, 15 * wallSize))
+            if plotChoose[0] == 5:
+                global moveonAssassin
+                screen.blit("assassin_rtwalk", (0 * wallSize + 2 * wallSize * moveonAssassin / 15, 10 * wallSize))
+                if moveonAssassin < 15:
+                    moveonAssassin += 1
+            if plotChoose[0] in (6, 7):
                 screen.blit("assassin_rt", (2 * wallSize , 10 * wallSize))
                 screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
                 screen.draw.text(f"It is not your father, knight. ", center=(
@@ -2780,13 +2768,13 @@ def show_plot():
             if plotChoose[0] == 8:
                 screen.blit("assassin_rt", (2 * wallSize , 10 * wallSize))
                 screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
-                screen.draw.text(f"Your father is dead. He was killed \nby the alien-king. I tried to rescue him, but \n it was too late.", center=(
+                screen.draw.text(f"Your father is dead. He was\nkilled by the alien-king. I\ntried to rescue him, but it\nwas too late.", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] == 9:
                 screen.blit("assassin_rt", (2 * wallSize , 10 * wallSize))
                 screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
-                screen.draw.text(f"He gave me a letter before gone. \nHe said it is for you.", center=(
+                screen.draw.text(f"He gave me a letter before gone.\nHe said it is for you.", center=(
                 3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                              fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] == 10:
@@ -2878,28 +2866,28 @@ def show_plot():
             if plotChoose[0] in (2, 3, 4):
                 screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
             if plotChoose[0]  in (2, 3):
-                screen.draw.text(f"Ehhhh...You are stronger than I thought. ", center=(
+                screen.draw.text(f"Ehhhh...You are stronger \nthan I thought. ", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] in (3, 4):
                 screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
-                screen.draw.text(f"Ahahahahaha, You fool! Do you really \nthink you can defeat me? You are as weak as \nyour father. I am unbeatable!", center=(
+                screen.draw.text(f"Ahahahahaha, You fool! Do\nyou really think you can kill\nme? You are as weak as your\nfather. I am unbeatable!", center=(
                     8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] == 4:
-                screen.draw.text(f"I can not lose... My ancestors, \nmy father, please,  give me your power!", center=(
+                screen.draw.text(f"I can\'t lose... My ancestors,\nmy father, please, give\nme your power!", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] in (5, 6):
                 screen.blit("monster_2a_04_rt", (2 * wallSize, 10 * wallSize))
                 screen.blit("monster_2b_04_lt", (19 * wallSize, 15 * wallSize))
                 screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
-                screen.draw.text(f"Wh...What? HOW COULD YOU?! \nIt is impossible!", center=(
+                screen.draw.text(f"W...What? HOW COULD YOU?!\nIt is impossible!", center=(
                 8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] == 6:
                 screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
-                screen.draw.text(f"Your end is coming, demon. Taste my flame!", center=(
+                screen.draw.text(f"Your end is coming, demon.\nTaste my flame!", center=(
                 3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
 
@@ -2912,13 +2900,13 @@ def show_plot():
                 8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
                 screen.blit('effect_hit_big', (2*wallSize + 17 * wallSize * moveonBullet/ 15, 10 * wallSize + 5 * wallSize * moveonBullet / 15))
-                if moveon < 15:
-                    moveon += 1
+                if moveonBullet < 15:
+                    moveonBullet += 1
             if plotChoose[0] == 8:
                 screen.blit("knight_rt", (2 * wallSize, 10 * wallSize))
                 screen.blit("monster_2b_04_death", (19 * wallSize, 15 * wallSize))
                 screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
-                screen.draw.text(f"Father, you can rest in peace forever. \nJustice shall be done, wish god with you. ", center=(
+                screen.draw.text(f"Father, you can rest in peace\nforever. Justice shall be\ndone, wish god with you. ", center=(
                 3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] == 9:
@@ -2965,12 +2953,12 @@ def show_plot():
                 screen.blit("monster_2b_04_lt", (19 * wallSize, 15 * wallSize))
             if plotChoose[0] in (2, 3):
                 screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
-                screen.draw.text(f"You are a respectable rival. \nI will give you an honoring death.", center=(
+                screen.draw.text(f"You are a respectable rival. \nI will give you an honoring\ndeath.", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] == 3:
                 screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
-                screen.draw.text(f"You little BUSTER, how dare could you say this?!", center=(
+                screen.draw.text(f"You little BUSTER, how\ndare could you say this?!", center=(
                     8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] == 4:
@@ -2981,7 +2969,7 @@ def show_plot():
                 screen.blit("assassin_rt", (2 * wallSize, 10 * wallSize + 6 * wallSize * moveAssassin / 15))
                 screen.blit("assassin_rt", (2 * wallSize, 10 * wallSize + 3 * wallSize * moveAssassin / 15))
                 screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
-                screen.draw.text(f"DEATH MARK", center=(
+                screen.draw.text(f"D-E-A-T-H M-A-R-K!!!!", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
                 screen.blit("monster_2b_04_lt", (19 * wallSize, 15 * wallSize))
@@ -3000,7 +2988,7 @@ def show_plot():
                 screen.blit("assassin_rt", (2 * wallSize, 10 * wallSize))
                 screen.blit("monster_2b_04_death", (19 * wallSize, 15 * wallSize))
                 screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
-                screen.draw.text(f"Huh...That ultimate skill takes my ten-year life, \nI don not think anyone can survive through this. ", center=(
+                screen.draw.text(f"Huh...That ultimate skill\ntakes my ten-year life, I do\nnot think anyone can survive\nthrough this.", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')            
             if plotChoose[0] in (8, 9):
@@ -3012,19 +3000,19 @@ def show_plot():
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] in (9, 10):
                 screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
-                screen.draw.text(f"Sorry to scare you. I am knight's father and I \nwas killed by the alien, could you please send this \nletter to my son? I have something to tell him", center=(
+                screen.draw.text(f"Sorry to scare you. I\'m knight's\nfather and I was killed by the\nalien, could you please send\nthis letter to my son? I have\nsomething to tell him", center=(
                     8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] == 10:
                 screen.blit("assassin_rt", (2 * wallSize, 10 * wallSize))
                 screen.blit("monster_2a_04_lt", (19 * wallSize, 15 * wallSize))
                 screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
-                screen.draw.text(f"Fine. May your soul rest in peace.", center=(
+                screen.draw.text(f"Fine. May your soul\nrest in peace.", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] == 11:
                 screen.fill((0, 0, 0))
-                screen.draw.text(f"Assassin sent the letter to knight. After all was over, \n he continued his journey. He did not care people, country or the world, \nhe just did what he thought was right. He earned much, also lost much, \nHe was strong enough to be a monarch or a general, but he \nenjoyed his life like this: saunting to the end, and rewarded as a lone ranger.", center=(
+                screen.draw.text(f"Assassin sent the letter to knight. After\nall was over, he continued his journey.\nHe did not care people, country or the\nworld, he just did what he thought was\nright. He earned much, also lost much,\nHe was strong enough to be a monarch or\na general, but he enjoyed his life like this: \nsaunting to the end, and rewarded as a lone ranger.", center=(
                     0.5 * WIDTH, 0.5 * HEIGHT),
                                  fontname='hanyinuomituan', fontsize=30, color='white')
 
@@ -3059,7 +3047,7 @@ def show_plot():
                 if plotChoose[0] == 3:    
                     screen.blit("assassin_rt", (2 * wallSize, 10 * wallSize))
                 screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
-                screen.draw.text(f"Disgusting creature. But who create this monster?", center=(
+                screen.draw.text(f"Disgusting creature.\nBut who create this monster?", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] in (3, 4):
@@ -3083,13 +3071,13 @@ def show_plot():
             if plotChoose[0] in (6, 7):
                 screen.blit("assassin_rt", (2 * wallSize, 10 * wallSize))
                 screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
-                screen.draw.text(f"Too much talking... Your death is coming, demon.", center=(
+                screen.draw.text(f"Too much talking...\nYour death is coming, demon.", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] == 7:
                 screen.blit("monster_2b_04_lt", (19 * wallSize, 15 * wallSize))
                 screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
-                screen.draw.text(f"Mortal, tremble before the anger of god!", center=(
+                screen.draw.text(f"Mortal, tremble before\nthe anger of god!", center=(
                     8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] == 8:
@@ -3104,7 +3092,7 @@ def show_plot():
                     screen.fill((255, 255, 255))
             if plotChoose[0] == 9:
                 screen.fill((255, 255, 255))
-                screen.draw.text(f"Assassin and the alien-king fought till midnight. Assassin knew he may die, \nbecause the enemy was stronger than he could imagine. But he enjoyed every fighting momoent, \nappreciating his wonderful fighting skills and rival's, reflecting himself while fighting, \nlike it was not a life-and-death struggle， but a show that was performed by two masters. \n\'I can fight like this all day.\' Assassin smiled, and kept punching...", center=(
+                screen.draw.text(f"Assassin and the alien-king fought till midnight.\nAssassin knew he may die, \nbecause the\nenemy was stronger than he could imagine.\nBut he enjoyed every fighting momoent,\nappreciating his wonderful fighting skills\nand rival's, reflecting himself while\nfighting, like it was not a life-and-death\nstruggle， but a show that was performed\nby two masters. \n\'I can fight like this\nall day.\' Assassin smiled, and kept punching...", center=(
                     0.5 * WIDTH, 0.5 * HEIGHT),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
 
@@ -3142,7 +3130,7 @@ def show_plot():
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] == 3:
                 screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
-                screen.draw.text(f"Hey? It seems that the heat is cooling down. \nSo the bug is the chief criminal!", center=(
+                screen.draw.text(f"Hey? It seems that the heat\nis cooling down. So the bug\nis the chief criminal!", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] in (4, 5, 6):
@@ -3150,28 +3138,28 @@ def show_plot():
                 screen.blit("assassin_lt", (19 * wallSize, 15 * wallSize))
             if plotChoose[0] in (4, 5):
                 screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
-                screen.draw.text(f"Wow! Who are you? How could you show up in a flash?\nIt seems amazing!", center=(
+                screen.draw.text(f"Wow! Who are you? How could\nyou show up in a flash? It\nseems amazing!", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] in (5, 6):
                 screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
-                screen.draw.text(f"You do not need to know who I am. But thank you for \nkilling the bug. It should be my work. ", center=(
+                screen.draw.text(f"You do not need to know who\nI am. But thank you for\nkilling the bug. It should\nbe my work. ", center=(
                     8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] == 6:
                 screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
-                screen.draw.text(f"Haha, never mind. By the way, \ncould you teach me how to show up like a flash? \nI re---eally want to learn!", center=(
+                screen.draw.text(f"Haha, never mind. By the way, \ncan you teach me how to show\nup like a flash? I really want to\nlearn!", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] == 7:
                 screen.blit("paladin_rt", (2 * wallSize, 10 * wallSize))
                 screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
-                screen.draw.text(f"Hey! Where are YOU??? Please, I am very clever, \nit will not take you too much time......", center=(
+                screen.draw.text(f"Hey! Where are YOU? Please,\nI am very clever, it will not\ntake you too much time......", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] == 8:
                 screen.fill((255, 255, 255))
-                screen.draw.text(f"Paladin continued his journey to the lost continent. In his mind the world was innocent and holy, \nalthough he had experienced too much darkness. He kept searching for a place where no attack exists, \nand that made him more and more disappointed to the realistic world. He still treated everything \naround him optimistically, but we have no idea how much pain was hiding behind his smile. ", center=(
+                screen.draw.text(f"Paladin continued his journey to the lost\ncontinent. In his mind the world was\ninnocent and holy, although he had experienced\ntoo much darkness. He kept searching for\na place where no attack exists, and that\nmade him more and more disappointed to the\nrealistic world. He still treated everything\naround him optimistically, but we have\nno idea how much pain was hiding behind\nhis smile. ", center=(
                     0.5 * WIDTH, 0.5 * HEIGHT),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
 
@@ -3212,19 +3200,19 @@ def show_plot():
                 screen.blit("monster_2a_05_death", (19 * wallSize, 15 * wallSize))
             if plotChoose[0] == 2:
                 screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
-                screen.draw.text(f"Why all of you are so rude? \nCan\'t you just wait a moment when I am talking?", center=(
+                screen.draw.text(f"Why all of you are so rude?\nCan\'t you just wait a moment\nwhen I am talking?", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] in (3, 4):
                 screen.blit("paladin_rt", (2 * wallSize, 10 * wallSize))
                 screen.blit("cage", (19 * wallSize, 15 * wallSize))
                 screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
-                screen.draw.text(f"Hey! Is anyone there? Please help me out!", center=(
+                screen.draw.text(f"Hey! Is anyone there?\nPlease help me out!", center=(
                     8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] == 4:
                 screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
-                screen.draw.text(f"Wow? Who is that unfortunate man? Wait a moment! \nYOUR HERO IS HERE TO RESCUE YOU!", center=(
+                screen.draw.text(f"Wow? Who is that unfortunate\nman? Wait a moment! YOUR\nHERO IS HERE TO RESCUE YOU!", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] == 5:
@@ -3234,17 +3222,17 @@ def show_plot():
                 screen.blit('bullet_ice', (2 * wallSize + 17 * wallSize * movePaladinBullet / 15, 10 * wallSize + 5 * wallSize * movePaladinBullet / 15))
                 if movePaladinBullet < 15:
                     movePaladinBullet += 1
-            if plotChoose[0] in(6, 7, 8, 9, 10, 11):
+            if plotChoose[0] in(6, 7, 8, 9, 10, 11, 12, 13, 14, 15):
                 screen.blit("paladin_rt", (2 * wallSize, 10 * wallSize))
                 screen.blit("knight_lt", (19 * wallSize, 15 * wallSize))
             if plotChoose[0] in (6, 7):
                 screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
-                screen.draw.text(f"Thank you for rescuing me, my friend.", center=(
+                screen.draw.text(f"Thank you for rescuing\nme, my friend.", center=(
                     8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] in (7, 8):
                 screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
-                screen.draw.text(f"Well, big deal. But why he cought you \nand locked you in the cage?", center=(
+                screen.draw.text(f"Well, big deal. But why he\ncought you and locked you\nin the cage?", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] in (8, 9):
@@ -3254,22 +3242,22 @@ def show_plot():
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] in (9, 10):
                 screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
-                screen.draw.text(f"Ops...Sorry to kill your fa... I have to say before that he punched me first! ", center=(
+                screen.draw.text(f"Ops...Sorry to kill your\nfa... I have to say before\nthat he punched me first! ", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] == 10:
                 screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
-                screen.draw.text(f"Fine... He has changed, becoming a demon. \nI do not know why.", center=(
+                screen.draw.text(f"Fine... He has changed,\nbecoming a demon. I do not\nknow why.", center=(
                     8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] in (11, 12):
                 screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
-                screen.draw.text(f"Thanks anyway. I have to go. \nI need to find out why he became like this. \nHe used to be my pride...", center=(
+                screen.draw.text(f"Thanks anyway. I have to go. \nI need to find out why he\nbecame like this. He used\nto be my pride...", center=(
                     8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] in (12, 13):
                 screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
-                screen.draw.text(f"Sorry to here that... Well, \ndo you mind having a accompanier?", center=(
+                screen.draw.text(f"Sorry to here that... Well, \ndo you mind having an \naccompanier?", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] in (13, 14):
@@ -3279,29 +3267,19 @@ def show_plot():
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] in (14, 15):
                 screen.blit("dialog_box_lt", (3 * wallSize, 2 * wallSize))
-                screen.draw.text(f"I am an explorer, and I have a couple of days free, \nso maybe I can help you finding the truth. ", center=(
+                screen.draw.text(f"I am an explorer, and I have\na couple of days free, so\nmaybe I can help you finding\nthe truth. ", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] == 15:
                 screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
-                screen.draw.text(f"It could not be better. Let us go!", center=(
+                screen.draw.text(f"It could not be better.\nLet us go!", center=(
                     8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] == 16:
                 screen.fill((0, 0, 0))
-                screen.draw.text(f"From then on, knight and paladin became best friends during their journey to truth. \nWe do not know whether knight found why his father corrupted, but all he experienced \nand he gained made him a soider better than his father. For paladin? \nHaha, he was still a child that may never grow up. To some degree, it is a good thing for him. ", center=(
+                screen.draw.text(f"From then on, knight and paladin became\nbest friends during their journey to truth.\nWe do not know whether knight found why\nhis father corrupted, but all he experienced\nand he gained made him a soider better than\nhis father. For paladin? Haha, he was\nstill a child that may never grow up. To\nsome degree, it is a good thing for him. ", center=(
                     0.5 * WIDTH, 0.5 * HEIGHT),
                                  fontname='hanyinuomituan', fontsize=30, color = 'white')
-
-
-
-
-
-                
-                
-
-
-
 
 # 画障碍物地图，这个太长了，直接放在最后面
 def obstacle_map():
