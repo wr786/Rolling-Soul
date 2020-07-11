@@ -277,12 +277,6 @@ class Bullet:
             self.track_player()
         self.actor.left += self.speed * cos(self.actor.angle / 180 * pi)
         self.actor.bottom += -1 * self.speed * sin(self.actor.angle / 180 * pi)
-        # # 上下两堵墙
-        # if self.actor.colliderect((0, 0), (WIDTH, wallSize)) or self.actor.colliderect((0, HEIGHT - wallSize), (WIDTH, HEIGHT)):
-        #     return False
-        # # 左右两堵墙
-        # if self.actor.colliderect((0, 0), (wallSize, HEIGHT)) or self.actor.colliderect((WIDTH - wallSize - barWidth, 0), (WIDTH, HEIGHT)):
-        #     return False
         # 新的判断撞墙
         _x, _y = self.actor.center
         if _x < wallSize:
@@ -364,8 +358,6 @@ class Weapon:
 
     def shoot(self, pos):   
         if self.cd <= 0 and player.mp >= self.cost:
-            # playerBulletList.append(Bullet(self.bulletType, (self.actor.center[0] + wallSize / 4 * (-1 if self.actor.pos[0] > WIDTH / 2 else 1), self.actor.top - heroHeight / 4), pos, self.bulletSpeed, self.atk))
-            # playerBulletList.append(Bullet(self.bulletType, (self.actor.right - wallSize / 4 if 'rt' in self.actor.image else self.actor.left + wallSize / 4, self.actor.top - heroHeight / 4), pos, self.bulletSpeed, self.atk))
             playerBulletList.append(Bullet(self.bulletType, (self.actor.center[0], player.actor.center[1]), pos, self.bulletSpeed, self.atk))
             sounds.gun.play()
             self.cd = self.cd_MAX
@@ -422,10 +414,6 @@ class Player:   # 基类，用于写一些共同点
         for _enemy in enemyList:
             if self.actor.colliderect(_enemy.actor):
                 self.get_damage()   # 碰撞伤害
-                # while self.actor.colliderect(_enemy.actor):
-                #   _angle = self.actor.angle_to(_enemy.actor)
-                #   self.actor.left -= 0.2 * moveSpan * cos(_angle / 180 * pi)
-                #   self.actor.top -= 0.2 * moveSpan * sin(_angle / 180 * pi)
         self.actor.left = max(self.actor.left, wallSize)
         self.actor.left = min(self.actor.left, WIDTH - self.actor.width - wallSize - barWidth)
         self.actor.top = max(self.actor.top, wallSize)
@@ -780,10 +768,6 @@ class Enemy:
                 self.actor.left -= dx
                 self.actor.bottom -= dy
                 enemyMoveFlag[enemyMoveCnt] = 0 # 如果碰到障碍物了，就不要继续往这个方向死磕了
-            # self.actor.left = max(self.actor.left, wallSize)
-            # self.actor.left = min(self.actor.left, WIDTH - self.actor.width - wallSize - barWidth)
-            # self.actor.top = max(self.actor.top, wallSize)
-            # self.actor.top = min(self.actor.top, HEIGHT - self.actor.height - wallSize)
             if self.actor.left < wallSize:
                 self.actor.left = wallSize
                 enemyMoveFlag[enemyMoveCnt] = 0
@@ -796,11 +780,6 @@ class Enemy:
             if self.actor.bottom > HEIGHT - wallSize:
                 self.actor.bottom = HEIGHT - wallSize
                 enemyMoveFlag[enemyMoveCnt] = 0
-            # for _enemy in enemyList:
-            #    while self.actor.colliderect(_enemy.actor) and self != _enemy:
-            #        self.actor.left -= dx
-            #        self.actor.bottom -= dy
-            #        enemyMoveFlag = 0
             self.moveCD = self.moveCD_MAX
 
         else:
@@ -1190,6 +1169,7 @@ def start_view():
     screen.draw.text("Max Armor:4", center=(0.75 * WIDTH, 0.5 * HEIGHT + 2.3 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="grey40")
     screen.draw.text("Max Power:200", center=(0.75 * WIDTH, 0.5 * HEIGHT + 2.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="blue")
     screen.blit("egg_enter", (WIDTH - 80, 10))
+    # 人物选择特效
     if roleChoice == 1:
         screen.blit("knight_choose", (0.25 * WIDTH - 25, 0.5 * HEIGHT))
     elif roleChoice == 2:
@@ -1199,15 +1179,13 @@ def start_view():
 
 # 裁剪技能条，使技能条看起来是动态的
 def generate_skillCD_png():
+    global cuttedHeight
     _skillreadyImg = Image.open('./images/skill_ready_backup.png')
     _width, _height = _skillreadyImg.size
     _borderHeight = 20
     cuttedHeight = min((_height - 2*_borderHeight) * player.skillCD // player.skillCD_MAX, (_height - 2*_borderHeight) - 1)
-    # _cropped = _skillreadyImg.crop((0, _borderHeight+cuttedHeight, _width, _height-_borderHeight))
-    # _cropped.save(f'./images/skillcd/skill_ready_{30 * player.skillCD // player.skillCD_MAX}.png')
 
     skillCD_cover.image = f'skillcd/skill_ready_{30 * player.skillCD // player.skillCD_MAX}'
-    # screen.blit('skill_ready', (WIDTH - 0.5 * barWidth - 0.5 * barHeight, 7 * barHeight + cuttedHeight))
     skillCD_cover.bottomleft = (WIDTH - 0.5 * barWidth - 0.5 * barHeight, 7 * barHeight + _height - _borderHeight)
 
 # 判断当前人物的剧情是否已经播放
@@ -1339,7 +1317,7 @@ def draw_button():
         volumeButtonDown.actor.draw()
         volumeButtonUp.actor.draw()
 
-# 迁移wxh在draw里写的一大堆东西
+# 控制开始剧情
 def show_beginning():
     global level, isBeginningAll, beginningAllNum, knightDeathTime
     global beginningKnightNum1, beginningKnightNum2, beginningKnightNum3, beginningKnightNum4, beginningKnightNum5
@@ -1490,7 +1468,6 @@ def draw():
                 if battleWave == 2:
                     if plotChoose[0] == 0:
                         portal_create(*spawnPoint)
-                        # slotmachine_create(0.5 * wallnum * wallSize, 0.2 * wallnum * wallSize)
                         slotmachine_create(*slotmachinePoint)
                     if slotmachineFlag == 4:
                         slotmachineCnt += 1
@@ -4639,164 +4616,7 @@ def obstacle_map():
         
         spawnPoint = (12 * wallSize, 4 * wallSize)
         slotmachinePoint = (12 * wallSize, 19 * wallSize)
-        
-    # elif level == [1, 'cb', 1]:
-        
-    #     obstacle_x = 4 * wallSize
-    #     obstacle_y = 3 * wallSize
-    #     for _ in range(6):
-    #         obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-    #         obstacle_y += wallSize
-        
-    #     obstacle_x = 7 * wallSize
-    #     obstacle_y = 4 * wallSize
-    #     for _ in range(5):
-    #         obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-    #         obstacle_y += wallSize
-        
-    #     obstacle_x = 10 * wallSize
-    #     obstacle_y = 3 * wallSize
-    #     for _ in range(6):
-    #         obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-    #         obstacle_y += wallSize
-        
-    #     obstacle_x = 15 * wallSize
-    #     obstacle_y = 3 * wallSize
-    #     for _ in range(6):
-    #         obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-    #         obstacle_x += wallSize
-        
-    #     obstacle_x = 15 * wallSize
-    #     obstacle_y = 9 * wallSize
-    #     for _ in range(6):
-    #         obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-    #         obstacle_x += wallSize
-        
-    #     obstacle_x = 14 * wallSize
-    #     obstacle_y = 4 * wallSize
-    #     for _ in range(5):
-    #         obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-    #         obstacle_y += wallSize
-        
-    #     obstacle_x = 5 * wallSize
-    #     obstacle_y = 9 * wallSize
-    #     for _ in range(2):
-    #         obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-    #         obstacle_x += wallSize
-        
-    #     obstacle_x = 8 * wallSize
-    #     obstacle_y = 9 * wallSize
-    #     for _ in range(2):
-    #         obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-    #         obstacle_x += wallSize
-        
-    #     obstacle_x = 4 * wallSize
-    #     obstacle_y = 13 * wallSize
-    #     for _ in range(6):
-    #         obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-    #         obstacle_x += wallSize
-        
-    #     obstacle_x = 4 * wallSize
-    #     obstacle_y = 14 * wallSize
-    #     for _ in range(6):
-    #         obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-    #         obstacle_y += wallSize
-        
-    #     obstacle_x = 10 * wallSize
-    #     obstacle_y = 14 * wallSize
-    #     for _ in range(5):
-    #         obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-    #         obstacle_y += wallSize
-        
-    #     obstacle_x = 8 * wallSize
-    #     obstacle_y = 14 * wallSize
-    #     for _ in range(2):
-    #         obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-    #         obstacle_x += wallSize
-        
-    #     obstacle_x = 14 * wallSize
-    #     obstacle_y = 13 * wallSize
-    #     for _ in range(6):
-    #         obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-    #         obstacle_y += wallSize
-        
-    #     obstacle_x = 17 * wallSize
-    #     obstacle_y = 14 * wallSize
-    #     for _ in range(5):
-    #         obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-    #         obstacle_y += wallSize
-        
-    #     obstacle_x = 20 * wallSize
-    #     obstacle_y = 13 * wallSize
-    #     for _ in range(6):
-    #         obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-    #         obstacle_y += wallSize
-        
-    #     obstacle_x = 15 * wallSize
-    #     obstacle_y = 19 * wallSize
-    #     for _ in range(2):
-    #         obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-    #         obstacle_x += wallSize
-        
-    #     obstacleList.append(Obstacle(18 * wallSize, 19 * wallSize))
-    #     obstacleList.append(Obstacle(19 * wallSize, 19 * wallSize))
-    #     obstacleList.append(Obstacle(8 * wallSize, 19 * wallSize))
-    #     obstacleList.append(Obstacle(9 * wallSize, 19 * wallSize))
-        
-    #     spawnPoint = (12 * wallSize, 4 * wallSize)
-    #     slotmachinePoint = (12 * wallSize, 19 * wallSize)
-        
-    # elif level == [2, 'cb', 1]:
-        
-    #     obstacle_x = 4 * wallSize
-    #     obstacle_y = 7 * wallSize
-    #     for _ in range(13):
-    #         obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-    #         obstacle_y += wallSize
-        
-    #     obstacle_x = 6 * wallSize
-    #     obstacle_y = 17 * wallSize
-    #     for _ in range(5):
-    #         obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-    #         obstacle_x += wallSize
-        
-    #     obstacle_x = 12 * wallSize
-    #     obstacle_y = 16 * wallSize
-    #     for _ in range(4):
-    #         obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-    #         obstacle_y += wallSize
-        
-    #     obstacle_x = 14 * wallSize
-    #     obstacle_y = 5 * wallSize
-    #     for _ in range(5):
-    #         obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-    #         obstacle_x += wallSize
-        
-    #     obstacle_x = 20 * wallSize
-    #     obstacle_y = 7 * wallSize
-    #     for _ in range(13):
-    #         obstacleList.append(Obstacle(obstacle_x, obstacle_y))
-    #         obstacle_y += wallSize
-        
-    #     obstacleList.append(Obstacle(5 * wallSize, 6 * wallSize))
-    #     obstacleList.append(Obstacle(6 * wallSize, 5 * wallSize))
-    #     obstacleList.append(Obstacle(10 * wallSize, 5 * wallSize))
-    #     obstacleList.append(Obstacle(11 * wallSize, 6 * wallSize))
-    #     obstacleList.append(Obstacle(12 * wallSize, 7 * wallSize))
-    #     obstacleList.append(Obstacle(13 * wallSize, 6 * wallSize))
-    #     obstacleList.append(Obstacle(19 * wallSize, 6 * wallSize))
-    #     obstacleList.append(Obstacle(5 * wallSize, 18 * wallSize))
-    #     obstacleList.append(Obstacle(11 * wallSize, 18 * wallSize))
-    #     obstacleList.append(Obstacle(13 * wallSize, 18 * wallSize))
-    #     obstacleList.append(Obstacle(12 * wallSize, 9 * wallSize))
-    #     obstacleList.append(Obstacle(12 * wallSize, 12 * wallSize))
-    #     obstacleList.append(Obstacle(12 * wallSize, 13 * wallSize))
-    #     obstacleList.append(Obstacle(14 * wallSize, 17 * wallSize))
-    #     obstacleList.append(Obstacle(18 * wallSize, 17 * wallSize))
-    #     obstacleList.append(Obstacle(19 * wallSize, 18 * wallSize))
-        
-    #     spawnPoint = (8 * wallSize, 10 * wallSize)
-    #     slotmachinePoimt = (12 * wallSize, 11 * wallSize)
+
 
 read_data()
 
