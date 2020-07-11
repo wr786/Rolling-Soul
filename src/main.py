@@ -1128,7 +1128,11 @@ def clear_level_data():
 
 def next_level(flag = True):   # 进入下一关, True表示剧情线不变，False表示错线
     if level[1] == 'cb':
-        level[0] += 1
+        if level[0] <5:
+            level[0] += 1
+        elif level[0] == 5:
+            clear_level_data()
+            reset_game()
     else:
         if level[2] == 3:
             level[0] += 1
@@ -2139,9 +2143,9 @@ def next_plot(pos):
         elif level[2] == 3:
             if plotChoose[0] < 14:
               plotChoose[0] += 1
-    #todo:  
-    #           elif plotChoose[0] == 14:
-    #               end
+            elif plotChoose[0] == 14:
+                clear_level_data()
+                reset_game()
 
     # 骑士2b关
     if level[0] == 2 and level[1] == 'b' and plotChoose[1] == False:
@@ -2156,6 +2160,9 @@ def next_plot(pos):
         elif level[2] == 3:
             if plotChoose[0] < 10:
                 plotChoose[0] += 1
+            elif plotChoose[0] == 10:
+                clear_level_data()
+                reset_game()
 
     # 刺客2b关
     if level[0] == 2 and level[1] == 'b' and plotChoose[1] == True:
@@ -2170,6 +2177,9 @@ def next_plot(pos):
         elif level[2] == 3:
             if plotChoose[0] < 12:
                 plotChoose[0] += 1
+            elif plotChoose[0] == 12:
+                clear_level_data()
+                reset_game()
 
     # 刺客2c关
     if level[0] == 2 and level[1] == 'c' and plotChoose[1] == False:
@@ -2184,6 +2194,9 @@ def next_plot(pos):
         elif level[2] == 3:
             if plotChoose[0] < 10:
                 plotChoose[0] += 1
+            elif plotChoose[0] == 10:
+                clear_level_data()
+                reset_game()
 
     # 游侠2c关
     if level[0] == 2 and level[1] == 'c' and plotChoose[1] == True:
@@ -2198,6 +2211,9 @@ def next_plot(pos):
         elif level[2] == 3:
             if plotChoose[0] < 9:
                 plotChoose[0] += 1
+            elif plotChoose[0] == 9:
+                clear_level_data()
+                reset_game()
 
     # 游侠2a关
     if level[0] == 2 and level[1] == 'a' and plotChoose[1] == False:
@@ -2211,6 +2227,13 @@ def next_plot(pos):
         elif level[2] == 3:
             if plotChoose[0] < 17:
                 plotChoose[0] += 1
+            elif plotChoose[0] == 17:
+                clear_level_data()
+                reset_game()
+
+# 结局报幕鸣谢
+def show_end():
+    screen.blit("end_show", (0, 0))
 
 # 剧情展示
 def show_plot():
@@ -2323,7 +2346,7 @@ def show_plot():
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                      fontname='hanyinuomituan', fontsize=30, color='black')
                 if plotChoose[0] in (18, 19):
-                    screen.draw.text("f!!!Aliens???\nDo you know thier scheme...", center=(
+                    screen.draw.text(f"!!!Aliens???\nDo you know thier scheme...", center=(
                     8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
                                      fontname='hanyinuomituan', fontsize=30, color='black')
                 if plotChoose[0] in (19, 20):
@@ -2838,6 +2861,8 @@ def show_plot():
                 screen.draw.text(f"Knight took his father's honor and his disappointment \nto the country, left, without saying a word. \nNobody knew where he went, he disappeared, forever, \nbecame a legend only can be found in some historical records.", center=(
                 0.5 * WIDTH, 0.5 * HEIGHT),
                              fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 14:
+                show_end()
                     
 
 
@@ -2943,6 +2968,8 @@ def show_plot():
                 screen.draw.text(f"Later, knight found a letter from his dad and \nlearned the king had betrayed them. He was disappointed \nand lost himself, so he disappeared. But a hero will \nalways be remembered. Although hundreds of years has gone, \nwe can still recognize his renown through preachers' songs. ", center=(
                     0.5 * WIDTH, 0.5 * HEIGHT),
                                  fontname='hanyinuomituan', fontsize=30, color='white')
+            if plotChoose[0] == 10:
+                show_end()
 
 
     # 刺客2b关
@@ -3044,6 +3071,8 @@ def show_plot():
                 screen.draw.text(f"Assassin sent the letter to knight. After\nall was over, he continued his journey.\nHe did not care people, country or the\nworld, he just did what he thought was\nright. He earned much, also lost much,\nHe was strong enough to be a monarch or\na general, but he enjoyed his life like this: \nsaunting to the end, and rewarded as a lone ranger.", center=(
                     0.5 * WIDTH, 0.5 * HEIGHT),
                                  fontname='hanyinuomituan', fontsize=30, color='white')
+            if plotChoose[0] == 12:
+                show_end()
 
     # 刺客2c关
     if level[0] == 2 and level[1] == 'c' and plotChoose[1] == False:
@@ -3124,6 +3153,8 @@ def show_plot():
                 screen.draw.text(f"Assassin and the alien-king fought till midnight.\nAssassin knew he may die, \nbecause the\nenemy was stronger than he could imagine.\nBut he enjoyed every fighting momoent,\nappreciating his wonderful fighting skills\nand rival's, reflecting himself while\nfighting, like it was not a life-and-death\nstruggle， but a show that was performed\nby two masters. \n\'I can fight like this\nall day.\' Assassin smiled, and kept punching...", center=(
                     0.5 * WIDTH, 0.5 * HEIGHT),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 10:
+                show_end()
 
     # 游侠2c关
     if level[0] == 2 and level[1] == 'c' and plotChoose[1] == True:
@@ -3191,6 +3222,8 @@ def show_plot():
                 screen.draw.text(f"Paladin continued his journey to the lost\ncontinent. In his mind the world was\ninnocent and holy, although he had experienced\ntoo much darkness. He kept searching for\na place where no attack exists, and that\nmade him more and more disappointed to the\nrealistic world. He still treated everything\naround him optimistically, but we have\nno idea how much pain was hiding behind\nhis smile. ", center=(
                     0.5 * WIDTH, 0.5 * HEIGHT),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
+            if plotChoose[0] == 9:
+                show_end()
 
     # 游侠2a关
     if level[0] == 2 and level[1] == 'a' and plotChoose[1] == False:
@@ -3205,13 +3238,13 @@ def show_plot():
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] in (3, 4, 5):
-                screen.draw.text(f"Please ask your soldiers not to attack me anymore.\nI'm just a passer-by!", center=(
+                screen.draw.text(f"Please ask your soldiers \nnot to attack me anymore.\nI'm just a passer-by!", center=(
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] >= 4:
                 screen.blit("dialog_box_rt", (8 * wallSize, 8 * wallSize))
             if plotChoose[0] == 4:
-                screen.draw.text(f"You burst into my castle and kill my soldiers.\nThat means you're ALIENS' enemy...", center=(
+                screen.draw.text(f"You burst into my castle\nand kill my soldiers.\nThat means you're\nALIENS' enemy...", center=(
                     8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
             if plotChoose[0] in (5, 6):
@@ -3309,6 +3342,8 @@ def show_plot():
                 screen.draw.text(f"From then on, knight and paladin became\nbest friends during their journey to truth.\nWe do not know whether knight found why\nhis father corrupted, but all he experienced\nand he gained made him a soider better than\nhis father. For paladin? Haha, he was\nstill a child that may never grow up. To\nsome degree, it is a good thing for him. ", center=(
                     0.5 * WIDTH, 0.5 * HEIGHT),
                                  fontname='hanyinuomituan', fontsize=30, color = 'white')
+            if plotChoose[0] == 17:
+                show_end()
 
 # 画障碍物地图，这个太长了，直接放在最后面
 def obstacle_map():
