@@ -810,6 +810,7 @@ class Enemy:
             self.moveCD -= 1
 
     def shoot(self):    # 敌人攻击
+        global enemyList
         # 先更新技能的值（sp值
         self.sp += 1
         self.sp = min(self.sp, 786554453)   # 为了防止溢出，设置一个INF（
@@ -842,9 +843,9 @@ class Enemy:
                     enemyBulletList.append(_bullet)
                     _bullet = _bullet.rotate_degree(360 / 6)
             elif '2b_04' in self.enemyType: # 外星人，每30s召唤两个2b_01
-                if self.sp == 30 * 60: 
-                    enemyList.append(Enemy('1b_04'))
-                    enemyList.append(Enemy('1b_04'))
+                if self.sp >= 30 * 60: 
+                    enemyList.append(Enemy('2b_01'))
+                    enemyList.append(Enemy('2b_01'))
                     self.sp = 0 # 使用完sp技能之后sp值归零
                 else:
                     # 每个120~239，加快射速
@@ -1723,7 +1724,7 @@ def on_key_down(key):
             elif settingChoose != 999:
                 settingChoose = 0
     if key == key.F:
-        player.weapon = Weapon('orange_unicorn')
+        player.weapon = Weapon('blue_sakura')
         clear_level_data()
         next_level()
 
