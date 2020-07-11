@@ -15,49 +15,49 @@ storyLine = 'a' # 故事线
 heroHeight = 68
 
 #开头相关
-isBeginningAll = 0
-beginningAllNum = 0
+isBeginningAll = 0 #判断总开头是否已经播放
+beginningAllNum = 0 #用于总开头文字的显示
  
 #骑士开头
-isBeginningKnight = 0
-beginningKnightNum1 = 0
+isBeginningKnight = 0 #判断骑士开头是否已经播放
+beginningKnightNum1 = 0 #用于骑士开头第一段文字的显示，下面同理
 beginningKnightNum2 = 0
 beginningKnightNum3 = 0
 beginningKnightNum4 = 0
 beginningKnightNum5 = 0
-tabForBeginningKnightDialog = 0
-knightDeathTime = 12
+tabForBeginningKnightDialog = 0 #用于鼠标点击推进骑士开头进程
+knightDeathTime = 30 #骑士开头晕眩时间
 
 #刺客开头：
-isBeginningAssassin = 0
-beginningAssassinNum1 = 0
+isBeginningAssassin = 0 #判断刺客开头是否已经播放
+beginningAssassinNum1 = 0 #用于刺客开头第一段文字的显示，下面同理
 beginningAssassinNum2 = 0
 beginningAssassinNum3 = 0
 beginningAssassinNum4 = 0
 beginningAssassinNum5 = 0
-tabForBeginningAssassinDialog = 0
+tabForBeginningAssassinDialog = 0 #用于鼠标点击推进刺客开头进程
 
 #游侠开头：
-isBeginningPaladin = 0
-beginningPaladinNum1 = 0
+isBeginningPaladin = 0 #判断游侠开头是否已经播放
+beginningPaladinNum1 = 0 #用于游侠开头第一段文字的显示，下面同理
 beginningPaladinNum2 = 0
 beginningPaladinNum3 = 0
 beginningPaladinNum4 = 0
 beginningPaladinNum5 = 0
 beginningPaladinNum6 = 0
-tabForBeginningPaladinDialog = 0
+tabForBeginningPaladinDialog = 0 #用于鼠标点击推进游侠开头进程
 
 #骑士结尾
-moveonKnight = 0 #实现骑士走路动态图
-moveonAssassin = 0
-moveonBullet = 0 #实现子弹移动动态图
+moveonKnight = 0 #实现骑士结尾骑士走路动态图
+moveonAssassin = 0 #实现骑士结尾刺客走路动态图
+moveonBullet = 0 #实现骑士结尾子弹移动动态图
 
 #刺客结尾
-moveAssassin = 0
-moveTwoBullet = 0
+moveAssassin = 0 #实现刺客结尾刺客走路动态图
+moveTwoBullet = 0 #实现刺客结尾两颗子弹移动动态图
 
 #游侠结尾：
-movePaladinBullet = 0
+movePaladinBullet = 0 #实现游侠结尾子弹移动动态图
 
 # 状态栏相关
 barWidth = 174
@@ -100,7 +100,7 @@ MOVESPAN = 8
 moveSpan = MOVESPAN
 enemyMoveFlag = [0]*12 #优化怪物行走方式
 enemyMoveCnt = 0 #不同数字代表不同怪物
-enemyMoveDirection = [random.randint(0, 360)]*12 
+enemyMoveDirection = [random.randint(0, 360)]*12 #怪物移动方向
 
 # 对话相关
 chatchoose = 0 # 0表示没有对话的状态，数字为剧情的编号
@@ -764,10 +764,7 @@ class Enemy:
         global enemyMoveFlag
         global enemyMoveDirection
         if not self.moveCD:
-            # enemyMoveDirection = ((0, 1), (1, 0), (0, -1), (-1, 0))
-            # moveDir = random.choice(enemyMoveDirection)
-            # (dx, dy) = (moveDir[0] * self.speed, moveDir[1] * self.speed)
-            if not enemyMoveFlag[enemyMoveCnt]:
+            if not enemyMoveFlag[enemyMoveCnt]: # 判断是否改变怪物移动方向
                 enemyMoveDirection[enemyMoveCnt] = random.randint(0, 360)
                 enemyMoveFlag[enemyMoveCnt] = random.randint(1, 60)
             (dx, dy) = (cos(enemyMoveDirection[enemyMoveCnt])*self.speed, sin(enemyMoveDirection[enemyMoveCnt])*self.speed)
@@ -2782,6 +2779,7 @@ def show_plot():
                     8 * wallSize + 0.5 * dialogBoxWitdh, 8 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
         elif level[2] == 3:
+            #骑士2a关结尾
             screen.blit("background_2a", (0, 0))
             if plotChoose[0] <= 2:
                 screen.blit("knight_rt", (2 * wallSize, 10 * wallSize))
@@ -2914,6 +2912,7 @@ def show_plot():
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
         elif level[2] == 3:
+            #骑士2b关结尾
             screen.blit("background_2b", (0, 0))
             if plotChoose[0] <= 4:
                 screen.blit("knight_rt", (2 * wallSize, 10 * wallSize))
@@ -3004,6 +3003,7 @@ def show_plot():
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
         if level[2] == 3:
+            #刺客2b关结尾
             screen.blit("background_2b", (0, 0))
             if plotChoose[0] <= 3:
                 screen.blit("assassin_rt", (2 * wallSize, 10 * wallSize))
@@ -3098,6 +3098,7 @@ def show_plot():
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
         if level[2] == 3:
+            #刺客2c关结尾
             screen.blit("background_2c", (0, 0))
             if plotChoose[0] <= 2:
                 screen.blit("assassin_rt", (2 * wallSize, 10 * wallSize))
@@ -3180,6 +3181,7 @@ def show_plot():
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
         if level[2] == 3:
+            #游侠2c关结尾
             screen.blit("background_2c", (0, 0))
             if plotChoose[0] <= 3:
                 screen.blit("paladin_rt", (2 * wallSize, 10 * wallSize))
@@ -3257,6 +3259,7 @@ def show_plot():
                     3 * wallSize + 0.5 * dialogBoxWitdh, 2 * wallSize + 0.35 * dialogBoxHeight),
                                  fontname='hanyinuomituan', fontsize=30, color='black')
         if level[2] == 3:
+            #游侠2a关结尾
             screen.blit("background_2a", (0, 0))
             if plotChoose[0] <= 2:
                 screen.blit("paladin_rt", (2 * wallSize, 10 * wallSize))
