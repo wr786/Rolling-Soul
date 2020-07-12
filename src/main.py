@@ -1127,11 +1127,11 @@ def next_level(flag = True):   # 进入下一关, True表示剧情线不变，Fa
 # 人物选择特效
 def choice_role(pos):
     global roleChoice
-    if 0.25 * WIDTH - 25 < pos[0] < 0.25 * WIDTH + 45 and 0.5 * HEIGHT < pos[1] < 0.5 * HEIGHT + 70:
+    if 0.25 * WIDTH - 25 < pos[0] < 0.25 * WIDTH + 45 and 0.4 * HEIGHT < pos[1] < 0.4 * HEIGHT + 70:
         roleChoice = 1
-    elif 0.5 * WIDTH - 25 < pos[0] < 0.5 * WIDTH + 45 and 0.5 * HEIGHT < pos[1] < 0.5 * HEIGHT + 70:
+    elif 0.5 * WIDTH - 25 < pos[0] < 0.5 * WIDTH + 45 and 0.4 * HEIGHT < pos[1] < 0.4 * HEIGHT + 70:
         roleChoice = 2
-    elif 0.75 * WIDTH - 25 < pos[0] < 0.75 * WIDTH + 45 and 0.5 * HEIGHT < pos[1] < 0.5 * HEIGHT + 70:
+    elif 0.75 * WIDTH - 25 < pos[0] < 0.75 * WIDTH + 45 and 0.4 * HEIGHT < pos[1] < 0.4 * HEIGHT + 70:
         roleChoice = 3
     else:
         roleChoice = 0
@@ -1139,11 +1139,11 @@ def choice_role(pos):
 # 人物选择
 def choose_role(pos):
     global roleChoose, storyLine
-    if 0.25 * WIDTH -25 < pos[0] < 0.25 * WIDTH + 45 and 0.5 * HEIGHT < pos[1] <0.5 * HEIGHT + 70:
+    if 0.25 * WIDTH -25 < pos[0] < 0.25 * WIDTH + 45 and 0.4 * HEIGHT < pos[1] <0.4 * HEIGHT + 70:
         roleChoose = 1
-    elif 0.5 * WIDTH -25 < pos[0] < 0.5 * WIDTH + 45 and 0.5 * HEIGHT < pos[1] <0.5 * HEIGHT + 70:
+    elif 0.5 * WIDTH -25 < pos[0] < 0.5 * WIDTH + 45 and 0.4 * HEIGHT < pos[1] <0.4 * HEIGHT + 70:
         roleChoose = 2
-    elif 0.75 * WIDTH - 25 < pos[0] < 0.75 * WIDTH + 45 and 0.5 * HEIGHT < pos[1] <0.5 * HEIGHT + 70:
+    elif 0.75 * WIDTH - 25 < pos[0] < 0.75 * WIDTH + 45 and 0.4 * HEIGHT < pos[1] <0.4 * HEIGHT + 70:
         roleChoose = 3
     elif WIDTH - 80 < pos[0] < WIDTH - 10 and 10 < pos[1] < 80:
         roleChoose = 6
@@ -1153,29 +1153,29 @@ def start_view():
     screen.fill("white")
     screen.blit("start_back", (0, 0))
     screen.draw.text(f"Welcome to ROLLING SOUL\nPlease Choose Your Hero", center = (0.5 * WIDTH, 0.25 * HEIGHT), fontname = "hanyinuomituan", fontsize = 80)
-    screen.blit("knight_rt", (0.25 * WIDTH - 25, 0.5 * HEIGHT))
-    screen.draw.text("Knight", center = (0.25 * WIDTH, 0.5 * HEIGHT + 1.3 * heroHeight), fontname = "hanyinuomituan", fontsize = 40, color = "orange")
-    screen.draw.text("Max Life:4", center=(0.25 * WIDTH, 0.5 * HEIGHT + 1.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="red")
-    screen.draw.text("Max Armor:6", center=(0.25 * WIDTH, 0.5 * HEIGHT + 2.3 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="grey40")
-    screen.draw.text("Max Power:200", center=(0.25 * WIDTH, 0.5 * HEIGHT + 2.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="blue")
-    screen.blit("assassin_rt", (0.5 * WIDTH - 25, 0.5 * HEIGHT))
-    screen.draw.text("Assassin", center=(0.5 * WIDTH, 0.5 * HEIGHT + 1.3 * heroHeight), fontname="hanyinuomituan", fontsize=40, color="black")
-    screen.draw.text("Max Life:5", center=(0.5 * WIDTH, 0.5 * HEIGHT + 1.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="red")
-    screen.draw.text("Max Armor:5", center=(0.5 * WIDTH, 0.5 * HEIGHT + 2.3 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="grey40")
-    screen.draw.text("Max Power:200", center=(0.5 * WIDTH, 0.5 * HEIGHT + 2.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="blue")
-    screen.blit("paladin_rt", (0.75 * WIDTH - 25, 0.5 * HEIGHT))
-    screen.draw.text("Paladin", center=(0.75 * WIDTH, 0.5 * HEIGHT + 1.3 * heroHeight), fontname="hanyinuomituan", fontsize=40, color="SteelBlue2")
-    screen.draw.text("Max Life:7", center=(0.75 * WIDTH, 0.5 * HEIGHT + 1.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="red")
-    screen.draw.text("Max Armor:4", center=(0.75 * WIDTH, 0.5 * HEIGHT + 2.3 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="grey40")
-    screen.draw.text("Max Power:200", center=(0.75 * WIDTH, 0.5 * HEIGHT + 2.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="blue")
+    screen.blit("knight_rt", (0.25 * WIDTH - 25, 0.4 * HEIGHT))
+    screen.draw.text("Knight", center = (0.25 * WIDTH, 0.4 * HEIGHT + 1.3 * heroHeight), fontname = "hanyinuomituan", fontsize = 40, color = "orange")
+    screen.draw.text("Max Life:4", center=(0.25 * WIDTH, 0.4 * HEIGHT + 1.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="red")
+    screen.draw.text("Max Armor:6", center=(0.25 * WIDTH, 0.4 * HEIGHT + 2.3 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="grey40")
+    screen.draw.text("Max Power:200", center=(0.25 * WIDTH, 0.4 * HEIGHT + 2.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="blue")
+    screen.blit("assassin_rt", (0.5 * WIDTH - 25, 0.4 * HEIGHT))
+    screen.draw.text("Assassin", center=(0.5 * WIDTH, 0.4 * HEIGHT + 1.3 * heroHeight), fontname="hanyinuomituan", fontsize=40, color="black")
+    screen.draw.text("Max Life:5", center=(0.5 * WIDTH, 0.4 * HEIGHT + 1.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="red")
+    screen.draw.text("Max Armor:5", center=(0.5 * WIDTH, 0.4 * HEIGHT + 2.3 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="grey40")
+    screen.draw.text("Max Power:200", center=(0.5 * WIDTH, 0.4 * HEIGHT + 2.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="blue")
+    screen.blit("paladin_rt", (0.75 * WIDTH - 25, 0.4 * HEIGHT))
+    screen.draw.text("Paladin", center=(0.75 * WIDTH, 0.4 * HEIGHT + 1.3 * heroHeight), fontname="hanyinuomituan", fontsize=40, color="SteelBlue2")
+    screen.draw.text("Max Life:7", center=(0.75 * WIDTH, 0.4 * HEIGHT + 1.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="red")
+    screen.draw.text("Max Armor:4", center=(0.75 * WIDTH, 0.4 * HEIGHT + 2.3 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="grey40")
+    screen.draw.text("Max Power:200", center=(0.75 * WIDTH, 0.4 * HEIGHT + 2.8 * heroHeight), fontname="hanyinuomituan", fontsize=30, color="blue")
     screen.blit("egg_enter", (WIDTH - 80, 10))
     # 人物选择特效
     if roleChoice == 1:
-        screen.blit("knight_choose", (0.25 * WIDTH - 25, 0.5 * HEIGHT))
+        screen.blit("knight_choose", (0.25 * WIDTH - 25, 0.4 * HEIGHT))
     elif roleChoice == 2:
-        screen.blit("assassin_choose", (0.5 * WIDTH - 25, 0.5 * HEIGHT))
+        screen.blit("assassin_choose", (0.5 * WIDTH - 25, 0.4 * HEIGHT))
     elif roleChoice == 3:
-        screen.blit("paladin_choose", (0.75 * WIDTH - 25, 0.5 * HEIGHT))
+        screen.blit("paladin_choose", (0.75 * WIDTH - 25, 0.4 * HEIGHT))
 
 # 裁剪技能条，使技能条看起来是动态的
 def generate_skillCD_png():
